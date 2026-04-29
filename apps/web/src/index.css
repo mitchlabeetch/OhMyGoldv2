@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import design tokens CSS custom properties */
+@import "../../packages/ui-shared/src/tokens.css";
+
+/* Import Inter font from Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-surface text-text-primary font-sans antialiased;
+    min-height: 100dvh;
+  }
+
+  /* Focus visible for keyboard navigation */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-gold-500;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-surface-secondary;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border-emphasis rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gold-700;
+  }
+
+  /* Selection */
+  ::selection {
+    @apply bg-gold-500/30 text-white;
+  }
+}
+
+@layer components {
+  /* Skip to content link */
+  .skip-to-content {
+    @apply sr-only focus-visible:not-sr-only focus-visible:absolute focus-visible:top-4 focus-visible:left-4 
+           focus-visible:z-50 focus-visible:bg-gold-500 focus-visible:text-black focus-visible:px-4 
+           focus-visible:py-2 focus-visible:rounded-lg focus-visible:font-semibold;
+  }
+
+  /* Gold gradient text */
+  .text-gradient-gold {
+    @apply bg-gradient-to-r from-gold-400 to-gold-600 bg-clip-text text-transparent;
+  }
+
+  /* Glass card */
+  .glass-card {
+    @apply bg-surface-card/80 backdrop-blur-sm border border-border rounded-2xl;
+  }
+
+  /* Shadow utilities */
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+  .shadow-elevated {
+    box-shadow: var(--shadow-elevated);
+  }
+  .shadow-modal {
+    box-shadow: var(--shadow-modal);
+  }
+  .shadow-gold-glow {
+    box-shadow: var(--shadow-gold-glow);
+  }
+}

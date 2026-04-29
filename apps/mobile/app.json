@@ -1,0 +1,79 @@
+{
+  "expo": {
+    "name": "OhMyGold",
+    "slug": "ohmygold",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "../../ohmygold/team1_golds_gym_resource_base/assets/icons/app-icon/app-icon-ios-180.png",
+    "scheme": "ohmygold",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0A0A0A",
+    "splash": {
+      "image": "../../ohmygold/team1_golds_gym_resource_base/assets/splash/splash-ios.jpg",
+      "resizeMode": "cover",
+      "backgroundColor": "#0A0A0A"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "fr.goldsgym.ohmygold",
+      "buildNumber": "1",
+      "icon": "../../ohmygold/team1_golds_gym_resource_base/assets/icons/app-icon/app-icon-ios-180.png",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Scanner votre QR code d'accès",
+        "NSFaceIDUsageDescription": "Connexion par Face ID",
+        "NSLocationWhenInUseUsageDescription": "Trouver les clubs Gold's Gym proches"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "../../ohmygold/team1_golds_gym_resource_base/assets/icons/app-icon/app-icon-android-192.png",
+        "backgroundColor": "#0A0A0A"
+      },
+      "package": "fr.goldsgym.ohmygold",
+      "versionCode": 1,
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.VIBRATE",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT"
+      ]
+    },
+    "web": {
+      "favicon": "../../ohmygold/team1_golds_gym_resource_base/assets/logos/favicon/favicon-32x32.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          "color": "#FFEC00",
+          "defaultChannel": "ohmygold"
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Autoriser OhMyGold à utiliser l'appareil photo"
+        }
+      ],
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Autoriser OhMyGold à utiliser Face ID"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "supabaseUrl": "http://localhost:54320",
+      "supabaseAnonKey": "placeholder"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "title": "Paiements",
+  "status": {
+    "pending": "En attente",
+    "paid": "Payé",
+    "failed": "Échoué",
+    "refunded": "Remboursé",
+    "cancelled": "Annulé"
+  }
+}

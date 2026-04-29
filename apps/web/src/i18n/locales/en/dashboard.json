@@ -1,0 +1,14 @@
+{
+  "title": "Dashboard",
+  "welcome": "Welcome, {{name}} 👋",
+  "overview": "Overview",
+  "today": "Today",
+  "thisWeek": "This week",
+  "thisMonth": "This month",
+  "stats": {
+    "activeMembers": "Active members",
+    "classesScheduled": "Scheduled classes",
+    "revenueToday": "Today's revenue",
+    "accessGranted": "Access granted"
+  }
+}
