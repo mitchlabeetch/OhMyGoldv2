@@ -187,17 +187,30 @@ function DashboardTab() {
             <span className="text-gold-400 text-xs font-semibold bg-gold-400/10 px-2 py-1 rounded-full">+8.3%</span>
           </div>
           <div className="flex items-end gap-1.5 h-32">
-            {REVENUE_DATA.map((val, i) => (
-              <div
-                key={i}
-                className="flex-1 rounded-t-sm bg-gradient-to-t from-gold-500/60 to-gold-400/80 transition-all hover:from-gold-400 hover:to-gold-300"
-                style={{
-                  height: `${(val / maxRevenue) * 100}%`,
-                  animation: `barGrow 0.6s ease-out ${i * 0.04}s both`,
-                }}
-                title={`${val} €`}
-              />
-            ))}
+            {REVENUE_DATA.map((val, i) => {
+              const targetHeight = `${(val / maxRevenue) * 100}%`;
+              return (
+                <div
+                  key={i}
+                  ref={(node) => {
+                    if (node && !node.dataset.animated) {
+                      node.dataset.animated = "true";
+                      node.animate([{ height: "0%" }, { height: targetHeight }], {
+                        duration: 600,
+                        easing: "ease-out",
+                        delay: i * 40,
+                        fill: "both",
+                      });
+                    }
+                  }}
+                  className="flex-1 rounded-t-sm bg-gradient-to-t from-gold-500/60 to-gold-400/80 transition-all hover:from-gold-400 hover:to-gold-300"
+                  style={{
+                    height: targetHeight,
+                  }}
+                  title={`${val} €`}
+                />
+              );
+            })}
           </div>
           <div className="flex justify-between mt-2 text-[10px] text-white/20">
             <span>J-14</span>
