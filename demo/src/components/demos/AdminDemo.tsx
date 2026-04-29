@@ -125,6 +125,7 @@ export default function AdminDemo() {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/30" />
               <input
+                aria-label="Rechercher"
                 className="bg-white/5 border border-white/10 rounded-lg pl-9 pr-4 py-1.5 text-xs text-white placeholder-white/30 w-44 focus:outline-none focus:border-gold-400/50"
                 placeholder="Rechercher..."
               />
