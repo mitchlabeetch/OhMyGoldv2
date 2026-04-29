@@ -1,0 +1,12 @@
+{
+  "extends": "@ohmygold/tsconfig/react-library.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "noEmit": true
+  },
+  "include": ["src", "vite.config.ts"]
+}

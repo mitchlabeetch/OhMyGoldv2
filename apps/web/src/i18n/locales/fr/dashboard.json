@@ -1,0 +1,14 @@
+{
+  "title": "Tableau de bord",
+  "welcome": "Bienvenue, {{name}} 👋",
+  "overview": "Vue d'ensemble",
+  "today": "Aujourd'hui",
+  "thisWeek": "Cette semaine",
+  "thisMonth": "Ce mois",
+  "stats": {
+    "activeMembers": "Membres actifs",
+    "classesScheduled": "Cours planifiés",
+    "revenueToday": "Revenus du jour",
+    "accessGranted": "Accès accordés"
+  }
+}

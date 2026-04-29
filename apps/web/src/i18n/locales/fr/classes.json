@@ -1,0 +1,17 @@
+{
+  "title": "Cours",
+  "newClass": "Nouveau cours",
+  "searchPlaceholder": "Rechercher un cours…",
+  "status": {
+    "scheduled": "Planifié",
+    "in_progress": "En cours",
+    "completed": "Terminé",
+    "cancelled": "Annulé"
+  },
+  "booking": {
+    "book": "Réserver",
+    "cancel": "Annuler",
+    "waitlist": "Liste d'attente",
+    "full": "Complet"
+  }
+}
