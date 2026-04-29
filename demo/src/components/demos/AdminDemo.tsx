@@ -13,8 +13,6 @@ import {
   Zap,
   ChevronRight,
   Circle,
-  CreditCard,
-  ShoppingCart,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -56,14 +54,20 @@ const USERS = [
 ];
 
 const TRANSACTIONS = [
-  { member: "Marie Laurent", amount: "49,99 €", plan: "Premium", time: "14:32", type: "subscription" },
-  { member: "Paul Marchetti", amount: "79,99 €", plan: "Élite", time: "14:18", type: "subscription" },
-  { member: "Isabelle Renard", amount: "39,99 €", plan: "Whey Protéine", time: "13:55", type: "product" },
-  { member: "Christophe Girard", amount: "29,99 €", plan: "Essentiel", time: "13:40", type: "subscription" },
-  { member: "Amina Diallo", amount: "79,99 €", plan: "Élite", time: "13:22", type: "subscription" },
+  { member: "Marie Laurent", type: "Abonnement Premium", amount: "49,99 €", date: "17 jan · 14:32", icon: "💳", color: "text-blue-400" },
+  { member: "Paul Marchetti", type: "Renouvellement Élite", amount: "79,99 €", date: "17 jan · 13:15", icon: "🔄", color: "text-purple-400" },
+  { member: "Samuel Torres", type: "Séance découverte", amount: "15,00 €", date: "17 jan · 12:48", icon: "✨", color: "text-gold-400" },
+  { member: "Isabelle Renard", type: "Cours Yoga Détente", amount: "12,00 €", date: "17 jan · 11:20", icon: "🧘", color: "text-green-400" },
+  { member: "Christophe Girard", type: "Abonnement Essentiel", amount: "29,99 €", date: "17 jan · 10:05", icon: "📋", color: "text-orange-400" },
 ];
 
 const maxRevenue = Math.max(...REVENUE_DATA);
+
+const CLUB_COMPARISON = [
+  { name: "Paris 8e", members: 724, revenue: 19200, satisfaction: 92 },
+  { name: "Lyon Part-Dieu", members: 631, revenue: 15800, satisfaction: 88 },
+  { name: "Bordeaux Mériadeck", members: 487, revenue: 12830, satisfaction: 85 },
+];
 
 export default function AdminDemo() {
   const [activeNav, setActiveNav] = useState("dashboard");
@@ -285,31 +289,30 @@ function DashboardTab() {
       </div>
 
       {/* Dernières transactions */}
-      <div className="bg-[#1A1A1A] rounded-xl border border-white/5 overflow-hidden animate-slide-up">
-        <div className="px-5 py-4 border-b border-white/5 flex items-center justify-between">
+      <div className="bg-[#1A1A1A] rounded-xl p-5 border border-white/5">
+        <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-bold text-white">Dernières transactions</h3>
-          <span className="text-[10px] text-white/30">{TRANSACTIONS.length} aujourd'hui</span>
+          <button className="text-xs text-gold-400 hover:underline">Voir tout →</button>
         </div>
-        {TRANSACTIONS.map((tx, i) => {
-          const Icon = tx.type === "product" ? ShoppingCart : CreditCard;
-          return (
-            <div key={i} className="flex items-center justify-between px-5 py-3 border-b border-white/5 last:border-0 hover:bg-white/3 transition-colors">
+        <div className="space-y-3">
+          {TRANSACTIONS.map((tx, i) => (
+            <div key={i} className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${tx.type === "product" ? "bg-blue-400/10" : "bg-gold-400/10"}`}>
-                  <Icon className={`w-4 h-4 ${tx.type === "product" ? "text-blue-400" : "text-gold-400"}`} />
+                <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0 text-base">
+                  {tx.icon}
                 </div>
                 <div>
                   <div className="text-xs font-semibold text-white">{tx.member}</div>
-                  <div className="text-[10px] text-white/30">{tx.plan}</div>
+                  <div className={`text-[10px] ${tx.color}`}>{tx.type}</div>
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-sm font-black text-white">{tx.amount}</div>
-                <div className="text-[10px] text-white/30">{tx.time}</div>
+                <div className="text-sm font-bold text-gold-400">{tx.amount}</div>
+                <div className="text-[10px] text-white/30">{tx.date}</div>
               </div>
             </div>
-          );
-        })}
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -403,11 +406,9 @@ function UsersTab() {
 }
 
 function AnalyticsTab() {
-  const clubAnalytics = [
-    { name: "Paris 8e", members: 100, revenue: 100, satisfaction: 96 },
-    { name: "Lyon Part-Dieu", members: 87, revenue: 82, satisfaction: 92 },
-    { name: "Bordeaux Mériadeck", members: 67, revenue: 67, satisfaction: 94 },
-  ];
+  const maxMembers = Math.max(...CLUB_COMPARISON.map((c) => c.members));
+  const maxRevenue = Math.max(...CLUB_COMPARISON.map((c) => c.revenue));
+  const maxSatisfaction = Math.max(...CLUB_COMPARISON.map((c) => c.satisfaction));
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -427,39 +428,39 @@ function AnalyticsTab() {
         ))}
       </div>
 
-      {/* Horizontal bar chart: clubs comparison */}
+      {/* Comparatif clubs */}
       <div className="bg-[#1A1A1A] rounded-xl p-5 border border-white/5">
-        <h3 className="text-sm font-bold text-white mb-4">Comparaison clubs</h3>
+        <h3 className="text-sm font-bold text-white mb-4">Comparatif clubs</h3>
         <div className="flex gap-5 mb-5 text-[10px] text-white/50">
           <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-gold-400" />Membres</div>
           <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-green-400" />Revenus</div>
           <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-blue-400" />Satisfaction</div>
         </div>
         <div className="space-y-5">
-          {clubAnalytics.map((club) => (
+          {CLUB_COMPARISON.map((club) => (
             <div key={club.name}>
               <div className="text-xs font-bold text-white mb-2">{club.name}</div>
               <div className="space-y-1.5">
                 <div className="flex items-center gap-3">
                   <div className="w-20 text-[10px] text-white/40 flex-shrink-0">Membres</div>
                   <div className="flex-1 h-2 bg-white/10 rounded-full">
-                    <div className="h-full bg-gold-400 rounded-full transition-all" style={{ width: `${club.members}%` }} />
+                    <div className="h-full bg-gold-400 rounded-full transition-all" style={{ width: `${(club.members / maxMembers) * 100}%` }} />
                   </div>
-                  <div className="text-[10px] text-white/40 w-8 text-right flex-shrink-0">{club.members}%</div>
+                  <div className="text-[10px] text-white/40 w-10 text-right flex-shrink-0">{club.members}</div>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-20 text-[10px] text-white/40 flex-shrink-0">Revenus</div>
                   <div className="flex-1 h-2 bg-white/10 rounded-full">
-                    <div className="h-full bg-green-400 rounded-full transition-all" style={{ width: `${club.revenue}%` }} />
+                    <div className="h-full bg-green-400 rounded-full transition-all" style={{ width: `${(club.revenue / maxRevenue) * 100}%` }} />
                   </div>
-                  <div className="text-[10px] text-white/40 w-8 text-right flex-shrink-0">{club.revenue}%</div>
+                  <div className="text-[10px] text-white/40 w-10 text-right flex-shrink-0">{(club.revenue / 1000).toFixed(1)}k</div>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-20 text-[10px] text-white/40 flex-shrink-0">Satisfaction</div>
                   <div className="flex-1 h-2 bg-white/10 rounded-full">
-                    <div className="h-full bg-blue-400 rounded-full transition-all" style={{ width: `${club.satisfaction}%` }} />
+                    <div className="h-full bg-blue-400 rounded-full transition-all" style={{ width: `${(club.satisfaction / maxSatisfaction) * 100}%` }} />
                   </div>
-                  <div className="text-[10px] text-white/40 w-8 text-right flex-shrink-0">{club.satisfaction}%</div>
+                  <div className="text-[10px] text-white/40 w-10 text-right flex-shrink-0">{club.satisfaction}%</div>
                 </div>
               </div>
             </div>

@@ -171,6 +171,19 @@ export default function ReceptionnisteDemo() {
       <div className="flex-1 overflow-auto p-6">
         {activeTab === "checkin" && (
           <div className="max-w-2xl space-y-5 animate-fade-in">
+            {/* Statut salle */}
+            <div className="flex items-center justify-between bg-[#1A1A1A] rounded-xl px-4 py-3 border border-white/5">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                <span className="text-xs font-semibold text-white">Salle opérationnelle</span>
+              </div>
+              <div className="flex items-center gap-4 text-xs text-white/40">
+                <span>47 personnes en salle</span>
+                <span>3 cours actifs</span>
+                <span className="text-orange-400 font-semibold">2 abonnements expirés</span>
+              </div>
+            </div>
+
             {/* Alarm status */}
             <div className="relative">
               <button
@@ -197,9 +210,9 @@ export default function ReceptionnisteDemo() {
 
             {/* Rich check-in success */}
             {checkedInMember && (
-              <div className="bg-green-400/10 border border-green-400/30 rounded-xl p-5 animate-slide-up">
+              <div className="border border-green-400/30 bg-green-400/5 rounded-2xl p-5 animate-slide-up">
                 <div className="flex items-start gap-4">
-                  <div className={`w-12 h-12 rounded-full ${checkedInMember.color} flex items-center justify-center text-base font-bold text-white flex-shrink-0`}>
+                  <div className={`w-14 h-14 rounded-2xl ${checkedInMember.color} flex items-center justify-center text-2xl font-black text-white flex-shrink-0`}>
                     {checkedInMember.initials}
                   </div>
                   <div className="flex-1">
@@ -207,16 +220,16 @@ export default function ReceptionnisteDemo() {
                       <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0" />
                       <span className="text-xs text-green-400 font-semibold">Accès autorisé</span>
                     </div>
-                    <div className="text-xl font-black text-white">Bienvenue !</div>
-                    <div className="text-sm font-semibold text-white/80 mb-2">{checkedInMember.name}</div>
+                    <div className="text-xl font-black text-white">{checkedInMember.name}</div>
+                    <div className="text-sm text-gold-400 font-semibold mb-2">Bienvenue !</div>
                     <div className="flex items-center gap-2 mb-3">
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${checkedInMember.planColor}`}>
                         {checkedInMember.plan}
                       </span>
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-[11px] text-white/50">
-                      <div>Valide jusqu'au <span className="text-white font-semibold">{checkedInMember.expiry}</span></div>
-                      <div>Séances ce mois : <span className="text-white font-semibold">{checkedInMember.sessionsMonth}</span></div>
+                      <div>Expire le <span className="text-white font-semibold">{checkedInMember.expiry}</span></div>
+                      <div><span className="text-white font-semibold">{checkedInMember.sessionsMonth}</span> séances ce mois</div>
                     </div>
                   </div>
                 </div>

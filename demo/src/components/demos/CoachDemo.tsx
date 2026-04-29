@@ -6,9 +6,6 @@ import {
   Star,
   Zap,
   Bell,
-  Clock,
-  CheckCircle,
-  X,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -51,21 +48,18 @@ const PARTICIPANTS = [
   { name: "Julien Fabre", class: "Yoga Détente", attendance: 95, sessions: 55, initials: "JF", color: "bg-teal-500", sparkline: [88, 90, 92, 93, 95] },
 ];
 
-type RequestStatus = "accepted" | "declined" | null;
+type RequestStatus = "pending" | "accepted" | "declined";
 
 export default function CoachDemo() {
   const [activeNav, setActiveNav] = useState("dashboard");
-  const [requests, setRequests] = useState<{ id: number; name: string; class: string; date: string; status: RequestStatus }[]>([
-    { id: 1, name: "Thomas R.", class: "Yoga Matinal", date: "Demain 09:00", status: null },
-    { id: 2, name: "Eva M.", class: "Pilates Avancé", date: "Mer 12:00", status: null },
+  const [requests, setRequests] = useState<{ id: number; name: string; class: string; initials: string; color: string; status: RequestStatus }[]>([
+    { id: 1, name: "Alice Moreau", class: "Yoga Matinal", initials: "AM", color: "bg-purple-500", status: "pending" },
+    { id: 2, name: "René Dupuis", class: "Pilates Avancé", initials: "RD", color: "bg-blue-500", status: "pending" },
   ]);
 
   const handleRequest = (id: number, status: RequestStatus) => {
     setRequests((prev) => prev.map((r) => r.id === id ? { ...r, status } : r));
   };
-
-  const totalClassesWeek = Object.values(WEEK_CLASSES).reduce((acc, cls) => acc + cls.length, 0);
-  const totalParticipants = Object.values(WEEK_CLASSES).reduce((acc, cls) => acc + cls.reduce((s, c) => s + c.booked, 0), 0);
 
   return (
     <div className="flex h-full min-h-full bg-[#0A0A0A] text-white">
@@ -174,58 +168,60 @@ export default function CoachDemo() {
                     </div>
                   ))}
                 </div>
+              </div>
 
-                {/* Countdown */}
-                <div className="mt-4 pt-4 border-t border-white/5 flex items-center gap-3">
-                  <Clock className="w-4 h-4 text-gold-400 flex-shrink-0" />
-                  <div>
-                    <div className="text-xs text-white/40">Prochain cours dans</div>
-                    <div className="text-sm font-bold text-white">2h 15min · Yoga Matinal · Salle A</div>
-                  </div>
+              {/* Prochain cours countdown */}
+              <div className="bg-[#1A1A1A] rounded-xl p-4 border border-white/5 flex items-center justify-between">
+                <div>
+                  <div className="text-xs text-white/30 mb-1">Prochain cours dans</div>
+                  <div className="text-2xl font-black text-gold-400">2h 15min</div>
+                  <div className="text-xs text-white/50 mt-1">Yoga Détente · Salle A · 18h30</div>
+                </div>
+                <div className="w-14 h-14 rounded-2xl bg-gold-400/10 flex items-center justify-center">
+                  <Calendar className="w-7 h-7 text-gold-400" />
                 </div>
               </div>
 
-              {/* Pending requests */}
+              {/* Demandes d'inscription */}
               <div className="bg-[#1A1A1A] rounded-xl p-5 border border-white/5">
                 <h3 className="text-sm font-bold text-white mb-4">
-                  Demandes en attente
+                  Demandes d'inscription
                   <span className="ml-2 text-[10px] bg-gold-400/10 text-gold-400 px-2 py-0.5 rounded-full font-semibold">
-                    {requests.filter((r) => r.status === null).length}
+                    {requests.filter((r) => r.status === "pending").length}
                   </span>
                 </h3>
                 <div className="space-y-3">
                   {requests.map((req) => (
-                    <div key={req.id} className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${
-                      req.status === "accepted" ? "border-green-400/20 bg-green-400/5" :
-                      req.status === "declined" ? "border-white/5 bg-white/3 opacity-50" :
-                      "border-white/5 bg-[#0A0A0A]"
-                    }`}>
-                      <div>
-                        <div className="text-xs font-semibold text-white">{req.name}</div>
-                        <div className="text-[10px] text-white/40">{req.class} · {req.date}</div>
+                    <div key={req.id} className="bg-[#1A1A1A] rounded-xl p-3 border border-white/5 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-8 h-8 rounded-full ${req.color} flex items-center justify-center text-xs font-bold text-white flex-shrink-0`}>
+                          {req.initials}
+                        </div>
+                        <div>
+                          <div className="text-xs font-semibold text-white">{req.name}</div>
+                          <div className="text-[10px] text-white/40">{req.class}</div>
+                        </div>
                       </div>
-                      {req.status === null ? (
+                      {req.status === "pending" ? (
                         <div className="flex gap-2">
                           <button
                             onClick={() => handleRequest(req.id, "accepted")}
-                            className="text-[10px] font-bold bg-green-400/15 text-green-400 border border-green-400/30 px-3 py-1.5 rounded-lg hover:bg-green-400/25 flex items-center gap-1"
+                            className="bg-green-400/15 text-green-400 border border-green-400/30 px-3 py-1 rounded-lg text-xs font-semibold hover:bg-green-400/25"
                           >
-                            <CheckCircle className="w-3 h-3" />
                             Accepter
                           </button>
                           <button
                             onClick={() => handleRequest(req.id, "declined")}
-                            className="text-[10px] font-bold bg-white/5 text-white/40 px-3 py-1.5 rounded-lg hover:bg-white/10 flex items-center gap-1"
+                            className="bg-red-400/10 text-red-400 px-3 py-1 rounded-lg text-xs font-semibold hover:bg-red-400/20"
                           >
-                            <X className="w-3 h-3" />
                             Refuser
                           </button>
                         </div>
                       ) : (
                         <span className={`text-[10px] font-semibold px-2 py-1 rounded-full ${
-                          req.status === "accepted" ? "bg-green-400/10 text-green-400" : "bg-white/10 text-white/40"
+                          req.status === "accepted" ? "bg-green-400/10 text-green-400" : "bg-red-400/10 text-red-400"
                         }`}>
-                          {req.status === "accepted" ? "Accepté" : "Refusé"}
+                          {req.status === "accepted" ? "✓ Accepté" : "✗ Refusé"}
                         </span>
                       )}
                     </div>
@@ -266,17 +262,21 @@ export default function CoachDemo() {
 
           {activeNav === "schedule" && (
             <div className="space-y-4 animate-fade-in">
-              {/* Summary row */}
-              <div className="flex items-center gap-4 bg-[#1A1A1A] rounded-xl px-5 py-3 border border-white/5">
-                <div className="text-xs text-white/50">Semaine en cours :</div>
-                <div className="flex items-center gap-1">
-                  <span className="text-sm font-bold text-gold-400">{totalClassesWeek}</span>
-                  <span className="text-xs text-white/40">cours</span>
+              {/* Summary bar */}
+              <div className="flex items-center gap-6 bg-[#1A1A1A] rounded-xl px-4 py-3 border border-white/5 mb-4">
+                <div>
+                  <div className="text-xl font-black text-gold-400">7</div>
+                  <div className="text-[10px] text-white/40">Cours cette semaine</div>
                 </div>
-                <div className="w-px h-4 bg-white/10" />
-                <div className="flex items-center gap-1">
-                  <span className="text-sm font-bold text-gold-400">{totalParticipants}</span>
-                  <span className="text-xs text-white/40">participants attendus</span>
+                <div className="w-px h-8 bg-white/10" />
+                <div>
+                  <div className="text-xl font-black text-white">83</div>
+                  <div className="text-[10px] text-white/40">Participants attendus</div>
+                </div>
+                <div className="w-px h-8 bg-white/10" />
+                <div>
+                  <div className="text-xl font-black text-green-400">87%</div>
+                  <div className="text-[10px] text-white/40">Taux de remplissage</div>
                 </div>
               </div>
 
@@ -331,13 +331,15 @@ export default function CoachDemo() {
                       <th className="text-left text-xs font-semibold text-white/30 px-4 py-3">Cours</th>
                       <th className="text-left text-xs font-semibold text-white/30 px-4 py-3">Présence</th>
                       <th className="text-left text-xs font-semibold text-white/30 px-4 py-3">5 sem.</th>
-                      <th className="text-left text-xs font-semibold text-white/30 px-4 py-3">Objectif</th>
+                      <th className="text-left text-xs font-semibold text-white/30 px-4 py-3">Progression</th>
                     </tr>
                   </thead>
                   <tbody>
                     {PARTICIPANTS.map((p) => {
                       const sparkMax = Math.max(...p.sparkline);
-                      const goal = p.attendance >= 90 ? "Atteint" : "En progression";
+                      const progBadge = p.attendance >= 90 ? { label: "Excellent", cls: "bg-green-400/10 text-green-400" }
+                        : p.attendance >= 80 ? { label: "Bon", cls: "bg-gold-400/10 text-gold-400" }
+                        : { label: "En cours", cls: "bg-white/10 text-white/50" };
                       return (
                         <tr key={p.name} className="border-b border-white/5 last:border-0 hover:bg-white/3">
                           <td className="px-4 py-3">
@@ -380,10 +382,8 @@ export default function CoachDemo() {
                             </svg>
                           </td>
                           <td className="px-4 py-3">
-                            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
-                              goal === "Atteint" ? "bg-green-400/10 text-green-400" : "bg-blue-400/10 text-blue-400"
-                            }`}>
-                              {goal}
+                            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${progBadge.cls}`}>
+                              {progBadge.label}
                             </span>
                           </td>
                         </tr>
