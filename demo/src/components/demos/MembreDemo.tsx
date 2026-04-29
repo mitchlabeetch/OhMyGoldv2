@@ -37,15 +37,42 @@ const BILLING = [
   { date: "01 nov 2024", amount: "49,99 €", status: "Payé" },
 ];
 
+const WEEKLY_ACTIVITY = [60, 80, 40, 90, 70, 50, 30];
+const WEEK_LABELS = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
+
+const ACCESS_LOG = [
+  { date: "Aujourd'hui 09:02", location: "Paris 8e", icon: "✅" },
+  { date: "Hier 18:35", location: "Paris 8e", icon: "✅" },
+  { date: "Mer 07:28", location: "Lyon Part-Dieu", icon: "✅" },
+];
+
+const MONTHLY_BARS = Array.from({ length: 30 }, (_, i) => {
+  const heights = [40, 70, 55, 80, 60, 30, 0, 75, 85, 50, 65, 90, 45, 70, 55, 80, 35, 60, 75, 45, 90, 55, 70, 40, 85, 60, 75, 50, 65, 80];
+  return heights[i] ?? 0;
+});
+
+const DAY_FILTERS = ["Tous", "Lun", "Mar", "Mer", "Jeu", "Ven"];
+
 export default function MembreDemo() {
   const [activeTab, setActiveTab] = useState("home");
   const [bookedClasses, setBookedClasses] = useState<string[]>(["CrossFit"]);
+  const [dayFilter, setDayFilter] = useState("Tous");
+  const [scanning, setScanning] = useState(false);
 
   const toggleBook = (name: string) => {
     setBookedClasses((prev) =>
       prev.includes(name) ? prev.filter((c) => c !== name) : [...prev, name]
     );
   };
+
+  const handleScan = () => {
+    setScanning(true);
+    setTimeout(() => setScanning(false), 2000);
+  };
+
+  const filteredClasses = dayFilter === "Tous" ? CLASSES : CLASSES.filter((c) => c.day === dayFilter);
+  const weeklyMax = Math.max(...WEEKLY_ACTIVITY);
+  const monthlyMax = Math.max(...MONTHLY_BARS);
 
   return (
     <div className="flex flex-col h-full min-h-full bg-[#0A0A0A] text-white">
@@ -72,6 +99,37 @@ export default function MembreDemo() {
                 <div>
                   <div className="text-lg font-black text-green-400">98%</div>
                   <div className="text-[10px] text-white/40">Présence</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Streak + weekly progress */}
+            <div className="grid grid-cols-2 gap-3">
+              {/* Streak counter */}
+              <div className="bg-[#1A1A1A] rounded-xl p-4 border border-white/5 flex flex-col justify-between">
+                <div className="text-xs font-bold text-white/40 uppercase tracking-wider mb-2">Série</div>
+                <div className="text-2xl">🔥</div>
+                <div className="text-xl font-black text-white mt-1">12 jours</div>
+                <div className="text-[10px] text-white/40">consécutifs</div>
+              </div>
+
+              {/* Weekly progress mini chart */}
+              <div className="bg-[#1A1A1A] rounded-xl p-4 border border-white/5">
+                <div className="text-xs font-bold text-white/40 uppercase tracking-wider mb-3">Cette semaine</div>
+                <div className="flex items-end gap-1 h-10">
+                  {WEEKLY_ACTIVITY.map((v, i) => (
+                    <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
+                      <div
+                        className={`w-full rounded-t-sm ${v > 0 ? "bg-gold-400/70" : "bg-white/5"}`}
+                        style={{ height: `${weeklyMax > 0 ? (v / weeklyMax) * 36 : 4}px` }}
+                      />
+                    </div>
+                  ))}
+                </div>
+                <div className="flex justify-between mt-1">
+                  {WEEK_LABELS.map((l) => (
+                    <span key={l} className="text-[8px] text-white/20 flex-1 text-center">{l}</span>
+                  ))}
                 </div>
               </div>
             </div>
@@ -118,10 +176,32 @@ export default function MembreDemo() {
         {activeTab === "booking" && (
           <div className="p-4 space-y-4 animate-fade-in">
             <h2 className="text-base font-black text-white">Réserver un cours</h2>
+
+            {/* Day filters */}
+            <div className="flex gap-2 flex-wrap">
+              {DAY_FILTERS.map((df) => (
+                <button
+                  key={df}
+                  onClick={() => setDayFilter(df)}
+                  className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${
+                    dayFilter === df
+                      ? "bg-gold-400 text-black"
+                      : "bg-white/5 text-white/50 hover:bg-white/10 hover:text-white"
+                  }`}
+                >
+                  {df}
+                </button>
+              ))}
+            </div>
+
             <div className="space-y-2">
-              {CLASSES.map((cls) => {
+              {filteredClasses.map((cls) => {
                 const isBooked = bookedClasses.includes(cls.name);
                 const isFull = cls.booked === cls.total;
+                const pctFree = (cls.total - cls.booked) / cls.total;
+                const spotsLeft = cls.total - cls.booked;
+                const spotsColor = isFull ? "text-red-400" : pctFree < 0.3 ? "text-orange-400" : "text-green-400";
+                const spotsBg = isFull ? "bg-red-400/10" : pctFree < 0.3 ? "bg-orange-400/10" : "bg-green-400/10";
                 return (
                   <div key={`${cls.name}-${cls.day}`} className="bg-[#1A1A1A] rounded-xl p-3 border border-white/5">
                     <div className="flex items-center justify-between">
@@ -133,7 +213,9 @@ export default function MembreDemo() {
                         </div>
                         <div className="flex items-center gap-3 ml-8">
                           <span className="text-[10px] text-white/30">{cls.coach}</span>
-                          <span className="text-[10px] text-white/30">{cls.booked}/{cls.total}</span>
+                          <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${spotsBg} ${spotsColor}`}>
+                            {isFull ? "Complet" : `${spotsLeft} place${spotsLeft > 1 ? "s" : ""} restante${spotsLeft > 1 ? "s" : ""}`}
+                          </span>
                         </div>
                       </div>
                       <button
@@ -171,17 +253,31 @@ export default function MembreDemo() {
                   <span className="text-xs text-gold-300/70 bg-gold-400/10 px-2 py-0.5 rounded-full font-semibold">PREMIUM</span>
                 </div>
 
-                {/* QR code */}
+                {/* QR code with scan animation */}
                 <div className="flex justify-center mb-5">
-                  <div className="w-28 h-28 bg-white rounded-xl p-2 flex items-center justify-center">
-                    <QrCode className="w-20 h-20 text-black" />
+                  <div className="relative">
+                    {scanning && (
+                      <div className="absolute inset-0 rounded-xl ring-4 ring-green-400 animate-ping opacity-60 z-10" />
+                    )}
+                    <div className={`w-28 h-28 bg-white rounded-xl p-2 flex items-center justify-center transition-all ${scanning ? "ring-2 ring-green-400" : ""}`}>
+                      <QrCode className="w-20 h-20 text-black" />
+                    </div>
                   </div>
                 </div>
 
-                <div className="text-center">
+                <div className="text-center mb-4">
                   <div className="text-base font-black text-white">Marie Laurent</div>
                   <div className="text-xs text-white/50 mt-1">#ML-1842 · Paris 8e</div>
                 </div>
+
+                <button
+                  onClick={handleScan}
+                  className={`w-full py-2 rounded-xl text-xs font-bold transition-all ${
+                    scanning ? "bg-green-400 text-black" : "bg-white/10 text-white hover:bg-white/15"
+                  }`}
+                >
+                  {scanning ? "✓ Scanner simulé..." : "Scanner simulé"}
+                </button>
               </div>
             </div>
 
@@ -199,6 +295,24 @@ export default function MembreDemo() {
                   </div>
                 ))}
               </div>
+            </div>
+
+            {/* Last 3 accesses */}
+            <div className="bg-[#1A1A1A] rounded-xl border border-white/5 overflow-hidden">
+              <div className="px-4 py-3 border-b border-white/5">
+                <span className="text-xs font-bold text-white/50 uppercase tracking-wider">Derniers accès</span>
+              </div>
+              {ACCESS_LOG.map((entry, i) => (
+                <div key={i} className="flex items-center justify-between px-4 py-2.5 border-b border-white/5 last:border-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm">{entry.icon}</span>
+                    <div>
+                      <div className="text-xs font-semibold text-white">{entry.location}</div>
+                      <div className="text-[10px] text-white/30">{entry.date}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
@@ -266,6 +380,43 @@ export default function MembreDemo() {
                   <div className="text-[10px] text-white/40">{stat.label}</div>
                 </div>
               ))}
+            </div>
+
+            {/* Monthly activity bar chart */}
+            <div className="bg-[#1A1A1A] rounded-xl p-4 border border-white/5">
+              <div className="text-xs font-bold text-white/40 uppercase tracking-wider mb-3">Activité mensuelle</div>
+              <div className="flex items-end gap-px h-12">
+                {MONTHLY_BARS.map((v, i) => (
+                  <div
+                    key={i}
+                    className={`flex-1 rounded-t-sm ${v > 0 ? "bg-gold-400/60 hover:bg-gold-400" : "bg-white/5"} transition-colors`}
+                    style={{ height: `${monthlyMax > 0 ? (v / monthlyMax) * 44 : 3}px` }}
+                    title={`Jour ${i + 1}`}
+                  />
+                ))}
+              </div>
+              <div className="flex justify-between mt-1 text-[9px] text-white/20">
+                <span>1er</span>
+                <span>Aujourd'hui</span>
+              </div>
+            </div>
+
+            {/* Badges */}
+            <div className="bg-[#1A1A1A] rounded-xl p-4 border border-white/5">
+              <div className="text-xs font-bold text-white/40 uppercase tracking-wider mb-3">Badges</div>
+              <div className="grid grid-cols-4 gap-3">
+                {[
+                  { emoji: "🏆", name: "50 séances" },
+                  { emoji: "🔥", name: "Streak 30j" },
+                  { emoji: "🧘", name: "Yoga Expert" },
+                  { emoji: "💪", name: "CrossFit Master" },
+                ].map((badge) => (
+                  <div key={badge.name} className="flex flex-col items-center gap-1.5 p-2 rounded-lg bg-gold-400/5 border border-gold-400/10">
+                    <span className="text-xl">{badge.emoji}</span>
+                    <span className="text-[9px] text-white/50 text-center leading-tight">{badge.name}</span>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Menu */}

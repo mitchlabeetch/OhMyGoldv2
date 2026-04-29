@@ -13,6 +13,8 @@ import {
   Zap,
   ChevronRight,
   Circle,
+  CreditCard,
+  ShoppingCart,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -25,11 +27,11 @@ const NAV_ITEMS = [
 ];
 
 const KPI_DATA = [
-  { label: "Membres actifs", value: "1 842", icon: Users, trend: "+12%", up: true, color: "text-gold-400" },
-  { label: "Revenus / mois", value: "47 830 €", icon: TrendingUp, trend: "+8.3%", up: true, color: "text-green-400" },
-  { label: "Abonnements", value: "156", icon: Zap, trend: "+5%", up: true, color: "text-blue-400" },
-  { label: "Cours aujourd'hui", value: "24", icon: BarChart3, trend: "-2", up: false, color: "text-orange-400" },
-  { label: "Accès aujourd'hui", value: "287", icon: Circle, trend: "+34", up: true, color: "text-purple-400" },
+  { label: "Membres actifs", value: "1 842", icon: Users, trend: "+12%", up: true, color: "text-gold-400", sparkline: [65, 72, 68, 78, 85] },
+  { label: "Revenus / mois", value: "47 830 €", icon: TrendingUp, trend: "+8.3%", up: true, color: "text-green-400", sparkline: [70, 75, 68, 82, 90] },
+  { label: "Abonnements", value: "156", icon: Zap, trend: "+5%", up: true, color: "text-blue-400", sparkline: [55, 60, 58, 65, 72] },
+  { label: "Cours aujourd'hui", value: "24", icon: BarChart3, trend: "-2", up: false, color: "text-orange-400", sparkline: [80, 75, 82, 70, 65] },
+  { label: "Accès aujourd'hui", value: "287", icon: Circle, trend: "+34", up: true, color: "text-purple-400", sparkline: [40, 55, 62, 70, 85] },
 ];
 
 const REVENUE_DATA = [
@@ -51,6 +53,14 @@ const USERS = [
   { name: "Antoine Leroy", email: "a.leroy@ohmygold.fr", role: "Réceptionniste", club: "Bordeaux Mériadeck", status: "Actif", initials: "AL", color: "bg-teal-500" },
   { name: "Clara Simon", email: "c.simon@ohmygold.fr", role: "Coach", club: "Paris 8e", status: "Actif", initials: "CS", color: "bg-indigo-500" },
   { name: "Maxime Robert", email: "m.robert@ohmygold.fr", role: "Administrateur", club: "Multi-clubs", status: "Actif", initials: "MR", color: "bg-gold-500" },
+];
+
+const TRANSACTIONS = [
+  { member: "Marie Laurent", amount: "49,99 €", plan: "Premium", time: "14:32", type: "subscription" },
+  { member: "Paul Marchetti", amount: "79,99 €", plan: "Élite", time: "14:18", type: "subscription" },
+  { member: "Isabelle Renard", amount: "39,99 €", plan: "Whey Protéine", time: "13:55", type: "product" },
+  { member: "Christophe Girard", amount: "29,99 €", plan: "Essentiel", time: "13:40", type: "subscription" },
+  { member: "Amina Diallo", amount: "79,99 €", plan: "Élite", time: "13:22", type: "subscription" },
 ];
 
 const maxRevenue = Math.max(...REVENUE_DATA);
@@ -157,10 +167,11 @@ export default function AdminDemo() {
 function DashboardTab() {
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* KPIs */}
+      {/* KPIs with sparklines */}
       <div className="grid grid-cols-5 gap-4">
         {KPI_DATA.map((kpi) => {
           const Icon = kpi.icon;
+          const sparkMax = Math.max(...kpi.sparkline);
           return (
             <div key={kpi.label} className="bg-[#1A1A1A] rounded-xl p-4 border border-white/5">
               <div className="flex items-center justify-between mb-3">
@@ -171,7 +182,24 @@ function DashboardTab() {
                 </span>
               </div>
               <div className="text-xl font-black text-white">{kpi.value}</div>
-              <div className="text-xs text-white/40 mt-1">{kpi.label}</div>
+              <div className="text-xs text-white/40 mt-1 mb-2">{kpi.label}</div>
+              <svg viewBox="0 0 55 16" className={`w-full h-4 ${kpi.color}`} preserveAspectRatio="none">
+                {kpi.sparkline.map((v, i) => {
+                  const h = (v / sparkMax) * 14;
+                  return (
+                    <rect
+                      key={i}
+                      x={i * 12}
+                      y={16 - h}
+                      width={8}
+                      height={h}
+                      rx={1}
+                      fill="currentColor"
+                      opacity={0.6}
+                    />
+                  );
+                })}
+              </svg>
             </div>
           );
         })}
@@ -205,9 +233,7 @@ function DashboardTab() {
                     }
                   }}
                   className="flex-1 rounded-t-sm bg-gradient-to-t from-gold-500/60 to-gold-400/80 transition-all hover:from-gold-400 hover:to-gold-300"
-                  style={{
-                    height: targetHeight,
-                  }}
+                  style={{ height: targetHeight }}
                   title={`${val} €`}
                 />
               );
@@ -256,6 +282,34 @@ function DashboardTab() {
             ))}
           </div>
         </div>
+      </div>
+
+      {/* Dernières transactions */}
+      <div className="bg-[#1A1A1A] rounded-xl border border-white/5 overflow-hidden animate-slide-up">
+        <div className="px-5 py-4 border-b border-white/5 flex items-center justify-between">
+          <h3 className="text-sm font-bold text-white">Dernières transactions</h3>
+          <span className="text-[10px] text-white/30">{TRANSACTIONS.length} aujourd'hui</span>
+        </div>
+        {TRANSACTIONS.map((tx, i) => {
+          const Icon = tx.type === "product" ? ShoppingCart : CreditCard;
+          return (
+            <div key={i} className="flex items-center justify-between px-5 py-3 border-b border-white/5 last:border-0 hover:bg-white/3 transition-colors">
+              <div className="flex items-center gap-3">
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${tx.type === "product" ? "bg-blue-400/10" : "bg-gold-400/10"}`}>
+                  <Icon className={`w-4 h-4 ${tx.type === "product" ? "text-blue-400" : "text-gold-400"}`} />
+                </div>
+                <div>
+                  <div className="text-xs font-semibold text-white">{tx.member}</div>
+                  <div className="text-[10px] text-white/30">{tx.plan}</div>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-sm font-black text-white">{tx.amount}</div>
+                <div className="text-[10px] text-white/30">{tx.time}</div>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -349,6 +403,12 @@ function UsersTab() {
 }
 
 function AnalyticsTab() {
+  const clubAnalytics = [
+    { name: "Paris 8e", members: 100, revenue: 100, satisfaction: 96 },
+    { name: "Lyon Part-Dieu", members: 87, revenue: 82, satisfaction: 92 },
+    { name: "Bordeaux Mériadeck", members: 67, revenue: 67, satisfaction: 94 },
+  ];
+
   return (
     <div className="space-y-6 animate-fade-in">
       <h2 className="text-sm font-bold text-white">Analytiques multi-clubs</h2>
@@ -365,6 +425,46 @@ function AnalyticsTab() {
             <div className={`text-xs font-semibold mt-1 ${stat.up ? "text-green-400" : "text-red-400"}`}>{stat.change} ce mois</div>
           </div>
         ))}
+      </div>
+
+      {/* Horizontal bar chart: clubs comparison */}
+      <div className="bg-[#1A1A1A] rounded-xl p-5 border border-white/5">
+        <h3 className="text-sm font-bold text-white mb-4">Comparaison clubs</h3>
+        <div className="flex gap-5 mb-5 text-[10px] text-white/50">
+          <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-gold-400" />Membres</div>
+          <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-green-400" />Revenus</div>
+          <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-blue-400" />Satisfaction</div>
+        </div>
+        <div className="space-y-5">
+          {clubAnalytics.map((club) => (
+            <div key={club.name}>
+              <div className="text-xs font-bold text-white mb-2">{club.name}</div>
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-3">
+                  <div className="w-20 text-[10px] text-white/40 flex-shrink-0">Membres</div>
+                  <div className="flex-1 h-2 bg-white/10 rounded-full">
+                    <div className="h-full bg-gold-400 rounded-full transition-all" style={{ width: `${club.members}%` }} />
+                  </div>
+                  <div className="text-[10px] text-white/40 w-8 text-right flex-shrink-0">{club.members}%</div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-20 text-[10px] text-white/40 flex-shrink-0">Revenus</div>
+                  <div className="flex-1 h-2 bg-white/10 rounded-full">
+                    <div className="h-full bg-green-400 rounded-full transition-all" style={{ width: `${club.revenue}%` }} />
+                  </div>
+                  <div className="text-[10px] text-white/40 w-8 text-right flex-shrink-0">{club.revenue}%</div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-20 text-[10px] text-white/40 flex-shrink-0">Satisfaction</div>
+                  <div className="flex-1 h-2 bg-white/10 rounded-full">
+                    <div className="h-full bg-blue-400 rounded-full transition-all" style={{ width: `${club.satisfaction}%` }} />
+                  </div>
+                  <div className="text-[10px] text-white/40 w-8 text-right flex-shrink-0">{club.satisfaction}%</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -397,23 +497,47 @@ function AuditTab() {
   );
 }
 
+const TOGGLE_ITEMS = new Set(["Authentification 2FA", "Alertes email", "Rapports hebdomadaires", "Alertes critiques"]);
+
 function SettingsTab() {
+  const [toggles, setToggles] = useState<Record<string, boolean>>({
+    "Authentification 2FA": true,
+    "Alertes email": true,
+    "Rapports hebdomadaires": false,
+    "Alertes critiques": true,
+  });
+
+  const flipToggle = (key: string) => {
+    setToggles((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const sections = [
+    { section: "Général", items: ["Nom de la plateforme", "Fuseau horaire", "Devise", "Langue"] },
+    { section: "Sécurité", items: ["Authentification 2FA", "Politique de mots de passe", "Sessions actives"] },
+    { section: "Notifications", items: ["Alertes email", "Rapports hebdomadaires", "Alertes critiques"] },
+  ];
+
   return (
     <div className="space-y-4 animate-fade-in">
       <h2 className="text-sm font-bold text-white">Paramètres système</h2>
-      {[
-        { section: "Général", items: ["Nom de la plateforme", "Fuseau horaire", "Devise", "Langue"] },
-        { section: "Sécurité", items: ["Authentification 2FA", "Politique de mots de passe", "Sessions actives"] },
-        { section: "Notifications", items: ["Alertes email", "Rapports hebdomadaires", "Alertes critiques"] },
-      ].map((section) => (
+      {sections.map((section) => (
         <div key={section.section} className="bg-[#1A1A1A] rounded-xl border border-white/5 overflow-hidden">
           <div className="px-4 py-3 border-b border-white/5">
             <span className="text-xs font-bold text-white/50 uppercase tracking-wider">{section.section}</span>
           </div>
           {section.items.map((item) => (
-            <div key={item} className="flex items-center justify-between px-4 py-3 border-b border-white/5 last:border-0 hover:bg-white/3">
+            <div key={item} className="flex items-center justify-between px-4 py-3 border-b border-white/5 last:border-0 hover:bg-white/3 transition-colors">
               <span className="text-xs text-white/70">{item}</span>
-              <ChevronRight className="w-4 h-4 text-white/20" />
+              {TOGGLE_ITEMS.has(item) ? (
+                <button
+                  onClick={() => flipToggle(item)}
+                  className={`relative w-9 h-5 rounded-full transition-colors flex-shrink-0 ${toggles[item] ? "bg-gold-400" : "bg-white/20"}`}
+                >
+                  <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${toggles[item] ? "translate-x-4" : "translate-x-0.5"}`} />
+                </button>
+              ) : (
+                <ChevronRight className="w-4 h-4 text-white/20" />
+              )}
             </div>
           ))}
         </div>

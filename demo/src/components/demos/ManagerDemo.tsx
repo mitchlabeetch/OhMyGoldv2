@@ -3,18 +3,22 @@ import {
   LayoutDashboard,
   Users,
   Calendar,
+  CreditCard,
   Search,
   Bell,
   TrendingUp,
   TrendingDown,
   Zap,
   ChevronRight,
+  CheckCircle,
+  X,
 } from "lucide-react";
 
 const NAV_ITEMS = [
   { id: "dashboard", icon: LayoutDashboard, label: "Tableau de bord" },
   { id: "members", icon: Users, label: "Membres" },
   { id: "planning", icon: Calendar, label: "Planning" },
+  { id: "billing", icon: CreditCard, label: "Facturation" },
 ];
 
 const KPI_DATA = [
@@ -52,15 +56,41 @@ const MEMBERS = [
   { name: "Nathalie Blanc", plan: "Essentiel", since: "Déc 2023", status: "Suspendu", initials: "NB", color: "bg-orange-500" },
 ];
 
+const LAST_PAYMENTS = [
+  { name: "Marie Laurent", amount: "49,99 €", date: "17 jan 2025", status: "Payé", initials: "ML", color: "bg-purple-500" },
+  { name: "Paul Marchetti", amount: "79,99 €", date: "17 jan 2025", status: "Payé", initials: "PM", color: "bg-blue-500" },
+  { name: "Thomas Durand", amount: "29,99 €", date: "16 jan 2025", status: "En attente", initials: "TD", color: "bg-orange-500" },
+  { name: "Amina Diallo", amount: "79,99 €", date: "16 jan 2025", status: "Payé", initials: "AD", color: "bg-indigo-500" },
+  { name: "Isabelle Renard", amount: "29,99 €", date: "15 jan 2025", status: "Payé", initials: "IR", color: "bg-pink-500" },
+];
+
+const WEEKLY_REVENUE = [2800, 3100, 2950, 3490];
+
 export default function ManagerDemo() {
   const [activeNav, setActiveNav] = useState("dashboard");
   const [search, setSearch] = useState("");
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [formName, setFormName] = useState("");
+  const [formEmail, setFormEmail] = useState("");
+  const [formPlan, setFormPlan] = useState("Essentiel");
+  const [showToast, setShowToast] = useState(false);
 
   const filteredMembers = MEMBERS.filter(
     (m) =>
       m.name.toLowerCase().includes(search.toLowerCase()) ||
       m.plan.toLowerCase().includes(search.toLowerCase())
   );
+
+  const handleAddMember = () => {
+    setShowAddForm(false);
+    setFormName("");
+    setFormEmail("");
+    setFormPlan("Essentiel");
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
+
+  const navLabel = NAV_ITEMS.find((n) => n.id === activeNav)?.label ?? "";
 
   return (
     <div className="flex h-full min-h-full bg-[#0A0A0A] text-white">
@@ -117,9 +147,7 @@ export default function ManagerDemo() {
       {/* Main */}
       <div className="flex-1 flex flex-col min-w-0">
         <div className="h-14 border-b border-white/5 flex items-center justify-between px-6 flex-shrink-0 bg-[#0D0D0D]">
-          <h1 className="text-sm font-bold text-white">
-            {NAV_ITEMS.find((n) => n.id === activeNav)?.label}
-          </h1>
+          <h1 className="text-sm font-bold text-white">{navLabel}</h1>
           <div className="flex items-center gap-3">
             <button
               type="button"
@@ -206,6 +234,14 @@ export default function ManagerDemo() {
 
           {activeNav === "members" && (
             <div className="space-y-4 animate-fade-in">
+              {/* Success toast */}
+              {showToast && (
+                <div className="flex items-center gap-3 bg-green-400/10 border border-green-400/30 rounded-xl px-4 py-3 animate-slide-up">
+                  <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0" />
+                  <span className="text-sm font-semibold text-green-400">Membre inscrit avec succès !</span>
+                </div>
+              )}
+
               <div className="flex items-center gap-3">
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/30" />
@@ -216,7 +252,51 @@ export default function ManagerDemo() {
                     onChange={(e) => setSearch(e.target.value)}
                   />
                 </div>
+                <button
+                  onClick={() => setShowAddForm((v) => !v)}
+                  className="text-xs bg-gold-400/15 text-gold-400 border border-gold-400/30 px-3 py-2 rounded-lg font-semibold hover:bg-gold-400/25 whitespace-nowrap flex items-center gap-1.5"
+                >
+                  {showAddForm ? <X className="w-3 h-3" /> : null}
+                  {showAddForm ? "Annuler" : "+ Inscrire un membre"}
+                </button>
               </div>
+
+              {/* Inline add form */}
+              {showAddForm && (
+                <div className="bg-[#1A1A1A] rounded-xl p-4 border border-gold-400/20 space-y-3 animate-slide-up">
+                  <div className="text-xs font-bold text-white mb-2">Nouveau membre</div>
+                  <div className="grid grid-cols-3 gap-3">
+                    <input
+                      className="bg-[#0A0A0A] border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder-white/30 focus:outline-none focus:border-gold-400/50"
+                      placeholder="Nom complet"
+                      value={formName}
+                      onChange={(e) => setFormName(e.target.value)}
+                    />
+                    <input
+                      className="bg-[#0A0A0A] border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder-white/30 focus:outline-none focus:border-gold-400/50"
+                      placeholder="Email"
+                      value={formEmail}
+                      onChange={(e) => setFormEmail(e.target.value)}
+                    />
+                    <select
+                      className="bg-[#0A0A0A] border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-gold-400/50"
+                      value={formPlan}
+                      onChange={(e) => setFormPlan(e.target.value)}
+                    >
+                      <option>Essentiel</option>
+                      <option>Premium</option>
+                      <option>Élite</option>
+                    </select>
+                  </div>
+                  <button
+                    onClick={handleAddMember}
+                    className="bg-gold-400 hover:bg-gold-300 text-black font-bold text-xs px-4 py-2 rounded-lg transition-colors"
+                  >
+                    Confirmer l'inscription
+                  </button>
+                </div>
+              )}
+
               <div className="bg-[#1A1A1A] rounded-xl border border-white/5 overflow-hidden">
                 {filteredMembers.map((member) => (
                   <div key={member.name} className="flex items-center justify-between px-4 py-3 border-b border-white/5 last:border-0 hover:bg-white/3">
@@ -261,7 +341,118 @@ export default function ManagerDemo() {
               </div>
             </div>
           )}
+
+          {activeNav === "billing" && <BillingTab />}
         </div>
+      </div>
+    </div>
+  );
+}
+
+function BillingTab() {
+  const weekMax = Math.max(...WEEKLY_REVENUE);
+
+  return (
+    <div className="space-y-6 animate-fade-in">
+      {/* KPIs */}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="bg-[#1A1A1A] rounded-xl p-4 border border-white/5">
+          <CreditCard className="w-4 h-4 text-gold-400 mb-3" />
+          <div className="text-2xl font-black text-white">12 340 €</div>
+          <div className="text-xs text-white/40 mt-1">Total du mois</div>
+          <div className="text-xs text-green-400 font-semibold mt-1 flex items-center gap-1">
+            <TrendingUp className="w-3 h-3" />+5.2% vs mois dernier
+          </div>
+        </div>
+        <div className="bg-[#1A1A1A] rounded-xl p-4 border border-white/5">
+          <Zap className="w-4 h-4 text-blue-400 mb-3" />
+          <div className="text-2xl font-black text-white">89</div>
+          <div className="text-xs text-white/40 mt-1">Abonnements renouvelés</div>
+          <div className="text-xs text-green-400 font-semibold mt-1">Ce mois</div>
+        </div>
+        <div className="bg-[#1A1A1A] rounded-xl p-4 border border-white/5">
+          <TrendingUp className="w-4 h-4 text-green-400 mb-3" />
+          <div className="text-2xl font-black text-white">3 490 €</div>
+          <div className="text-xs text-white/40 mt-1">Meilleure semaine</div>
+          <div className="text-xs text-green-400 font-semibold mt-1">Semaine 4</div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-6">
+        {/* Weekly revenue bar chart */}
+        <div className="bg-[#1A1A1A] rounded-xl p-5 border border-white/5">
+          <h3 className="text-sm font-bold text-white mb-4">Revenus par semaine</h3>
+          <div className="flex items-end gap-3 h-28">
+            {WEEKLY_REVENUE.map((val, i) => (
+              <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                <div className="text-[10px] text-white/40">{val.toLocaleString("fr-FR")} €</div>
+                <div
+                  className="w-full rounded-t-sm bg-gradient-to-t from-gold-500/60 to-gold-400/80 hover:from-gold-400 hover:to-gold-300 transition-all"
+                  style={{ height: `${(val / weekMax) * 80}px` }}
+                />
+                <div className="text-[10px] text-white/30">S{i + 1}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Subscriptions breakdown */}
+        <div className="bg-[#1A1A1A] rounded-xl p-5 border border-white/5">
+          <h3 className="text-sm font-bold text-white mb-4">Abonnements actifs</h3>
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-white/5">
+                <th className="text-left text-[10px] font-semibold text-white/30 pb-2">Plan</th>
+                <th className="text-right text-[10px] font-semibold text-white/30 pb-2">Qté</th>
+                <th className="text-right text-[10px] font-semibold text-white/30 pb-2">Prix</th>
+                <th className="text-right text-[10px] font-semibold text-white/30 pb-2">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { plan: "Essentiel", count: 42, price: "29,99 €", total: "1 259,58 €" },
+                { plan: "Premium", count: 35, price: "49,99 €", total: "1 749,65 €" },
+                { plan: "Élite", count: 12, price: "79,99 €", total: "959,88 €" },
+              ].map((row) => (
+                <tr key={row.plan} className="border-b border-white/5 last:border-0">
+                  <td className="py-2 text-xs font-semibold text-white">{row.plan}</td>
+                  <td className="py-2 text-xs text-white/50 text-right">{row.count}</td>
+                  <td className="py-2 text-xs text-white/50 text-right">{row.price}</td>
+                  <td className="py-2 text-xs font-bold text-gold-400 text-right">{row.total}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Last payments */}
+      <div className="bg-[#1A1A1A] rounded-xl border border-white/5 overflow-hidden">
+        <div className="px-4 py-3 border-b border-white/5 flex items-center justify-between">
+          <h3 className="text-sm font-bold text-white">Derniers paiements</h3>
+          <span className="text-[10px] text-white/30">{LAST_PAYMENTS.length} transactions</span>
+        </div>
+        {LAST_PAYMENTS.map((pay, i) => (
+          <div key={i} className="flex items-center justify-between px-4 py-3 border-b border-white/5 last:border-0 hover:bg-white/3 transition-colors">
+            <div className="flex items-center gap-3">
+              <div className={`w-8 h-8 rounded-full ${pay.color} flex items-center justify-center text-xs font-bold text-white flex-shrink-0`}>
+                {pay.initials}
+              </div>
+              <div>
+                <div className="text-xs font-semibold text-white">{pay.name}</div>
+                <div className="text-[10px] text-white/30">{pay.date}</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="text-sm font-black text-white">{pay.amount}</div>
+              <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                pay.status === "Payé" ? "bg-green-400/10 text-green-400" : "bg-gold-400/10 text-gold-400"
+              }`}>
+                {pay.status}
+              </span>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

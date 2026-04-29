@@ -9,6 +9,8 @@ import {
   Zap,
   Plus,
   Minus,
+  AlertTriangle,
+  ChevronDown,
 } from "lucide-react";
 
 const TABS = [
@@ -18,16 +20,16 @@ const TABS = [
 ];
 
 const RECENT_CHECKINS = [
-  { name: "Marie Laurent", plan: "Premium", time: "14:32", initials: "ML", color: "bg-purple-500" },
-  { name: "Paul Marchetti", plan: "Élite", time: "14:28", initials: "PM", color: "bg-blue-500" },
-  { name: "Isabelle Renard", plan: "Essentiel", time: "14:15", initials: "IR", color: "bg-pink-500" },
-  { name: "Christophe Girard", plan: "Premium", time: "14:02", initials: "CG", color: "bg-green-500" },
-  { name: "Nathalie Blanc", plan: "Essentiel", time: "13:55", initials: "NB", color: "bg-orange-500" },
-  { name: "Julien Fabre", plan: "Premium", time: "13:42", initials: "JF", color: "bg-teal-500" },
-  { name: "Amina Diallo", plan: "Élite", time: "13:30", initials: "AD", color: "bg-indigo-500" },
-  { name: "Pierre Morel", plan: "Essentiel", time: "13:18", initials: "PM2", color: "bg-red-500" },
-  { name: "Claire Vidal", plan: "Premium", time: "13:05", initials: "CV", color: "bg-cyan-500" },
-  { name: "Samuel Torres", plan: "Élite", time: "12:50", initials: "ST", color: "bg-yellow-500" },
+  { name: "Marie Laurent", plan: "Premium", planColor: "bg-gold-400/20 text-gold-400", time: "14:32", initials: "ML", color: "bg-purple-500", expiry: "31 jan 2025", sessionsMonth: 8 },
+  { name: "Paul Marchetti", plan: "Élite", planColor: "bg-purple-400/20 text-purple-400", time: "14:28", initials: "PM", color: "bg-blue-500", expiry: "28 fév 2025", sessionsMonth: 14 },
+  { name: "Isabelle Renard", plan: "Essentiel", planColor: "bg-white/10 text-white/60", time: "14:15", initials: "IR", color: "bg-pink-500", expiry: "31 jan 2025", sessionsMonth: 5 },
+  { name: "Christophe Girard", plan: "Premium", planColor: "bg-gold-400/20 text-gold-400", time: "14:02", initials: "CG", color: "bg-green-500", expiry: "31 mars 2025", sessionsMonth: 11 },
+  { name: "Nathalie Blanc", plan: "Essentiel", planColor: "bg-white/10 text-white/60", time: "13:55", initials: "NB", color: "bg-orange-500", expiry: "31 jan 2025", sessionsMonth: 3 },
+  { name: "Julien Fabre", plan: "Premium", planColor: "bg-gold-400/20 text-gold-400", time: "13:42", initials: "JF", color: "bg-teal-500", expiry: "28 fév 2025", sessionsMonth: 9 },
+  { name: "Amina Diallo", plan: "Élite", planColor: "bg-purple-400/20 text-purple-400", time: "13:30", initials: "AD", color: "bg-indigo-500", expiry: "31 mars 2025", sessionsMonth: 18 },
+  { name: "Pierre Morel", plan: "Essentiel", planColor: "bg-white/10 text-white/60", time: "13:18", initials: "PM2", color: "bg-red-500", expiry: "15 jan 2025", sessionsMonth: 2 },
+  { name: "Claire Vidal", plan: "Premium", planColor: "bg-gold-400/20 text-gold-400", time: "13:05", initials: "CV", color: "bg-cyan-500", expiry: "28 fév 2025", sessionsMonth: 7 },
+  { name: "Samuel Torres", plan: "Élite", planColor: "bg-purple-400/20 text-purple-400", time: "12:50", initials: "ST", color: "bg-yellow-500", expiry: "31 mars 2025", sessionsMonth: 22 },
 ];
 
 const PRODUCTS = [
@@ -42,11 +44,17 @@ const PRODUCTS = [
 ];
 
 const RESERVATIONS = [
-  { name: "Marie Laurent", class: "Yoga Matinal", date: "Aujourd'hui 15:00", status: "Confirmé", initials: "ML", color: "bg-purple-500" },
-  { name: "Paul Marchetti", class: "CrossFit", date: "Demain 10:30", status: "Confirmé", initials: "PM", color: "bg-blue-500" },
-  { name: "Isabelle Renard", class: "Pilates", date: "Demain 12:00", status: "En attente", initials: "IR", color: "bg-pink-500" },
-  { name: "Christophe Girard", class: "HIIT Express", date: "Jeu 17:00", status: "Confirmé", initials: "CG", color: "bg-green-500" },
-  { name: "Amina Diallo", class: "Boxe", date: "Ven 18:30", status: "Confirmé", initials: "AD", color: "bg-indigo-500" },
+  { name: "Marie Laurent", class: "Yoga Matinal", date: "Aujourd'hui 15:00", day: "Aujourd'hui", status: "Confirmé", initials: "ML", color: "bg-purple-500" },
+  { name: "Paul Marchetti", class: "CrossFit", date: "Demain 10:30", day: "Demain", status: "Confirmé", initials: "PM", color: "bg-blue-500" },
+  { name: "Isabelle Renard", class: "Pilates", date: "Demain 12:00", day: "Demain", status: "En attente", initials: "IR", color: "bg-pink-500" },
+  { name: "Christophe Girard", class: "HIIT Express", date: "Jeu 17:00", day: "Cette semaine", status: "Confirmé", initials: "CG", color: "bg-green-500" },
+  { name: "Amina Diallo", class: "Boxe", date: "Ven 18:30", day: "Cette semaine", status: "Confirmé", initials: "AD", color: "bg-indigo-500" },
+];
+
+const DATE_FILTERS = [
+  { label: "Aujourd'hui", count: 1 },
+  { label: "Demain", count: 2 },
+  { label: "Cette semaine", count: 2 },
 ];
 
 interface CartItem { id: number; name: string; category: string; price: number; qty: number; emoji: string }
@@ -54,17 +62,23 @@ interface CartItem { id: number; name: string; category: string; price: number; 
 export default function ReceptionnisteDemo() {
   const [activeTab, setActiveTab] = useState("checkin");
   const [searchValue, setSearchValue] = useState("");
-  const [checkedIn, setCheckedIn] = useState<string | null>(null);
+  const [checkedInMember, setCheckedInMember] = useState<typeof RECENT_CHECKINS[0] | null>(null);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [paid, setPaid] = useState(false);
+  const [alarmOpen, setAlarmOpen] = useState(false);
+  const [productCategory, setProductCategory] = useState("Tous");
+  const [promoCode, setPromoCode] = useState("");
+  const [discount, setDiscount] = useState(0);
+  const [promoError, setPromoError] = useState(false);
+  const [dateFilter, setDateFilter] = useState("Aujourd'hui");
 
   const handleSearch = () => {
     const found = RECENT_CHECKINS.find((m) =>
       m.name.toLowerCase().includes(searchValue.toLowerCase())
     );
     if (found || searchValue.length > 2) {
-      setCheckedIn(found ? found.name : searchValue);
-      setTimeout(() => setCheckedIn(null), 3000);
+      setCheckedInMember(found ?? RECENT_CHECKINS[0]);
+      setTimeout(() => setCheckedInMember(null), 4000);
       setSearchValue("");
     }
   };
@@ -89,12 +103,31 @@ export default function ReceptionnisteDemo() {
     });
   };
 
-  const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+  const applyPromo = () => {
+    if (promoCode.trim().toUpperCase() === "GOLD10") {
+      setDiscount(0.10);
+      setPromoError(false);
+    } else {
+      setDiscount(0);
+      setPromoError(true);
+    }
+  };
+
+  const rawTotal = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+  const total = rawTotal * (1 - discount);
 
   const handlePay = () => {
     setPaid(true);
+    setDiscount(0);
+    setPromoCode("");
     setTimeout(() => { setPaid(false); setCart([]); }, 2500);
   };
+
+  const filteredProducts = productCategory === "Tous"
+    ? PRODUCTS
+    : PRODUCTS.filter((p) => p.category === productCategory);
+
+  const filteredReservations = RESERVATIONS.filter((r) => r.day === dateFilter);
 
   return (
     <div className="flex h-full min-h-full bg-[#0A0A0A] text-white flex-col">
@@ -137,14 +170,55 @@ export default function ReceptionnisteDemo() {
       {/* Content */}
       <div className="flex-1 overflow-auto p-6">
         {activeTab === "checkin" && (
-          <div className="max-w-2xl space-y-6 animate-fade-in">
-            {/* Success banner */}
-            {checkedIn && (
-              <div className="flex items-center gap-3 bg-green-400/10 border border-green-400/30 rounded-xl px-4 py-3 animate-slide-up">
-                <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
-                <div>
-                  <div className="text-sm font-bold text-green-400">Accès autorisé !</div>
-                  <div className="text-xs text-green-300/70">{checkedIn} — Bienvenue chez Gold's Gym</div>
+          <div className="max-w-2xl space-y-5 animate-fade-in">
+            {/* Alarm status */}
+            <div className="relative">
+              <button
+                onClick={() => setAlarmOpen((v) => !v)}
+                className="flex items-center gap-2 bg-[#1A1A1A] border border-white/5 rounded-xl px-4 py-2.5 hover:border-white/10 transition-colors"
+              >
+                <div className="w-2 h-2 rounded-full bg-orange-400 animate-pulse" />
+                <span className="text-xs font-semibold text-white/70">Statut alarme</span>
+                <span className="text-[10px] bg-orange-400/10 text-orange-400 px-2 py-0.5 rounded-full font-semibold">2 membres expirés</span>
+                <ChevronDown className={`w-3.5 h-3.5 text-white/30 transition-transform ${alarmOpen ? "rotate-180" : ""}`} />
+              </button>
+              {alarmOpen && (
+                <div className="absolute top-full mt-2 left-0 z-10 bg-[#222] border border-white/10 rounded-xl p-3 w-72 shadow-xl animate-slide-up">
+                  <div className="text-xs font-bold text-white mb-2 flex items-center gap-2">
+                    <AlertTriangle className="w-3.5 h-3.5 text-orange-400" />
+                    Membres avec abonnement expiré
+                  </div>
+                  {["Pierre Morel — expiré le 15 jan", "Nathalie Blanc — expire le 31 jan"].map((item) => (
+                    <div key={item} className="text-[11px] text-orange-300/80 py-1 border-b border-white/5 last:border-0">{item}</div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Rich check-in success */}
+            {checkedInMember && (
+              <div className="bg-green-400/10 border border-green-400/30 rounded-xl p-5 animate-slide-up">
+                <div className="flex items-start gap-4">
+                  <div className={`w-12 h-12 rounded-full ${checkedInMember.color} flex items-center justify-center text-base font-bold text-white flex-shrink-0`}>
+                    {checkedInMember.initials}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0" />
+                      <span className="text-xs text-green-400 font-semibold">Accès autorisé</span>
+                    </div>
+                    <div className="text-xl font-black text-white">Bienvenue !</div>
+                    <div className="text-sm font-semibold text-white/80 mb-2">{checkedInMember.name}</div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${checkedInMember.planColor}`}>
+                        {checkedInMember.plan}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-[11px] text-white/50">
+                      <div>Valide jusqu'au <span className="text-white font-semibold">{checkedInMember.expiry}</span></div>
+                      <div>Séances ce mois : <span className="text-white font-semibold">{checkedInMember.sessionsMonth}</span></div>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -206,9 +280,25 @@ export default function ReceptionnisteDemo() {
           <div className="flex gap-6 h-full animate-fade-in">
             {/* Products */}
             <div className="flex-1">
-              <h3 className="text-sm font-bold text-white mb-3">Produits</h3>
+              {/* Category filters */}
+              <div className="flex gap-2 mb-4">
+                {["Tous", "Suppléments", "Boissons", "Équipement"].map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setProductCategory(cat)}
+                    className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${
+                      productCategory === cat
+                        ? "bg-gold-400 text-black"
+                        : "bg-white/5 text-white/50 hover:bg-white/10 hover:text-white"
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+
               <div className="grid grid-cols-4 gap-3">
-                {PRODUCTS.map((product) => (
+                {filteredProducts.map((product) => (
                   <button
                     key={product.id}
                     onClick={() => addToCart(product)}
@@ -224,7 +314,7 @@ export default function ReceptionnisteDemo() {
             </div>
 
             {/* Cart */}
-            <div className="w-56 flex-shrink-0">
+            <div className="w-60 flex-shrink-0">
               <h3 className="text-sm font-bold text-white mb-3">Panier</h3>
               <div className="bg-[#1A1A1A] rounded-xl border border-white/5 overflow-hidden">
                 {paid ? (
@@ -233,12 +323,10 @@ export default function ReceptionnisteDemo() {
                     <div className="text-sm font-bold text-green-400 text-center">Paiement réussi !</div>
                   </div>
                 ) : cart.length === 0 ? (
-                  <div className="p-6 text-center text-xs text-white/20">
-                    Panier vide
-                  </div>
+                  <div className="p-6 text-center text-xs text-white/20">Panier vide</div>
                 ) : (
                   <>
-                    <div className="max-h-48 overflow-auto">
+                    <div className="max-h-44 overflow-auto">
                       {cart.map((item) => (
                         <div key={item.id} className="flex items-center justify-between px-3 py-2 border-b border-white/5">
                           <div className="flex-1 min-w-0">
@@ -257,7 +345,38 @@ export default function ReceptionnisteDemo() {
                         </div>
                       ))}
                     </div>
+
+                    {/* Promo code */}
+                    <div className="px-3 py-2 border-b border-white/5">
+                      <div className="flex gap-1.5">
+                        <input
+                          className="flex-1 bg-[#0A0A0A] border border-white/10 rounded-lg px-2 py-1.5 text-[10px] text-white placeholder-white/20 focus:outline-none focus:border-gold-400/50"
+                          placeholder="Code promo"
+                          value={promoCode}
+                          onChange={(e) => { setPromoCode(e.target.value); setPromoError(false); }}
+                        />
+                        <button
+                          onClick={applyPromo}
+                          className="text-[10px] font-bold bg-white/5 hover:bg-white/10 text-white/70 px-2 py-1.5 rounded-lg transition-colors"
+                        >
+                          Appliquer
+                        </button>
+                      </div>
+                      {discount > 0 && (
+                        <div className="text-[10px] text-green-400 mt-1 font-semibold">-10% appliqué ✓</div>
+                      )}
+                      {promoError && (
+                        <div className="text-[10px] text-red-400 mt-1">Code invalide</div>
+                      )}
+                    </div>
+
                     <div className="p-3 border-t border-white/10">
+                      {discount > 0 && (
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-[10px] text-white/30 line-through">{rawTotal.toFixed(2)} €</span>
+                          <span className="text-[10px] text-green-400 font-semibold">-10%</span>
+                        </div>
+                      )}
                       <div className="flex items-center justify-between mb-3">
                         <span className="text-xs text-white/50">Total</span>
                         <span className="text-sm font-black text-gold-400">{total.toFixed(2)} €</span>
@@ -286,27 +405,53 @@ export default function ReceptionnisteDemo() {
           <div className="space-y-4 animate-fade-in">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-bold text-white">Réservations à venir</h3>
-              <span className="text-xs text-white/30">{RESERVATIONS.length} réservations</span>
             </div>
-            <div className="bg-[#1A1A1A] rounded-xl border border-white/5 overflow-hidden">
-              {RESERVATIONS.map((res, i) => (
-                <div key={i} className="flex items-center justify-between px-4 py-3 border-b border-white/5 last:border-0">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-8 h-8 rounded-full ${res.color} flex items-center justify-center text-xs font-bold text-white`}>
-                      {res.initials}
-                    </div>
-                    <div>
-                      <div className="text-xs font-semibold text-white">{res.name}</div>
-                      <div className="text-[10px] text-white/30">{res.class} · {res.date}</div>
-                    </div>
-                  </div>
-                  <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
-                    res.status === "Confirmé" ? "bg-green-400/10 text-green-400" : "bg-gold-400/10 text-gold-400"
+
+            {/* Date filter pills */}
+            <div className="flex gap-2">
+              {DATE_FILTERS.map((df) => (
+                <button
+                  key={df.label}
+                  onClick={() => setDateFilter(df.label)}
+                  className={`flex items-center gap-2 text-xs font-semibold px-4 py-2 rounded-full transition-colors ${
+                    dateFilter === df.label
+                      ? "bg-gold-400 text-black"
+                      : "bg-white/5 text-white/50 hover:bg-white/10 hover:text-white"
+                  }`}
+                >
+                  {df.label}
+                  <span className={`text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center ${
+                    dateFilter === df.label ? "bg-black/20" : "bg-white/10"
                   }`}>
-                    {res.status}
+                    {df.count}
                   </span>
-                </div>
+                </button>
               ))}
+            </div>
+
+            <div className="bg-[#1A1A1A] rounded-xl border border-white/5 overflow-hidden">
+              {filteredReservations.length === 0 ? (
+                <div className="p-6 text-center text-xs text-white/20">Aucune réservation</div>
+              ) : (
+                filteredReservations.map((res, i) => (
+                  <div key={i} className="flex items-center justify-between px-4 py-3 border-b border-white/5 last:border-0">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-8 h-8 rounded-full ${res.color} flex items-center justify-center text-xs font-bold text-white`}>
+                        {res.initials}
+                      </div>
+                      <div>
+                        <div className="text-xs font-semibold text-white">{res.name}</div>
+                        <div className="text-[10px] text-white/30">{res.class} · {res.date}</div>
+                      </div>
+                    </div>
+                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                      res.status === "Confirmé" ? "bg-green-400/10 text-green-400" : "bg-gold-400/10 text-gold-400"
+                    }`}>
+                      {res.status}
+                    </span>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         )}
