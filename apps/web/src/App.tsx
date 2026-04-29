@@ -3,6 +3,7 @@ import { Suspense, lazy } from "react";
 import { Loader2 } from "lucide-react";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { AppShell } from "@/components/layout";
 
 // Auth pages (eager — needed immediately)
 import LoginPage from "@/pages/auth/login";
@@ -37,44 +38,46 @@ export default function App() {
         <a href="#main-content" className="skip-to-content">
           Aller au contenu principal
         </a>
-        <main id="main-content">
-          <Suspense fallback={<PageLoader />}>
-            <Routes>
-              {/* Public auth routes */}
-              <Route path="/auth/login" element={<LoginPage />} />
-              <Route path="/auth/register" element={<RegisterPage />} />
-              <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
-              <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
-              <Route path="/auth/callback" element={<OAuthCallbackPage />} />
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            {/* Public auth routes — no AppShell */}
+            <Route path="/auth/login" element={<LoginPage />} />
+            <Route path="/auth/register" element={<RegisterPage />} />
+            <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/auth/callback" element={<OAuthCallbackPage />} />
 
-              {/* Protected routes */}
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute>
+            {/* Protected routes wrapped in AppShell */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <AppShell>
                     <DashboardPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/settings/security"
-                element={
-                  <ProtectedRoute>
+                  </AppShell>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings/security"
+              element={
+                <ProtectedRoute>
+                  <AppShell>
                     <MFAPage />
-                  </ProtectedRoute>
-                }
-              />
+                  </AppShell>
+                </ProtectedRoute>
+              }
+            />
 
-              {/* Error pages */}
-              <Route path="/unauthorized" element={<UnauthorizedPage />} />
-              <Route path="/404" element={<NotFoundPage />} />
+            {/* Error pages */}
+            <Route path="/unauthorized" element={<UnauthorizedPage />} />
+            <Route path="/404" element={<NotFoundPage />} />
 
-              {/* Redirects */}
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
-              <Route path="*" element={<Navigate to="/404" replace />} />
-            </Routes>
-          </Suspense>
-        </main>
+            {/* Redirects */}
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<Navigate to="/404" replace />} />
+          </Routes>
+        </Suspense>
       </AuthProvider>
     </BrowserRouter>
   );

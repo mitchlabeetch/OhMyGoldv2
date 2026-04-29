@@ -1,6 +1,40 @@
 {
   "appName": "OhMyGold",
   "tagline": "Gold's Gym France",
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "members": "Membres",
+    "classes": "Cours",
+    "billing": "Facturation",
+    "analytics": "Analytiques",
+    "reports": "Rapports",
+    "settings": "Paramètres",
+    "auditLog": "Journal d'audit",
+    "locations": "Salles",
+    "users": "Utilisateurs",
+    "staff": "Personnel",
+    "checkIn": "Pointage",
+    "pos": "Caisse",
+    "booking": "Réservation",
+    "subscription": "Abonnement",
+    "profile": "Profil",
+    "myCard": "Ma Carte",
+    "pricing": "Tarifs",
+    "findGym": "Trouver une salle"
+  },
+  "layout": {
+    "collapseMenu": "Réduire le menu",
+    "expandMenu": "Développer le menu",
+    "toggleMenu": "Basculer le menu",
+    "notifications": "Notifications",
+    "noNotifications": "Aucune nouvelle notification",
+    "markAllRead": "Tout marquer comme lu",
+    "switchLanguage": "Changer de langue",
+    "logout": "Se déconnecter",
+    "profile": "Mon Profil",
+    "settings": "Paramètres",
+    "mySubscription": "Mon Abonnement"
+  },
   "email": "E-mail",
   "password": "Mot de passe",
   "firstName": "Prénom",
@@ -30,5 +64,13 @@
     "unauthorized": "Accès non autorisé.",
     "notFound": "Ressource introuvable.",
     "serverError": "Erreur serveur. Réessayez plus tard."
+  },
+  "roles": {
+    "super_admin": "Super Administrateur",
+    "admin": "Administrateur",
+    "coach": "Coach",
+    "receptionist": "Réceptionniste",
+    "member": "Membre",
+    "visitor": "Visiteur"
   }
 }
