@@ -11,47 +11,86 @@ import {
   ArrowRight,
 } from "lucide-react";
 
+// Real Gold's Gym France subscription tiers (goldsgymfrance.fr, 2026)
 const PLANS = [
   {
-    name: "Découverte",
-    price: "29,99",
+    name: "Basic",
+    price: "7,99",
+    unit: "/sem",
+    monthlyEquiv: "~34,63 €/mois",
     color: "border-white/10",
     badge: null,
-    features: ["Accès 3 fois/semaine", "1 club", "Vestiaires", "Application mobile"],
+    features: [
+      "Accès réseau national Gold's Gym France",
+      "Accès réseau international Gold's Gym",
+      "Suivi & entraînement via l'app",
+      "QR code d'accès mobile",
+      "Sans engagement · préavis 8 sem.",
+    ],
+  },
+  {
+    name: "Flex",
+    price: "9,99",
+    unit: "/sem",
+    monthlyEquiv: "~43,29 €/mois",
+    color: "border-gold-400",
+    badge: "Populaire",
+    features: [
+      "Tout Basic inclus",
+      "Hydromassage",
+      "Balance de composition corporelle",
+      "Sportwatter (6 saveurs)",
+      "Sans engagement · préavis 8 sem.",
+    ],
   },
   {
     name: "Premium",
-    price: "49,99",
-    color: "border-gold-400",
-    badge: "Populaire",
-    features: ["Accès illimité", "Multi-clubs", "Cours collectifs inclus", "Suivi personnalisé", "Invités (2/mois)"],
-  },
-  {
-    name: "Elite",
-    price: "89,99",
+    price: "10,99",
+    unit: "/sem",
+    monthlyEquiv: "~47,63 €/mois",
     color: "border-purple-400/50",
-    badge: "VIP",
-    features: ["Tout Premium", "Coach personnel", "Nutrition", "Physiothérapie", "Priorité réservation"],
+    badge: "Best Seller",
+    features: [
+      "Tout Flex inclus",
+      "Cours Hyrox & MMA",
+      "Carte partageable (1 membre du foyer)",
+      "10% de réduction boutique",
+      "Sans engagement · préavis 8 sem.",
+    ],
   },
 ];
 
+// Real Gold's Gym France club locations (2025-2026)
 const CLUBS = [
-  { city: "Paris 8e", address: "42 Avenue Haussmann", open: "06h – 23h", members: "1 240", rating: 4.9 },
-  { city: "Paris 15e", address: "18 Rue du Commerce", open: "06h – 22h", members: "980", rating: 4.8 },
-  { city: "Lyon Part-Dieu", address: "3 Place Charles Béraudier", open: "07h – 22h", members: "850", rating: 4.7 },
+  {
+    city: "Gold's Gym — Thiais",
+    address: "246 Rue des Alouettes, 94320 Thiais",
+    open: "24h/24 · 7j/7",
+    env: "Zone Commerciale Belle Épine",
+    transport: "Métro L7 direction Villejuif",
+    rating: 4.9,
+  },
+  {
+    city: "Gold's Gym — Val d'Europe",
+    address: "14 Cours du Danube, 77700 Serris",
+    open: "06:00 – 23:00 · 7j/7",
+    env: "Val d'Europe · Près de Disneyland Paris",
+    transport: "RER A — Val d'Europe / Serris",
+    rating: 4.8,
+  },
 ];
 
 const STEPS = [
-  { n: "01", title: "Choisissez votre plan", desc: "Découverte, Premium ou Elite — sans engagement." },
-  { n: "02", title: "Créez votre compte", desc: "2 minutes. Accès immédiat à l'app mobile." },
-  { n: "03", title: "Venez vous entraîner", desc: "Carte digitale, QR code, contrôle biométrique." },
+  { n: "01", title: "Choisissez votre plan", desc: "Basic, Flex ou Premium — sans engagement, préavis 8 semaines." },
+  { n: "02", title: "Créez votre compte", desc: "2 minutes. Accès immédiat à l'app Gold's Gym France." },
+  { n: "03", title: "Venez vous entraîner", desc: "Carte digitale, QR code unique généré à chaque accès." },
 ];
 
 const TESTIMONIALS = [
   {
     initials: "SM",
     name: "Sophie M.",
-    city: "Paris 8e · 8 mois",
+    city: "Thiais · 8 mois",
     color: "bg-purple-500",
     stars: 5,
     quote: "L'application est incroyable, les coachs sont top et l'ambiance est vraiment motivante. Je ne changerais pour rien au monde !",
@@ -59,18 +98,18 @@ const TESTIMONIALS = [
   {
     initials: "JR",
     name: "Julien R.",
-    city: "Lyon · 1 an",
+    city: "Val d'Europe · 1 an",
     color: "bg-blue-500",
     stars: 5,
-    quote: "Les équipements sont toujours propres et fonctionnels. Le système de réservation multi-clubs est un vrai plus pour mes déplacements pro.",
+    quote: "Les équipements sont toujours propres et fonctionnels. Le système QR code pour entrer est ultra pratique. Je recommande à 100% !",
   },
   {
     initials: "AK",
     name: "Anna K.",
-    city: "Paris 15e · 4 mois",
+    city: "Thiais · 4 mois",
     color: "bg-green-600",
     stars: 5,
-    quote: "J'ai perdu 8 kg en 4 mois grâce au suivi personnalisé. Mon coach adapte chaque programme à mes objectifs. Merci OhMyGold !",
+    quote: "J'ai perdu 8 kg en 4 mois. Le Gold's Queen est un espace parfait. Merci à toute l'équipe de Thiais !",
   },
 ];
 
@@ -82,7 +121,7 @@ const PARTNER_BADGES = [
 ];
 
 export default function VisiteurDemo() {
-  const [selectedPlan, setSelectedPlan] = useState("Premium");
+  const [selectedPlan, setSelectedPlan] = useState("Flex");
   const [formStep, setFormStep] = useState(0);
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -100,14 +139,14 @@ export default function VisiteurDemo() {
         <div className="relative">
           <div className="inline-flex items-center gap-1.5 bg-gold-400/10 text-gold-400 text-xs font-semibold px-3 py-1 rounded-full border border-gold-400/20 mb-4">
             <Zap className="w-3 h-3" fill="#FBBF24" />
-            OhMyGold Premium Fitness
+            Gold's Gym France · OhMyGold
           </div>
           <h1 className="text-2xl font-black text-white leading-tight mb-3">
-            Le gym qui<br />
-            <span className="text-gold-400">réinvente</span> ta forme
+            L'héritage de<br />
+            <span className="text-gold-400">Venice Beach</span> à Paris
           </h1>
           <p className="text-sm text-white/50 mb-6 max-w-xs mx-auto">
-            Accès illimité, coachs experts, suivi IA — tout ce qu'il faut pour atteindre vos objectifs.
+            2 clubs Île-de-France · Accès QR code · Suivi digital — tout pour atteindre tes objectifs.
           </p>
           <div className="flex gap-3 justify-center flex-wrap">
             <button
@@ -131,7 +170,7 @@ export default function VisiteurDemo() {
             <span className="text-white/20 text-xs">·</span>
             <span className="text-xs text-white/40">aujourd'hui</span>
             <span className="text-white/20 text-xs">·</span>
-            <span className="text-xs text-white/40">Paris 8e</span>
+            <span className="text-xs text-white/40">Thiais (Belle Épine)</span>
           </div>
         </div>
       </section>
@@ -139,8 +178,8 @@ export default function VisiteurDemo() {
       {/* Stats bar */}
       <section className="grid grid-cols-3 gap-px bg-white/5 border-y border-white/5">
         {[
-          { value: "3 800+", label: "Membres actifs" },
-          { value: "3", label: "Clubs" },
+          { value: "1 355+", label: "Membres actifs" },
+          { value: "2", label: "Clubs France" },
           { value: "98%", label: "Satisfaction" },
         ].map((stat) => (
           <div key={stat.label} className="bg-[#0A0A0A] py-4 text-center">
@@ -222,15 +261,18 @@ export default function VisiteurDemo() {
                   <span className="text-xs font-bold text-gold-400">{club.rating}</span>
                 </div>
               </div>
-              <div className="flex items-center gap-4 mt-2">
+              <div className="flex items-center gap-4 mt-2 flex-wrap">
                 <div className="flex items-center gap-1">
                   <Clock className="w-3 h-3 text-white/20" />
                   <span className="text-[10px] text-white/40">{club.open}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Users className="w-3 h-3 text-white/20" />
-                  <span className="text-[10px] text-white/40">{club.members} membres</span>
+                  <Dumbbell className="w-3 h-3 text-white/20" />
+                  <span className="text-[10px] text-white/40">{club.env}</span>
                 </div>
+              </div>
+              <div className="flex items-center gap-1 mt-1">
+                <span className="text-[10px] text-white/25">🚇 {club.transport}</span>
               </div>
             </div>
           ))}
@@ -257,13 +299,16 @@ export default function VisiteurDemo() {
                   <span className="text-sm font-black text-white">{plan.name}</span>
                   {plan.badge && (
                     <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
-                      plan.badge === "Populaire" ? "bg-gold-400/20 text-gold-400" : "bg-purple-400/20 text-purple-400"
+                      plan.badge === "Best Seller" ? "bg-gold-400/20 text-gold-400" : "bg-blue-400/20 text-blue-400"
                     }`}>{plan.badge}</span>
                   )}
                 </div>
                 <div className="text-right">
-                  <span className="text-base font-black text-white">{plan.price} €</span>
-                  <span className="text-[10px] text-white/30">/mois</span>
+                  <div>
+                    <span className="text-base font-black text-white">{plan.price} €</span>
+                    <span className="text-[10px] text-white/30">{plan.unit}</span>
+                  </div>
+                  <div className="text-[10px] text-white/25">{plan.monthlyEquiv}</div>
                 </div>
               </div>
               <div className="space-y-1">
@@ -283,10 +328,10 @@ export default function VisiteurDemo() {
       <section className="px-6 pb-10">
         <div className="grid grid-cols-2 gap-3">
           {[
-            { icon: Dumbbell, label: "500+ machines", sub: "Matériel dernière génération", color: "text-gold-400" },
-            { icon: Users, label: "120 coachs", sub: "Certifiés et passionnés", color: "text-blue-400" },
-            { icon: Clock, label: "7j/7", sub: "Ouvert toute l'année", color: "text-green-400" },
-            { icon: Zap, label: "Suivi IA", sub: "Analyse de performance", color: "text-purple-400" },
+            { icon: Dumbbell, label: "Gold's Iron Ground", sub: "Free weights · Musculation guidée", color: "text-gold-400" },
+            { icon: Users, label: "Gold's Arena", sub: "Boxe · MMA · Combat", color: "text-blue-400" },
+            { icon: Clock, label: "Gold's CrossZone", sub: "Entraînement fonctionnel", color: "text-green-400" },
+            { icon: Zap, label: "Gold's Pulse", sub: "Cardio · 24h Thiais", color: "text-purple-400" },
           ].map((feat) => {
             const Icon = feat.icon;
             return (
@@ -323,8 +368,8 @@ export default function VisiteurDemo() {
             </div>
           ) : formStep === 0 ? (
             <div>
-              <h3 className="text-base font-black text-white mb-1">Essai gratuit 7 jours</h3>
-              <p className="text-xs text-white/40 mb-4">Plan {selectedPlan} · Sans engagement · Annulation facile</p>
+              <h3 className="text-base font-black text-white mb-1">Séance d'essai gratuite</h3>
+              <p className="text-xs text-white/40 mb-4">Plan {selectedPlan} · Sans engagement · Accès complet à tous les espaces</p>
               <input
                 type="email"
                 placeholder="votre@email.fr"

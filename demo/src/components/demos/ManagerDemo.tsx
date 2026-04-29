@@ -12,6 +12,8 @@ import {
   ChevronRight,
   CheckCircle,
   X,
+  ChevronLeft,
+  Menu,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -29,12 +31,12 @@ const KPI_DATA = [
 ];
 
 const CLASSES_TODAY = [
+  { time: "06:30", name: "Gold's CrossZone", coach: "Lucas B.", total: 20, booked: 18, color: "bg-orange-500" },
   { time: "09:00", name: "Yoga Matinal", coach: "Claire V.", total: 15, booked: 13, color: "bg-purple-500" },
-  { time: "10:30", name: "CrossFit", coach: "Lucas B.", total: 20, booked: 20, color: "bg-orange-500" },
   { time: "12:00", name: "Pilates", coach: "Sophie M.", total: 12, booked: 9, color: "bg-blue-500" },
   { time: "17:00", name: "HIIT Express", coach: "Antoine L.", total: 18, booked: 15, color: "bg-red-500" },
-  { time: "18:30", name: "Boxe", coach: "Marc D.", total: 16, booked: 16, color: "bg-gold-500" },
-  { time: "20:00", name: "Stretching", coach: "Julie R.", total: 10, booked: 6, color: "bg-teal-500" },
+  { time: "18:30", name: "Boxe MMA (Premium)", coach: "Marc D.", total: 16, booked: 16, color: "bg-gold-500" },
+  { time: "20:00", name: "Hyrox Training (Premium)", coach: "Julie R.", total: 10, booked: 6, color: "bg-teal-500" },
 ];
 
 const CHECKINS = [
@@ -48,32 +50,35 @@ const CHECKINS = [
   { name: "Pierre Morel", time: "Il y a 31 min", initials: "PM", color: "bg-red-500" },
 ];
 
+// Real subscription tier names (Basic/Flex/Premium matching goldsgymfrance.fr)
 const MEMBERS = [
-  { name: "Marie Laurent", plan: "Premium", since: "Jan 2023", status: "Actif", initials: "ML", color: "bg-purple-500" },
-  { name: "Paul Marchetti", plan: "Élite", since: "Mars 2022", status: "Actif", initials: "PM", color: "bg-blue-500" },
-  { name: "Isabelle Renard", plan: "Essentiel", since: "Juin 2024", status: "Actif", initials: "IR", color: "bg-pink-500" },
-  { name: "Christophe Girard", plan: "Premium", since: "Sept 2023", status: "Actif", initials: "CG", color: "bg-green-500" },
-  { name: "Nathalie Blanc", plan: "Essentiel", since: "Déc 2023", status: "Suspendu", initials: "NB", color: "bg-orange-500" },
+  { name: "Marie Laurent", plan: "Premium", since: "Jan 2025", status: "Actif", initials: "ML", color: "bg-purple-500" },
+  { name: "Paul Marchetti", plan: "Flex", since: "Mars 2025", status: "Actif", initials: "PM", color: "bg-blue-500" },
+  { name: "Isabelle Renard", plan: "Basic", since: "Juin 2025", status: "Actif", initials: "IR", color: "bg-pink-500" },
+  { name: "Christophe Girard", plan: "Premium", since: "Sept 2025", status: "Actif", initials: "CG", color: "bg-green-500" },
+  { name: "Nathalie Blanc", plan: "Basic", since: "Déc 2025", status: "Suspendu", initials: "NB", color: "bg-orange-500" },
 ];
 
+// Real pricing: Basic ~34,63€/mo, Flex ~43,29€/mo, Premium ~47,63€/mo
 const LAST_PAYMENTS = [
-  { name: "Marie Laurent", amount: "49,99 €", date: "17 jan 2025", plan: "Premium", status: "Payé", initials: "ML", color: "bg-purple-500" },
-  { name: "Paul Marchetti", amount: "79,99 €", date: "17 jan 2025", plan: "Élite", status: "Payé", initials: "PM", color: "bg-blue-500" },
-  { name: "Isabelle Renard", amount: "29,99 €", date: "16 jan 2025", plan: "Essentiel", status: "Payé", initials: "IR", color: "bg-pink-500" },
-  { name: "Nathalie Blanc", amount: "49,99 €", date: "15 jan 2025", plan: "Premium", status: "Échoué", initials: "NB", color: "bg-orange-500" },
-  { name: "Samuel Torres", amount: "79,99 €", date: "15 jan 2025", plan: "Élite", status: "Payé", initials: "ST", color: "bg-yellow-500" },
+  { name: "Marie Laurent", amount: "47,63 €", date: "17 jan 2026", plan: "Premium", status: "Payé", initials: "ML", color: "bg-purple-500" },
+  { name: "Paul Marchetti", amount: "43,29 €", date: "17 jan 2026", plan: "Flex", status: "Payé", initials: "PM", color: "bg-blue-500" },
+  { name: "Isabelle Renard", amount: "34,63 €", date: "16 jan 2026", plan: "Basic", status: "Payé", initials: "IR", color: "bg-pink-500" },
+  { name: "Nathalie Blanc", amount: "47,63 €", date: "15 jan 2026", plan: "Premium", status: "Échoué", initials: "NB", color: "bg-orange-500" },
+  { name: "Samuel Torres", amount: "43,29 €", date: "15 jan 2026", plan: "Flex", status: "Payé", initials: "ST", color: "bg-yellow-500" },
 ];
 
 const WEEKLY_REVENUE = [2800, 3100, 2950, 3490];
 
 export default function ManagerDemo() {
   const [activeNav, setActiveNav] = useState("dashboard");
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [search, setSearch] = useState("");
   const [showEnroll, setShowEnroll] = useState(false);
   const [enrollSuccess, setEnrollSuccess] = useState(false);
   const [formName, setFormName] = useState("");
   const [formEmail, setFormEmail] = useState("");
-  const [formPlan, setFormPlan] = useState("Essentiel");
+  const [formPlan, setFormPlan] = useState("Basic");
 
   const filteredMembers = MEMBERS.filter(
     (m) =>
@@ -85,7 +90,7 @@ export default function ManagerDemo() {
     setShowEnroll(false);
     setFormName("");
     setFormEmail("");
-    setFormPlan("Essentiel");
+    setFormPlan("Basic");
     setEnrollSuccess(true);
     setTimeout(() => setEnrollSuccess(false), 2500);
   };
@@ -95,22 +100,31 @@ export default function ManagerDemo() {
   return (
     <div className="flex h-full min-h-full bg-[#0A0A0A] text-white">
       {/* Sidebar */}
-      <div className="w-52 flex-shrink-0 bg-[#111111] border-r border-white/5 flex flex-col">
-        <div className="p-4 border-b border-white/5">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gold-400 flex items-center justify-center">
-              <Zap className="w-4 h-4 text-black" fill="black" />
+      <div
+        className="flex-shrink-0 bg-[#111111] border-r border-white/5 flex flex-col transition-all duration-200"
+        style={{ width: sidebarCollapsed ? "52px" : "208px" }}
+      >
+        <div className="p-3 border-b border-white/5 flex items-center justify-between">
+          {!sidebarCollapsed && (
+            <div className="flex items-center gap-2 min-w-0">
+              <img src="/assets/logos/golds-gym-logo-primary-small.png" alt="Gold's Gym" className="h-6 object-contain flex-shrink-0" />
             </div>
-            <span className="font-black text-sm">
-              Oh<span className="text-gold-400">My</span>Gold
-            </span>
-          </div>
-          <div className="mt-2 text-[10px] text-white/30 font-medium uppercase tracking-wider">
-            Paris 8e
-          </div>
+          )}
+          <button
+            onClick={() => setSidebarCollapsed((v) => !v)}
+            className="w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center flex-shrink-0 transition-colors"
+            aria-label={sidebarCollapsed ? "Ouvrir le menu" : "Fermer le menu"}
+          >
+            {sidebarCollapsed ? <Menu className="w-4 h-4 text-white/50" /> : <ChevronLeft className="w-4 h-4 text-white/50" />}
+          </button>
         </div>
+        {!sidebarCollapsed && (
+          <div className="px-3 py-1.5 text-[10px] text-white/30 font-medium uppercase tracking-wider">
+            Thiais (Belle Épine)
+          </div>
+        )}
 
-        <nav className="flex-1 p-3 space-y-1">
+        <nav className="flex-1 p-2 space-y-1">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
             const active = activeNav === item.id;
@@ -118,28 +132,31 @@ export default function ManagerDemo() {
               <button
                 key={item.id}
                 onClick={() => setActiveNav(item.id)}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                title={sidebarCollapsed ? item.label : undefined}
+                className={`w-full flex items-center gap-3 px-2 py-2 rounded-lg text-sm font-medium transition-all ${
                   active
                     ? "bg-gold-400/15 text-gold-400"
                     : "text-white/40 hover:text-white hover:bg-white/5"
-                }`}
+                } ${sidebarCollapsed ? "justify-center" : ""}`}
               >
                 <Icon className="w-4 h-4 flex-shrink-0" />
-                {item.label}
+                {!sidebarCollapsed && item.label}
               </button>
             );
           })}
         </nav>
 
-        <div className="p-3 border-t border-white/5">
-          <div className="flex items-center gap-2 px-3 py-2">
-            <div className="w-7 h-7 rounded-full bg-blue-500 flex items-center justify-center text-xs font-bold text-white">
+        <div className="p-2 border-t border-white/5">
+          <div className={`flex items-center gap-2 px-2 py-2 ${sidebarCollapsed ? "justify-center" : ""}`}>
+            <div className="w-7 h-7 rounded-full bg-blue-500 flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
               SM
             </div>
-            <div>
-              <div className="text-xs font-semibold text-white">S. Martin</div>
-              <div className="text-[10px] text-white/30">Gestionnaire</div>
-            </div>
+            {!sidebarCollapsed && (
+              <div>
+                <div className="text-xs font-semibold text-white">S. Martin</div>
+                <div className="text-[10px] text-white/30">Gestionnaire</div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -283,9 +300,9 @@ export default function ManagerDemo() {
                       value={formPlan}
                       onChange={(e) => setFormPlan(e.target.value)}
                     >
-                      <option>Essentiel</option>
+                      <option>Basic</option>
+                      <option>Flex</option>
                       <option>Premium</option>
-                      <option>Élite</option>
                     </select>
                   </div>
                   <button
@@ -414,9 +431,9 @@ function BillingTab() {
             </thead>
             <tbody>
               {[
-                { plan: "Essentiel", count: 42, price: "29,99 €", total: "1 259,58 €" },
-                { plan: "Premium", count: 35, price: "49,99 €", total: "1 749,65 €" },
-                { plan: "Élite", count: 12, price: "79,99 €", total: "959,88 €" },
+                { plan: "Basic", count: 42, price: "34,63 €", total: "1 454,46 €" },
+                { plan: "Flex", count: 35, price: "43,29 €", total: "1 515,15 €" },
+                { plan: "Premium", count: 12, price: "47,63 €", total: "571,56 €" },
               ].map((row) => (
                 <tr key={row.plan} className="border-b border-white/5 last:border-0">
                   <td className="py-2 text-xs font-semibold text-white">{row.plan}</td>

@@ -13,6 +13,8 @@ import {
   Zap,
   ChevronRight,
   Circle,
+  ChevronLeft,
+  Menu,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -25,72 +27,81 @@ const NAV_ITEMS = [
 ];
 
 const KPI_DATA = [
-  { label: "Membres actifs", value: "1 842", icon: Users, trend: "+12%", up: true, color: "text-gold-400", sparkline: [65, 72, 68, 78, 85] },
-  { label: "Revenus / mois", value: "47 830 €", icon: TrendingUp, trend: "+8.3%", up: true, color: "text-green-400", sparkline: [70, 75, 68, 82, 90] },
-  { label: "Abonnements", value: "156", icon: Zap, trend: "+5%", up: true, color: "text-blue-400", sparkline: [55, 60, 58, 65, 72] },
-  { label: "Cours aujourd'hui", value: "24", icon: BarChart3, trend: "-2", up: false, color: "text-orange-400", sparkline: [80, 75, 82, 70, 65] },
-  { label: "Accès aujourd'hui", value: "287", icon: Circle, trend: "+34", up: true, color: "text-purple-400", sparkline: [40, 55, 62, 70, 85] },
+  { label: "Membres actifs", value: "1 355", icon: Users, trend: "+12%", up: true, color: "text-gold-400", sparkline: [65, 72, 68, 78, 85] },
+  { label: "Revenus / mois", value: "35 000 €", icon: TrendingUp, trend: "+8.3%", up: true, color: "text-green-400", sparkline: [70, 75, 68, 82, 90] },
+  { label: "Abonnements", value: "98", icon: Zap, trend: "+5%", up: true, color: "text-blue-400", sparkline: [55, 60, 58, 65, 72] },
+  { label: "Cours aujourd'hui", value: "18", icon: BarChart3, trend: "-2", up: false, color: "text-orange-400", sparkline: [80, 75, 82, 70, 65] },
+  { label: "Accès aujourd'hui", value: "214", icon: Circle, trend: "+34", up: true, color: "text-purple-400", sparkline: [40, 55, 62, 70, 85] },
 ];
 
 const REVENUE_DATA = [
   1820, 2100, 1950, 2400, 2250, 2800, 2650, 3100, 2900, 3200, 3050, 3400, 3250, 3600,
 ];
 
+// Real Gold's Gym France clubs (as of 2025-2026)
 const CLUBS = [
-  { name: "Paris 8e", members: 724, revenue: "19 200 €", status: "Actif", occupancy: 82 },
-  { name: "Lyon Part-Dieu", members: 631, revenue: "15 800 €", status: "Actif", occupancy: 75 },
-  { name: "Bordeaux Mériadeck", members: 487, revenue: "12 830 €", status: "Actif", occupancy: 68 },
+  { name: "Thiais (Belle Épine)", address: "246 Rue des Alouettes, 94320 Thiais", members: 724, revenue: "19 200 €", status: "Actif", occupancy: 82, hours: "24h/24" },
+  { name: "Val d'Europe", address: "14 Cours du Danube, 77700 Serris", members: 631, revenue: "15 800 €", status: "Actif", occupancy: 75, hours: "06:00–23:00" },
 ];
 
 const USERS = [
-  { name: "Sophie Martin", email: "s.martin@ohmygold.fr", role: "Gestionnaire", club: "Paris 8e", status: "Actif", initials: "SM", color: "bg-purple-500" },
-  { name: "Lucas Bernard", email: "l.bernard@ohmygold.fr", role: "Coach", club: "Paris 8e", status: "Actif", initials: "LB", color: "bg-blue-500" },
-  { name: "Emma Petit", email: "e.petit@ohmygold.fr", role: "Réceptionniste", club: "Lyon Part-Dieu", status: "Actif", initials: "EP", color: "bg-green-500" },
-  { name: "Thomas Durand", email: "t.durand@ohmygold.fr", role: "Coach", club: "Lyon Part-Dieu", status: "Inactif", initials: "TD", color: "bg-orange-500" },
-  { name: "Julie Moreau", email: "j.moreau@ohmygold.fr", role: "Gestionnaire", club: "Bordeaux Mériadeck", status: "Actif", initials: "JM", color: "bg-pink-500" },
-  { name: "Antoine Leroy", email: "a.leroy@ohmygold.fr", role: "Réceptionniste", club: "Bordeaux Mériadeck", status: "Actif", initials: "AL", color: "bg-teal-500" },
-  { name: "Clara Simon", email: "c.simon@ohmygold.fr", role: "Coach", club: "Paris 8e", status: "Actif", initials: "CS", color: "bg-indigo-500" },
-  { name: "Maxime Robert", email: "m.robert@ohmygold.fr", role: "Administrateur", club: "Multi-clubs", status: "Actif", initials: "MR", color: "bg-gold-500" },
+  { name: "Sophie Martin", email: "s.martin@goldsgymfrance.fr", role: "Gestionnaire", club: "Thiais (Belle Épine)", status: "Actif", initials: "SM", color: "bg-purple-500" },
+  { name: "Lucas Bernard", email: "l.bernard@goldsgymfrance.fr", role: "Coach", club: "Thiais (Belle Épine)", status: "Actif", initials: "LB", color: "bg-blue-500" },
+  { name: "Emma Petit", email: "e.petit@goldsgymfrance.fr", role: "Réceptionniste", club: "Val d'Europe", status: "Actif", initials: "EP", color: "bg-green-500" },
+  { name: "Thomas Durand", email: "t.durand@goldsgymfrance.fr", role: "Coach", club: "Val d'Europe", status: "Inactif", initials: "TD", color: "bg-orange-500" },
+  { name: "Julie Moreau", email: "j.moreau@goldsgymfrance.fr", role: "Gestionnaire", club: "Val d'Europe", status: "Actif", initials: "JM", color: "bg-pink-500" },
+  { name: "Antoine Leroy", email: "a.leroy@goldsgymfrance.fr", role: "Réceptionniste", club: "Thiais (Belle Épine)", status: "Actif", initials: "AL", color: "bg-teal-500" },
+  { name: "Clara Simon", email: "c.simon@goldsgymfrance.fr", role: "Coach", club: "Thiais (Belle Épine)", status: "Actif", initials: "CS", color: "bg-indigo-500" },
+  { name: "Franck Bouchard", email: "f.bouchard@goldsgymfrance.fr", role: "Administrateur", club: "Multi-clubs", status: "Actif", initials: "FB", color: "bg-gold-500" },
 ];
 
 const TRANSACTIONS = [
-  { member: "Marie Laurent", type: "Abonnement Premium", amount: "49,99 €", date: "17 jan · 14:32", icon: "💳", color: "text-blue-400" },
-  { member: "Paul Marchetti", type: "Renouvellement Élite", amount: "79,99 €", date: "17 jan · 13:15", icon: "🔄", color: "text-purple-400" },
-  { member: "Samuel Torres", type: "Séance découverte", amount: "15,00 €", date: "17 jan · 12:48", icon: "✨", color: "text-gold-400" },
-  { member: "Isabelle Renard", type: "Cours Yoga Détente", amount: "12,00 €", date: "17 jan · 11:20", icon: "🧘", color: "text-green-400" },
-  { member: "Christophe Girard", type: "Abonnement Essentiel", amount: "29,99 €", date: "17 jan · 10:05", icon: "📋", color: "text-orange-400" },
+  { member: "Marie Laurent", type: "Abonnement Premium", amount: "47,63 €", date: "17 jan · 14:32", icon: "💳", color: "text-blue-400" },
+  { member: "Paul Marchetti", type: "Renouvellement Flex", amount: "43,29 €", date: "17 jan · 13:15", icon: "🔄", color: "text-purple-400" },
+  { member: "Samuel Torres", type: "Séance d'essai", amount: "0,00 €", date: "17 jan · 12:48", icon: "✨", color: "text-gold-400" },
+  { member: "Isabelle Renard", type: "Pass Semaine Basic", amount: "35,00 €", date: "17 jan · 11:20", icon: "🏋️", color: "text-green-400" },
+  { member: "Christophe Girard", type: "Abonnement Basic", amount: "34,63 €", date: "17 jan · 10:05", icon: "📋", color: "text-orange-400" },
 ];
 
 const maxRevenue = Math.max(...REVENUE_DATA);
 
 const CLUB_COMPARISON = [
-  { name: "Paris 8e", members: 724, revenue: 19200, satisfaction: 92 },
-  { name: "Lyon Part-Dieu", members: 631, revenue: 15800, satisfaction: 88 },
-  { name: "Bordeaux Mériadeck", members: 487, revenue: 12830, satisfaction: 85 },
+  { name: "Thiais (Belle Épine)", members: 724, revenue: 19200, satisfaction: 92 },
+  { name: "Val d'Europe", members: 631, revenue: 15800, satisfaction: 88 },
 ];
 
 export default function AdminDemo() {
   const [activeNav, setActiveNav] = useState("dashboard");
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
 
   return (
     <div className="flex h-full min-h-full bg-[#0A0A0A] text-white">
       {/* Sidebar */}
-      <div className="w-56 flex-shrink-0 bg-[#111111] border-r border-white/5 flex flex-col">
-        <div className="p-4 border-b border-white/5">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gold-400 flex items-center justify-center">
-              <Zap className="w-4 h-4 text-black" fill="black" />
+      <div
+        className="flex-shrink-0 bg-[#111111] border-r border-white/5 flex flex-col transition-all duration-200"
+        style={{ width: sidebarCollapsed ? "52px" : "224px" }}
+      >
+        <div className="p-3 border-b border-white/5 flex items-center justify-between">
+          {!sidebarCollapsed && (
+            <div className="flex items-center gap-2 min-w-0">
+              <img src="/assets/logos/golds-gym-logo-primary-small.png" alt="Gold's Gym" className="h-6 object-contain flex-shrink-0" />
             </div>
-            <span className="font-black text-sm">
-              Oh<span className="text-gold-400">My</span>Gold
-            </span>
-          </div>
-          <div className="mt-2 text-[10px] text-white/30 font-medium uppercase tracking-wider">
+          )}
+          <button
+            onClick={() => setSidebarCollapsed((v) => !v)}
+            className="w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center flex-shrink-0 transition-colors"
+            aria-label={sidebarCollapsed ? "Ouvrir le menu" : "Fermer le menu"}
+          >
+            {sidebarCollapsed ? <Menu className="w-4 h-4 text-white/50" /> : <ChevronLeft className="w-4 h-4 text-white/50" />}
+          </button>
+        </div>
+        {!sidebarCollapsed && (
+          <div className="px-3 py-1.5 text-[10px] text-white/30 font-medium uppercase tracking-wider">
             Administration
           </div>
-        </div>
+        )}
 
-        <nav className="flex-1 p-3 space-y-1">
+        <nav className="flex-1 p-2 space-y-1">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
             const active = activeNav === item.id;
@@ -98,29 +109,36 @@ export default function AdminDemo() {
               <button
                 key={item.id}
                 onClick={() => setActiveNav(item.id)}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                title={sidebarCollapsed ? item.label : undefined}
+                className={`w-full flex items-center gap-3 px-2 py-2 rounded-lg text-sm font-medium transition-all ${
                   active
                     ? "bg-gold-400/15 text-gold-400"
                     : "text-white/40 hover:text-white hover:bg-white/5"
-                }`}
+                } ${sidebarCollapsed ? "justify-center" : ""}`}
               >
                 <Icon className="w-4 h-4 flex-shrink-0" />
-                {item.label}
-                {active && <div className="ml-auto w-1 h-4 rounded-full bg-gold-400" />}
+                {!sidebarCollapsed && (
+                  <>
+                    {item.label}
+                    {active && <div className="ml-auto w-1 h-4 rounded-full bg-gold-400" />}
+                  </>
+                )}
               </button>
             );
           })}
         </nav>
 
-        <div className="p-3 border-t border-white/5">
-          <div className="flex items-center gap-2 px-3 py-2">
-            <div className="w-7 h-7 rounded-full bg-gold-500 flex items-center justify-center text-xs font-bold text-black">
-              MR
+        <div className="p-2 border-t border-white/5">
+          <div className={`flex items-center gap-2 px-2 py-2 ${sidebarCollapsed ? "justify-center" : ""}`}>
+            <div className="w-7 h-7 rounded-full bg-gold-500 flex items-center justify-center text-xs font-bold text-black flex-shrink-0">
+              FB
             </div>
-            <div>
-              <div className="text-xs font-semibold text-white">M. Robert</div>
-              <div className="text-[10px] text-white/30">Super Admin</div>
-            </div>
+            {!sidebarCollapsed && (
+              <div>
+                <div className="text-xs font-semibold text-white">Franck B.</div>
+                <div className="text-[10px] text-white/30">Super Admin</div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -336,6 +354,7 @@ function ClubsTab() {
             <div>
               <div className="text-sm font-bold text-white">{club.name}</div>
               <div className="text-xs text-white/40">{club.members} membres · {club.revenue}/mois</div>
+              <div className="text-[10px] text-white/25 mt-0.5">{club.address} · {club.hours}</div>
             </div>
           </div>
           <div className="flex items-center gap-4">
@@ -473,11 +492,11 @@ function AnalyticsTab() {
 
 function AuditTab() {
   const events = [
-    { time: "14:32", user: "S. Martin", action: "Modification tarif abonnement Premium", type: "update" },
-    { time: "13:15", user: "M. Robert", action: "Ajout club Bordeaux Mériadeck", type: "create" },
-    { time: "12:48", user: "L. Bernard", action: "Annulation cours CrossFit 17h", type: "delete" },
-    { time: "11:20", user: "E. Petit", action: "Création compte membre #1842", type: "create" },
-    { time: "10:05", user: "M. Robert", action: "Export données RGPD", type: "export" },
+    { time: "14:32", user: "S. Martin", action: "Modification tarif abonnement Flex → 43,29 €/mois", type: "update" },
+    { time: "13:15", user: "F. Bouchard", action: "Ouverture club Val d'Europe — Serris (77700)", type: "create" },
+    { time: "12:48", user: "L. Bernard", action: "Annulation cours CrossFit 17h — Gold's CrossZone", type: "delete" },
+    { time: "11:20", user: "E. Petit", action: "Création compte membre #1355 — Abonnement Basic", type: "create" },
+    { time: "10:05", user: "F. Bouchard", action: "Export données RGPD — Thiais (Belle Épine)", type: "export" },
   ];
   return (
     <div className="space-y-4 animate-fade-in">

@@ -20,7 +20,7 @@ const ROLE_LABELS: Record<Role, string> = {
 
 export default function DeviceMockup({ platform, role, onBack, onHome, children }: Props) {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-start py-8 px-4 bg-[#0A0A0A]">
+    <div className="min-h-screen flex flex-col items-center justify-start py-8 px-4 bg-[#0A0A0A] overflow-x-auto">
       {/* Top bar */}
       <div className="w-full max-w-6xl flex items-center justify-between mb-8 animate-fade-in">
         <button
@@ -121,45 +121,43 @@ function LaptopFrame({ children }: { children: React.ReactNode }) {
 }
 
 function PhoneFrame({ children }: { children: React.ReactNode }) {
+  // iPhone 17 logical dimensions: 393 × 852 points (same form factor as iPhone 16)
+  const SCREEN_W = 393;
+  const SCREEN_H = 852;
+  const FRAME_PAD = 14;
+
   return (
     <div className="flex flex-col items-center animate-slide-up">
       <div
-        className="relative device-shadow gold-glow-sm"
+        className="relative device-shadow gold-glow-sm flex-shrink-0"
         style={{
-          width: "min(390px, calc(100vw - 40px))",
+          width: `${SCREEN_W + FRAME_PAD * 2}px`,
           background: "linear-gradient(145deg, #252525, #1a1a1a)",
           borderRadius: "54px",
-          padding: "14px",
+          padding: `${FRAME_PAD}px`,
           border: "1px solid rgba(255,255,255,0.1)",
         }}
       >
-        {/* Side buttons */}
-        <div
-          className="absolute left-[-3px] top-[120px] w-1 h-10 bg-[#2a2a2a] rounded-l-full border-l border-white/10"
-        />
-        <div
-          className="absolute left-[-3px] top-[170px] w-1 h-14 bg-[#2a2a2a] rounded-l-full border-l border-white/10"
-        />
-        <div
-          className="absolute left-[-3px] top-[200px] w-1 h-14 bg-[#2a2a2a] rounded-l-full border-l border-white/10"
-        />
-        <div
-          className="absolute right-[-3px] top-[150px] w-1 h-20 bg-[#2a2a2a] rounded-r-full border-r border-white/10"
-        />
+        {/* Side buttons — mute, volume up, volume down (left), power (right) */}
+        <div className="absolute left-[-3px] top-[118px] w-1 h-8 bg-[#2a2a2a] rounded-l-full border-l border-white/10" />
+        <div className="absolute left-[-3px] top-[160px] w-1 h-14 bg-[#2a2a2a] rounded-l-full border-l border-white/10" />
+        <div className="absolute left-[-3px] top-[212px] w-1 h-14 bg-[#2a2a2a] rounded-l-full border-l border-white/10" />
+        <div className="absolute right-[-3px] top-[168px] w-1 h-20 bg-[#2a2a2a] rounded-r-full border-r border-white/10" />
 
-        {/* Screen */}
+        {/* Screen — fixed iPhone 17 dimensions */}
         <div
           className="relative overflow-hidden"
           style={{
             borderRadius: "44px",
-            height: "min(820px, calc(100vh - 200px))",
+            width: `${SCREEN_W}px`,
+            height: `${SCREEN_H}px`,
             background: "#0A0A0A",
           }}
         >
-          {/* Dynamic island / notch */}
-          <div className="absolute top-3 left-1/2 -translate-x-1/2 w-24 h-6 bg-black rounded-full z-50 flex items-center justify-center gap-2">
+          {/* Dynamic island */}
+          <div className="absolute top-3 left-1/2 -translate-x-1/2 w-28 h-[34px] bg-black rounded-full z-50 flex items-center justify-center gap-3">
             <div className="w-2 h-2 rounded-full bg-[#1a1a1a] border border-white/10" />
-            <div className="w-3 h-3 rounded-full bg-[#1a1a1a] border border-white/10" />
+            <div className="w-3.5 h-3.5 rounded-full bg-[#1a1a1a] border border-white/10" />
           </div>
 
           {/* Content — transform creates a new containing block so that
@@ -167,7 +165,7 @@ function PhoneFrame({ children }: { children: React.ReactNode }) {
                anchored to this element instead of the viewport */}
           <div className="w-full h-full overflow-auto pt-12" style={{ transform: "translateZ(0)" }}>{children}</div>
 
-          {/* Bottom indicator */}
+          {/* Home indicator */}
           <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-1 bg-white/20 rounded-full" />
         </div>
       </div>
