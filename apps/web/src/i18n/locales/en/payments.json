@@ -1,0 +1,10 @@
+{
+  "title": "Payments",
+  "status": {
+    "pending": "Pending",
+    "paid": "Paid",
+    "failed": "Failed",
+    "refunded": "Refunded",
+    "cancelled": "Cancelled"
+  }
+}

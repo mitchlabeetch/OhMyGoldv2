@@ -1,0 +1,9 @@
+{
+  "generic": "Une erreur est survenue. Veuillez réessayer.",
+  "network": "Erreur réseau. Vérifiez votre connexion internet.",
+  "unauthorized": "Vous n'êtes pas autorisé à effectuer cette action.",
+  "notFound": "La ressource demandée est introuvable.",
+  "serverError": "Erreur serveur. Réessayez plus tard.",
+  "validation": "Vérifiez vos saisies et réessayez.",
+  "timeout": "La requête a expiré. Veuillez réessayer."
+}

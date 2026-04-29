@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import design tokens CSS custom properties */
+@import "../../packages/ui-shared/src/tokens.css";
+
+/* Import Inter font from Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
+
 @layer base {
   :root {
     color-scheme: dark;
@@ -64,6 +70,20 @@
 
   /* Glass card */
   .glass-card {
-    @apply bg-surface-elevated/80 backdrop-blur-sm border border-border rounded-2xl;
+    @apply bg-surface-card/80 backdrop-blur-sm border border-border rounded-2xl;
+  }
+
+  /* Shadow utilities */
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+  .shadow-elevated {
+    box-shadow: var(--shadow-elevated);
+  }
+  .shadow-modal {
+    box-shadow: var(--shadow-modal);
+  }
+  .shadow-gold-glow {
+    box-shadow: var(--shadow-gold-glow);
   }
 }

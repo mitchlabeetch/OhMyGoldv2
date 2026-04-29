@@ -23,8 +23,10 @@ interface AuthState {
   loginWithGoogle: () => Promise<void>;
   loginWithApple: () => Promise<void>;
   logout: () => Promise<void>;
+  signOut: () => Promise<void>;
   checkSession: () => Promise<void>;
   fetchProfile: (userId: string) => Promise<void>;
+  refreshProfile: () => Promise<void>;
   clearError: () => void;
 }
 
@@ -169,6 +171,17 @@ export const useAuthStore = create<AuthState>()(
             console.error("[Auth] Error fetching profile:", err);
             // Don't fail — profile might not exist yet for OAuth users
           }
+        },
+
+        // Re-fetch profile for the currently logged-in user
+        refreshProfile: async () => {
+          const userId = get().user?.id;
+          if (userId) await get().fetchProfile(userId);
+        },
+
+        // Alias: signOut = logout (used by useSession hook)
+        signOut: async () => {
+          await get().logout();
         },
       }),
       {

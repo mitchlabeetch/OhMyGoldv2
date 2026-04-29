@@ -1,0 +1,19 @@
+{
+  "title": "Members",
+  "newMember": "New member",
+  "searchPlaceholder": "Search members…",
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "suspended": "Suspended",
+    "expired": "Expired",
+    "pending": "Pending"
+  },
+  "contract": {
+    "monthly": "Monthly",
+    "annual": "Annual",
+    "quarterly": "Quarterly",
+    "day_pass": "Day pass",
+    "trial": "Trial"
+  }
+}
