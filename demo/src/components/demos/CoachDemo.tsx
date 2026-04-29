@@ -30,8 +30,8 @@ const TODAY_CLASSES = [
 const WEEK_DAYS = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 const WEEK_CLASSES: Record<string, { name: string; time: string }[]> = {
   Lun: [{ name: "Yoga Matinal", time: "09:00" }, { name: "Pilates", time: "12:00" }],
-  Mar: [{ name: "Yoga Detente", time: "18:30" }],
-  Mer: [{ name: "Yoga Matinal", time: "09:00" }, { name: "Meditation", time: "12:00" }],
+  Mar: [{ name: "Yoga Détente", time: "18:30" }],
+  Mer: [{ name: "Yoga Matinal", time: "09:00" }, { name: "Méditation", time: "12:00" }],
   Jeu: [{ name: "Yoga Flow", time: "18:00" }],
   Ven: [{ name: "Yoga Matinal", time: "09:00" }, { name: "Pilates", time: "12:00" }],
   Sam: [{ name: "Yoga Weekend", time: "10:00" }],
