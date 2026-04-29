@@ -71,7 +71,7 @@ DECLARE
   exists_flag BOOLEAN;
 BEGIN
   LOOP
-    card_num := 'OMG-' || LPAD(FLOOR(RANDOM() * 999999999)::TEXT, 9, '0');
+    card_num := 'OMG-' || LPAD(TRUNC(RANDOM() * 999999999)::INTEGER::TEXT, 9, '0');
     SELECT EXISTS(SELECT 1 FROM membership_cards WHERE card_number = card_num) INTO exists_flag;
     EXIT WHEN NOT exists_flag;
   END LOOP;

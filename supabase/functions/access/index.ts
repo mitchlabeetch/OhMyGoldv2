@@ -63,8 +63,6 @@ serve(async (req) => {
 
       if (!subscription) {
         denied_reason = "no_active_subscription";
-      } else if (subscription.status === "frozen") {
-        denied_reason = "subscription_frozen";
       } else if (subscription.end_date && subscription.end_date < today) {
         denied_reason = "subscription_expired";
       } else {

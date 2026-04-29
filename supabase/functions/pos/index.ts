@@ -32,11 +32,16 @@ serve(async (req) => {
 
         if (locationId) query = query.or(`location_id.eq.${locationId},location_id.is.null`);
         if (category) query = query.eq("category", category);
-        if (lowStock) query = query.lte("stock_quantity", supabase.rpc("pos_products_low_stock_threshold"));
 
         const { data, error } = await query;
         if (error) throw error;
-        return json(data);
+
+        // Filter low stock client-side (stock_quantity <= low_stock_threshold)
+        const result = lowStock
+          ? (data ?? []).filter((p) => p.stock_quantity <= p.low_stock_threshold)
+          : data;
+
+        return json(result);
       }
 
       // GET /pos/products/:id
@@ -137,10 +142,10 @@ serve(async (req) => {
           .single();
         if (error) throw error;
 
-        // Decrement stock for each item
+        // Decrement stock atomically for each item via database function
         const items: Array<{ product_id: string; quantity: number }> = body.items ?? [];
         for (const item of items) {
-          await supabase.rpc("decrement_stock", {
+          await supabase.rpc("decrement_stock_qty", {
             p_product_id: item.product_id,
             p_quantity: item.quantity,
           });

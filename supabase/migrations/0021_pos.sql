@@ -53,3 +53,13 @@ CREATE POLICY "pos_transactions_access" ON pos_transactions FOR ALL TO authentic
 CREATE TRIGGER trg_pos_products_updated_at
   BEFORE UPDATE ON pos_products
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+
+-- Atomically decrement product stock (no negative stock allowed)
+CREATE OR REPLACE FUNCTION decrement_stock_qty(p_product_id UUID, p_quantity INTEGER)
+RETURNS VOID LANGUAGE plpgsql AS $$
+BEGIN
+  UPDATE pos_products
+  SET stock_quantity = GREATEST(stock_quantity - p_quantity, 0)
+  WHERE id = p_product_id;
+END;
+$$;
