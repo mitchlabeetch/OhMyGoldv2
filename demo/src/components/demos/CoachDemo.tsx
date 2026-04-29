@@ -104,7 +104,10 @@ export default function CoachDemo() {
           <h1 className="text-sm font-bold text-white">
             {NAV_ITEMS.find((n) => n.id === activeNav)?.label}
           </h1>
-          <button className="relative w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center hover:bg-white/10">
+          <button
+            aria-label="Voir les notifications"
+            className="relative w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center hover:bg-white/10"
+          >
             <Bell className="w-4 h-4 text-white/50" />
           </button>
         </div>
