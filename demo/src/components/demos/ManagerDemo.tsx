@@ -121,7 +121,11 @@ export default function ManagerDemo() {
             {NAV_ITEMS.find((n) => n.id === activeNav)?.label}
           </h1>
           <div className="flex items-center gap-3">
-            <button className="relative w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center hover:bg-white/10">
+            <button
+              type="button"
+              aria-label="Notifications"
+              className="relative w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center hover:bg-white/10"
+            >
               <Bell className="w-4 h-4 text-white/50" />
               <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-gold-400" />
             </button>
