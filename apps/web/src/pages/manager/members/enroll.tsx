@@ -58,16 +58,20 @@ export default function EnrollPage() {
   const handleSubmit = async () => {
     setSubmitting(true);
     try {
-      // Create auth user
-      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+      // Invite user via standard signup flow (server-side admin enrollment
+      // should be handled via an Edge Function in production)
+      const { data: authData, error: authError } = await supabase.auth.signUp({
         email: personalInfo.email,
-        email_confirm: true,
-        user_metadata: {
-          first_name: personalInfo.firstName,
-          last_name: personalInfo.lastName,
+        password: Math.random().toString(36).slice(2) + "Aa1!",
+        options: {
+          data: {
+            first_name: personalInfo.firstName,
+            last_name: personalInfo.lastName,
+          },
         },
       });
       if (authError) throw authError;
+      if (!authData.user) throw new Error("No user returned from signup");
 
       // Create member record
       const { data: member, error: memberError } = await supabase

@@ -12,7 +12,15 @@ type CartItem = {
   quantity: number;
 };
 
-const CATEGORIES = ["Tous", "Supplements", "Equipment", "Drinks", "Other"];
+const CATEGORIES = ["Tous", "supplement", "equipment", "drink", "other"];
+
+const CATEGORY_LABELS: Record<string, string> = {
+  "Tous": "Tous",
+  "supplement": "Suppléments",
+  "equipment": "Équipement",
+  "drink": "Boissons",
+  "other": "Autre",
+};
 
 type PaymentMethod = "cash" | "card" | "member_account";
 
@@ -115,7 +123,7 @@ export default function POSPage() {
                   : "bg-surface-card border border-border text-text-secondary hover:text-white"
               }`}
             >
-              {cat}
+              {CATEGORY_LABELS[cat] ?? cat}
             </button>
           ))}
         </div>
