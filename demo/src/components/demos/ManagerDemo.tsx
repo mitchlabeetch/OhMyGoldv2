@@ -107,7 +107,7 @@ export default function ManagerDemo() {
         <div className="p-3 border-b border-white/5 flex items-center justify-between">
           {!sidebarCollapsed && (
             <div className="flex items-center gap-2 min-w-0">
-              <img src="/assets/logos/golds-gym-logo-primary-small.png" alt="Gold's Gym" className="h-6 object-contain flex-shrink-0" />
+              <img src="/assets/logos/golds-gym-logo-primary-small.png" alt="Gold's Gym France logo" className="h-6 object-contain flex-shrink-0" />
             </div>
           )}
           <button

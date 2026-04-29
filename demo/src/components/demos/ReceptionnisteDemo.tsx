@@ -140,7 +140,7 @@ export default function ReceptionnisteDemo() {
       {/* Topbar */}
       <div className="h-14 border-b border-white/5 flex items-center justify-between px-6 flex-shrink-0 bg-[#111111]">
         <div className="flex items-center gap-2">
-          <img src="/assets/logos/golds-gym-logo-primary-small.png" alt="Gold's Gym" className="h-6 object-contain" />
+          <img src="/assets/logos/golds-gym-logo-primary-small.png" alt="Gold's Gym France logo" className="h-6 object-contain" />
         </div>
         <div className="text-xs text-white/30">Réception · Thiais (Belle Épine) · 14:35</div>
         <div className="flex items-center gap-2 text-xs text-white/40">

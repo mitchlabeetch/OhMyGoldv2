@@ -243,7 +243,7 @@ export default function MembreDemo() {
               <div className="absolute top-0 right-0 w-48 h-48 rounded-full bg-gold-400/5 -translate-y-1/2 translate-x-1/2" />
               <div className="relative">
                 <div className="flex items-center justify-between mb-6">
-                  <img src="/assets/logos/golds-gym-logo-primary-small.png" alt="Gold's Gym" className="h-7 object-contain" />
+                  <img src="/assets/logos/golds-gym-logo-primary-small.png" alt="Gold's Gym France logo" className="h-7 object-contain" />
                   <span className="text-xs text-gold-300/70 bg-gold-400/10 px-2 py-0.5 rounded-full font-semibold">PREMIUM</span>
                 </div>
 

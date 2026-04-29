@@ -299,7 +299,7 @@ export default function VisiteurDemo() {
                   <span className="text-sm font-black text-white">{plan.name}</span>
                   {plan.badge && (
                     <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
-                      plan.badge === "Best Seller" ? "bg-gold-400/20 text-gold-400" : "bg-blue-400/20 text-blue-400"
+                      plan.badge === "Best Seller" ? "bg-gold-400/20 text-gold-400" : "bg-green-400/20 text-green-400"
                     }`}>{plan.badge}</span>
                   )}
                 </div>

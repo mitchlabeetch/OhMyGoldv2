@@ -72,7 +72,7 @@ export default function CoachDemo() {
       >
         <div className="p-3 border-b border-white/5 flex items-center justify-between">
           {!sidebarCollapsed && (
-            <img src="/assets/logos/golds-gym-logo-primary-small.png" alt="Gold's Gym" className="h-6 object-contain" />
+            <img src="/assets/logos/golds-gym-logo-primary-small.png" alt="Gold's Gym France logo" className="h-6 object-contain" />
           )}
           <button
             onClick={() => setSidebarCollapsed((v) => !v)}
