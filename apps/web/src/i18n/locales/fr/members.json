@@ -1,19 +1,12 @@
 {
   "title": "Membres",
-  "newMember": "Nouveau membre",
-  "searchPlaceholder": "Rechercher un membre…",
-  "status": {
-    "active": "Actif",
-    "inactive": "Inactif",
-    "suspended": "Suspendu",
-    "expired": "Expiré",
-    "pending": "En attente"
-  },
-  "contract": {
-    "monthly": "Mensuel",
-    "annual": "Annuel",
-    "quarterly": "Trimestriel",
-    "day_pass": "Pass journalier",
-    "trial": "Essai"
-  }
+  "newMember": "Nouveau Membre",
+  "enroll": "Inscrire un Membre",
+  "search": "Rechercher des membres...",
+  "filters": { "all": "Tous", "active": "Actifs", "frozen": "Gelés", "expired": "Expirés", "inactive": "Inactifs", "suspended": "Suspendus" },
+  "table": { "name": "Nom", "plan": "Forfait", "status": "Statut", "joinDate": "Date d'adhésion", "lastVisit": "Dernière visite" },
+  "enrollment": { "title": "Inscription d'un Nouveau Membre", "step1": "Informations personnelles", "step2": "Choisir un forfait", "step3": "Confirmer", "step4": "Terminé" },
+  "status": { "active": "Actif", "inactive": "Inactif", "suspended": "Suspendu", "expired": "Expiré", "pending": "En attente" },
+  "contract": { "monthly": "Mensuel", "annual": "Annuel", "quarterly": "Trimestriel", "day_pass": "Pass journalier", "trial": "Essai" },
+  "searchPlaceholder": "Rechercher un membre…"
 }

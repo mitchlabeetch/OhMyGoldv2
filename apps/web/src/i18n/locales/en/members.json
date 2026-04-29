@@ -1,19 +1,12 @@
 {
   "title": "Members",
-  "newMember": "New member",
-  "searchPlaceholder": "Search members…",
-  "status": {
-    "active": "Active",
-    "inactive": "Inactive",
-    "suspended": "Suspended",
-    "expired": "Expired",
-    "pending": "Pending"
-  },
-  "contract": {
-    "monthly": "Monthly",
-    "annual": "Annual",
-    "quarterly": "Quarterly",
-    "day_pass": "Day pass",
-    "trial": "Trial"
-  }
+  "newMember": "New Member",
+  "enroll": "Enroll Member",
+  "search": "Search members...",
+  "filters": { "all": "All", "active": "Active", "frozen": "Frozen", "expired": "Expired", "inactive": "Inactive", "suspended": "Suspended" },
+  "table": { "name": "Name", "plan": "Plan", "status": "Status", "joinDate": "Join Date", "lastVisit": "Last Visit" },
+  "enrollment": { "title": "New Member Enrollment", "step1": "Personal Info", "step2": "Choose Plan", "step3": "Confirm", "step4": "Complete" },
+  "status": { "active": "Active", "inactive": "Inactive", "suspended": "Suspended", "expired": "Expired", "pending": "Pending" },
+  "contract": { "monthly": "Monthly", "annual": "Annual", "quarterly": "Quarterly", "day_pass": "Day pass", "trial": "Trial" },
+  "searchPlaceholder": "Search members…"
 }

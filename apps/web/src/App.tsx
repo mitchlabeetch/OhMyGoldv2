@@ -18,6 +18,30 @@ const MFAPage = lazy(() => import("@/pages/auth/mfa"));
 const UnauthorizedPage = lazy(() => import("@/pages/errors/unauthorized"));
 const NotFoundPage = lazy(() => import("@/pages/errors/not-found"));
 
+// Admin pages
+const AdminDashboard = lazy(() => import("@/pages/admin/dashboard"));
+const AdminLocations = lazy(() => import("@/pages/admin/locations/index"));
+const AdminLocationNew = lazy(() => import("@/pages/admin/locations/new"));
+const AdminLocationDetail = lazy(() => import("@/pages/admin/locations/detail"));
+const AdminUsers = lazy(() => import("@/pages/admin/users/index"));
+const AdminUserDetail = lazy(() => import("@/pages/admin/users/detail"));
+const AdminSettings = lazy(() => import("@/pages/admin/settings/index"));
+const AdminAuditLog = lazy(() => import("@/pages/admin/audit-log/index"));
+const AdminAnalytics = lazy(() => import("@/pages/admin/analytics/index"));
+
+// Manager pages
+const ManagerDashboard = lazy(() => import("@/pages/manager/dashboard"));
+const ManagerMembers = lazy(() => import("@/pages/manager/members/index"));
+const ManagerMemberDetail = lazy(() => import("@/pages/manager/members/detail"));
+const ManagerMemberEnroll = lazy(() => import("@/pages/manager/members/enroll"));
+const ManagerClasses = lazy(() => import("@/pages/manager/classes/index"));
+const ManagerBilling = lazy(() => import("@/pages/manager/billing/index"));
+
+// Employee pages
+const EmployeeCheckIn = lazy(() => import("@/pages/employee/check-in"));
+const EmployeeBookings = lazy(() => import("@/pages/employee/bookings"));
+const EmployeePOS = lazy(() => import("@/pages/employee/pos"));
+
 function PageLoader() {
   return (
     <div
@@ -68,6 +92,72 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
+
+            {/* Admin routes */}
+            {[
+              { path: "/admin/dashboard", Component: AdminDashboard, roles: ["admin"] as const },
+              { path: "/admin/locations", Component: AdminLocations, roles: ["admin"] as const },
+              { path: "/admin/locations/new", Component: AdminLocationNew, roles: ["admin"] as const },
+              { path: "/admin/locations/:id", Component: AdminLocationDetail, roles: ["admin"] as const },
+              { path: "/admin/users", Component: AdminUsers, roles: ["admin"] as const },
+              { path: "/admin/users/:id", Component: AdminUserDetail, roles: ["admin"] as const },
+              { path: "/admin/settings", Component: AdminSettings, roles: ["admin"] as const },
+              { path: "/admin/audit-log", Component: AdminAuditLog, roles: ["admin"] as const },
+              { path: "/admin/analytics", Component: AdminAnalytics, roles: ["admin"] as const },
+            ].map(({ path, Component, roles }) => (
+              <Route
+                key={path}
+                path={path}
+                element={
+                  <ProtectedRoute roles={roles}>
+                    <AppShell>
+                      <Component />
+                    </AppShell>
+                  </ProtectedRoute>
+                }
+              />
+            ))}
+
+            {/* Manager routes */}
+            {[
+              { path: "/manager/dashboard", Component: ManagerDashboard, roles: ["admin", "manager"] as const },
+              { path: "/manager/members", Component: ManagerMembers, roles: ["admin", "manager"] as const },
+              { path: "/manager/members/enroll", Component: ManagerMemberEnroll, roles: ["admin", "manager"] as const },
+              { path: "/manager/members/:id", Component: ManagerMemberDetail, roles: ["admin", "manager"] as const },
+              { path: "/manager/classes", Component: ManagerClasses, roles: ["admin", "manager"] as const },
+              { path: "/manager/billing", Component: ManagerBilling, roles: ["admin", "manager"] as const },
+            ].map(({ path, Component, roles }) => (
+              <Route
+                key={path}
+                path={path}
+                element={
+                  <ProtectedRoute roles={roles}>
+                    <AppShell>
+                      <Component />
+                    </AppShell>
+                  </ProtectedRoute>
+                }
+              />
+            ))}
+
+            {/* Employee routes */}
+            {[
+              { path: "/employee/check-in", Component: EmployeeCheckIn },
+              { path: "/employee/bookings", Component: EmployeeBookings },
+              { path: "/employee/pos", Component: EmployeePOS },
+            ].map(({ path, Component }) => (
+              <Route
+                key={path}
+                path={path}
+                element={
+                  <ProtectedRoute roles={["admin", "manager", "employee"]}>
+                    <AppShell>
+                      <Component />
+                    </AppShell>
+                  </ProtectedRoute>
+                }
+              />
+            ))}
 
             {/* Error pages */}
             <Route path="/unauthorized" element={<UnauthorizedPage />} />
