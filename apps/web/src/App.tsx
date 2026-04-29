@@ -42,6 +42,25 @@ const EmployeeCheckIn = lazy(() => import("@/pages/employee/check-in"));
 const EmployeeBookings = lazy(() => import("@/pages/employee/bookings"));
 const EmployeePOS = lazy(() => import("@/pages/employee/pos"));
 
+// Teacher pages
+const TeacherDashboard = lazy(() => import("@/pages/teacher/dashboard"));
+const TeacherClasses = lazy(() => import("@/pages/teacher/classes/index"));
+const TeacherClassDetail = lazy(() => import("@/pages/teacher/classes/detail"));
+const TeacherRoster = lazy(() => import("@/pages/teacher/roster"));
+
+// Client pages
+const ClientDashboard = lazy(() => import("@/pages/client/dashboard"));
+const ClientBooking = lazy(() => import("@/pages/client/booking/index"));
+const ClientMyBookings = lazy(() => import("@/pages/client/booking/my-bookings"));
+const ClientSubscription = lazy(() => import("@/pages/client/subscription/index"));
+const ClientProfile = lazy(() => import("@/pages/client/profile/index"));
+const ClientCard = lazy(() => import("@/pages/client/card/index"));
+
+// Visitor pages (public)
+const VisitorHome = lazy(() => import("@/pages/visitor/index"));
+const VisitorPricing = lazy(() => import("@/pages/visitor/pricing"));
+const VisitorLocations = lazy(() => import("@/pages/visitor/locations"));
+
 function PageLoader() {
   return (
     <div
@@ -158,6 +177,53 @@ export default function App() {
                 }
               />
             ))}
+
+            {/* Teacher routes */}
+            {[
+              { path: "/teacher/dashboard", Component: TeacherDashboard },
+              { path: "/teacher/classes", Component: TeacherClasses },
+              { path: "/teacher/classes/:id", Component: TeacherClassDetail },
+              { path: "/teacher/roster", Component: TeacherRoster },
+            ].map(({ path, Component }) => (
+              <Route
+                key={path}
+                path={path}
+                element={
+                  <ProtectedRoute roles={["admin", "manager", "teacher"]}>
+                    <AppShell>
+                      <Component />
+                    </AppShell>
+                  </ProtectedRoute>
+                }
+              />
+            ))}
+
+            {/* Client routes */}
+            {[
+              { path: "/client/dashboard", Component: ClientDashboard },
+              { path: "/client/booking", Component: ClientBooking },
+              { path: "/client/booking/my-bookings", Component: ClientMyBookings },
+              { path: "/client/subscription", Component: ClientSubscription },
+              { path: "/client/profile", Component: ClientProfile },
+              { path: "/client/card", Component: ClientCard },
+            ].map(({ path, Component }) => (
+              <Route
+                key={path}
+                path={path}
+                element={
+                  <ProtectedRoute roles={["admin", "manager", "employee", "teacher", "client"]}>
+                    <AppShell>
+                      <Component />
+                    </AppShell>
+                  </ProtectedRoute>
+                }
+              />
+            ))}
+
+            {/* Public visitor routes */}
+            <Route path="/visitor" element={<VisitorHome />} />
+            <Route path="/visitor/pricing" element={<VisitorPricing />} />
+            <Route path="/visitor/locations" element={<VisitorLocations />} />
 
             {/* Error pages */}
             <Route path="/unauthorized" element={<UnauthorizedPage />} />
