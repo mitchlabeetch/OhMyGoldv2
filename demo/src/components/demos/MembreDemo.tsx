@@ -46,10 +46,7 @@ const ACCESS_LOG = [
   { date: "Mer 07:28", location: "Lyon Part-Dieu", icon: "✅" },
 ];
 
-const MONTHLY_BARS = Array.from({ length: 30 }, (_, i) => {
-  const heights = [40, 70, 55, 80, 60, 30, 0, 75, 85, 50, 65, 90, 45, 70, 55, 80, 35, 60, 75, 45, 90, 55, 70, 40, 85, 60, 75, 50, 65, 80];
-  return heights[i] ?? 0;
-});
+const MONTHLY_BARS = [40, 70, 55, 80, 60, 30, 0, 75, 85, 50, 65, 90, 45, 70, 55, 80, 35, 60, 75, 45, 90, 55, 70, 40, 85, 60, 75, 50, 65, 80];
 
 const DAY_FILTERS = ["Tous", "Lun", "Mar", "Mer", "Jeu", "Ven"];
 

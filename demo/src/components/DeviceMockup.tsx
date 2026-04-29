@@ -162,8 +162,10 @@ function PhoneFrame({ children }: { children: React.ReactNode }) {
             <div className="w-3 h-3 rounded-full bg-[#1a1a1a] border border-white/10" />
           </div>
 
-          {/* Content */}
-          <div className="w-full h-full overflow-auto pt-12">{children}</div>
+          {/* Content — transform creates a new containing block so that
+               position:fixed descendants (e.g. MembreDemo bottom nav) are
+               anchored to this element instead of the viewport */}
+          <div className="w-full h-full overflow-auto pt-12" style={{ transform: "translateZ(0)" }}>{children}</div>
 
           {/* Bottom indicator */}
           <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-1 bg-white/20 rounded-full" />

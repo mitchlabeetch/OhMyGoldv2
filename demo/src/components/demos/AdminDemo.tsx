@@ -498,14 +498,17 @@ function AuditTab() {
 }
 
 const TOGGLE_ITEMS = new Set(["Authentification 2FA", "Alertes email", "Rapports hebdomadaires", "Alertes critiques"]);
+const TOGGLE_DEFAULTS: Record<string, boolean> = {
+  "Authentification 2FA": true,
+  "Alertes email": true,
+  "Rapports hebdomadaires": false,
+  "Alertes critiques": true,
+};
 
 function SettingsTab() {
-  const [toggles, setToggles] = useState<Record<string, boolean>>({
-    "Authentification 2FA": true,
-    "Alertes email": true,
-    "Rapports hebdomadaires": false,
-    "Alertes critiques": true,
-  });
+  const [toggles, setToggles] = useState<Record<string, boolean>>(
+    Object.fromEntries([...TOGGLE_ITEMS].map((k) => [k, TOGGLE_DEFAULTS[k] ?? false]))
+  );
 
   const flipToggle = (key: string) => {
     setToggles((prev) => ({ ...prev, [key]: !prev[key] }));

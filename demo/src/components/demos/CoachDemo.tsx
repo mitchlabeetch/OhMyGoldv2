@@ -31,14 +31,14 @@ const TODAY_CLASSES = [
 
 const WEEK_DAYS = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 
-interface WeekClass { name: string; time: string; booked: number; total: number }
+interface WeekClass { name: string; time: string; booked: number; total: number; coachInitials: string }
 const WEEK_CLASSES: Record<string, WeekClass[]> = {
-  Lun: [{ name: "Yoga Matinal", time: "09:00", booked: 13, total: 15 }, { name: "Pilates", time: "12:00", booked: 9, total: 12 }],
-  Mar: [{ name: "Yoga Détente", time: "18:30", booked: 15, total: 15 }],
-  Mer: [{ name: "Yoga Matinal", time: "09:00", booked: 11, total: 15 }, { name: "Méditation", time: "12:00", booked: 8, total: 10 }],
-  Jeu: [{ name: "Yoga Flow", time: "18:00", booked: 12, total: 15 }],
-  Ven: [{ name: "Yoga Matinal", time: "09:00", booked: 14, total: 15 }, { name: "Pilates", time: "12:00", booked: 10, total: 12 }],
-  Sam: [{ name: "Yoga Weekend", time: "10:00", booked: 12, total: 20 }],
+  Lun: [{ name: "Yoga Matinal", time: "09:00", booked: 13, total: 15, coachInitials: "CV" }, { name: "Pilates", time: "12:00", booked: 9, total: 12, coachInitials: "CV" }],
+  Mar: [{ name: "Yoga Détente", time: "18:30", booked: 15, total: 15, coachInitials: "CV" }],
+  Mer: [{ name: "Yoga Matinal", time: "09:00", booked: 11, total: 15, coachInitials: "CV" }, { name: "Méditation", time: "12:00", booked: 8, total: 10, coachInitials: "CV" }],
+  Jeu: [{ name: "Yoga Flow", time: "18:00", booked: 12, total: 15, coachInitials: "CV" }],
+  Ven: [{ name: "Yoga Matinal", time: "09:00", booked: 14, total: 15, coachInitials: "CV" }, { name: "Pilates", time: "12:00", booked: 10, total: 12, coachInitials: "CV" }],
+  Sam: [{ name: "Yoga Weekend", time: "10:00", booked: 12, total: 20, coachInitials: "CV" }],
   Dim: [],
 };
 
@@ -296,7 +296,7 @@ export default function CoachDemo() {
                           <div key={j} className="mb-1.5 px-1.5 py-1 rounded bg-white/5 hover:bg-white/10 cursor-pointer transition-colors">
                             <div className="flex items-center gap-1 mb-0.5">
                               <div className="w-3.5 h-3.5 rounded-full bg-orange-500 flex items-center justify-center text-[7px] font-bold text-white flex-shrink-0">
-                                CV
+                                {cls.coachInitials}
                               </div>
                               <div className="text-[9px] text-gold-400 font-semibold">{cls.time}</div>
                             </div>

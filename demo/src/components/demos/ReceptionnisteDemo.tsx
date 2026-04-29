@@ -76,8 +76,8 @@ export default function ReceptionnisteDemo() {
     const found = RECENT_CHECKINS.find((m) =>
       m.name.toLowerCase().includes(searchValue.toLowerCase())
     );
-    if (found || searchValue.length > 2) {
-      setCheckedInMember(found ?? RECENT_CHECKINS[0]);
+    if (found) {
+      setCheckedInMember(found);
       setTimeout(() => setCheckedInMember(null), 4000);
       setSearchValue("");
     }
