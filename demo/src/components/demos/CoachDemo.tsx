@@ -4,8 +4,9 @@ import {
   Calendar,
   Users,
   Star,
-  Zap,
   Bell,
+  ChevronLeft,
+  Menu,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -52,6 +53,7 @@ type RequestStatus = "pending" | "accepted" | "declined";
 
 export default function CoachDemo() {
   const [activeNav, setActiveNav] = useState("dashboard");
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [requests, setRequests] = useState<{ id: number; name: string; class: string; initials: string; color: string; status: RequestStatus }[]>([
     { id: 1, name: "Alice Moreau", class: "Yoga Matinal", initials: "AM", color: "bg-purple-500", status: "pending" },
     { id: 2, name: "René Dupuis", class: "Pilates Avancé", initials: "RD", color: "bg-blue-500", status: "pending" },
@@ -64,20 +66,29 @@ export default function CoachDemo() {
   return (
     <div className="flex h-full min-h-full bg-[#0A0A0A] text-white">
       {/* Sidebar */}
-      <div className="w-52 flex-shrink-0 bg-[#111111] border-r border-white/5 flex flex-col">
-        <div className="p-4 border-b border-white/5">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gold-400 flex items-center justify-center">
-              <Zap className="w-4 h-4 text-black" fill="black" />
-            </div>
-            <span className="font-black text-sm">Oh<span className="text-gold-400">My</span>Gold</span>
-          </div>
-          <div className="mt-2 text-[10px] text-white/30 font-medium uppercase tracking-wider">
+      <div
+        className="flex-shrink-0 bg-[#111111] border-r border-white/5 flex flex-col transition-all duration-200"
+        style={{ width: sidebarCollapsed ? "52px" : "208px" }}
+      >
+        <div className="p-3 border-b border-white/5 flex items-center justify-between">
+          {!sidebarCollapsed && (
+            <img src="/assets/logos/golds-gym-logo-primary-small.png" alt="Gold's Gym France logo" className="h-6 object-contain" />
+          )}
+          <button
+            onClick={() => setSidebarCollapsed((v) => !v)}
+            className="w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center flex-shrink-0 transition-colors"
+            aria-label={sidebarCollapsed ? "Ouvrir le menu" : "Fermer le menu"}
+          >
+            {sidebarCollapsed ? <Menu className="w-4 h-4 text-white/50" /> : <ChevronLeft className="w-4 h-4 text-white/50" />}
+          </button>
+        </div>
+        {!sidebarCollapsed && (
+          <div className="px-3 py-1.5 text-[10px] text-white/30 font-medium uppercase tracking-wider">
             Espace Coach
           </div>
-        </div>
+        )}
 
-        <nav className="flex-1 p-3 space-y-1">
+        <nav className="flex-1 p-2 space-y-1">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
             const active = activeNav === item.id;
@@ -85,26 +96,30 @@ export default function CoachDemo() {
               <button
                 key={item.id}
                 onClick={() => setActiveNav(item.id)}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                title={sidebarCollapsed ? item.label : undefined}
+                aria-label={sidebarCollapsed ? item.label : undefined}
+                className={`w-full flex items-center gap-3 px-2 py-2 rounded-lg text-sm font-medium transition-all ${
                   active ? "bg-gold-400/15 text-gold-400" : "text-white/40 hover:text-white hover:bg-white/5"
-                }`}
+                } ${sidebarCollapsed ? "justify-center" : ""}`}
               >
                 <Icon className="w-4 h-4 flex-shrink-0" />
-                {item.label}
+                {!sidebarCollapsed && item.label}
               </button>
             );
           })}
         </nav>
 
-        <div className="p-3 border-t border-white/5">
-          <div className="flex items-center gap-2 px-3 py-2">
-            <div className="w-7 h-7 rounded-full bg-orange-500 flex items-center justify-center text-xs font-bold text-white">
+        <div className="p-2 border-t border-white/5">
+          <div className={`flex items-center gap-2 px-2 py-2 ${sidebarCollapsed ? "justify-center" : ""}`}>
+            <div className="w-7 h-7 rounded-full bg-orange-500 flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
               CV
             </div>
-            <div>
-              <div className="text-xs font-semibold text-white">C. Vidal</div>
-              <div className="text-[10px] text-white/30">Coach Yoga</div>
-            </div>
+            {!sidebarCollapsed && (
+              <div>
+                <div className="text-xs font-semibold text-white">C. Vidal</div>
+                <div className="text-[10px] text-white/30">Coach Yoga</div>
+              </div>
+            )}
           </div>
         </div>
       </div>

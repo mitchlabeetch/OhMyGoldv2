@@ -32,18 +32,18 @@ const CLASSES = [
 ];
 
 const BILLING = [
-  { date: "01 jan 2025", amount: "49,99 €", status: "Payé" },
-  { date: "01 déc 2024", amount: "49,99 €", status: "Payé" },
-  { date: "01 nov 2024", amount: "49,99 €", status: "Payé" },
+  { date: "01 jan 2026", amount: "47,63 €", status: "Payé" },
+  { date: "01 déc 2025", amount: "47,63 €", status: "Payé" },
+  { date: "01 nov 2025", amount: "47,63 €", status: "Payé" },
 ];
 
 const WEEKLY_ACTIVITY = [60, 80, 40, 90, 70, 50, 30];
 const WEEK_LABELS = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 
 const ACCESS_LOG = [
-  { date: "Aujourd'hui 09:02", location: "Paris 8e", icon: "✅" },
-  { date: "Hier 18:35", location: "Paris 8e", icon: "✅" },
-  { date: "Mer 07:28", location: "Lyon Part-Dieu", icon: "✅" },
+  { date: "Aujourd'hui 09:02", location: "Thiais (Belle Épine)", icon: "✅" },
+  { date: "Hier 18:35", location: "Thiais (Belle Épine)", icon: "✅" },
+  { date: "Mer 07:28", location: "Val d'Europe", icon: "✅" },
 ];
 
 const MONTHLY_BARS = [40, 70, 55, 80, 60, 30, 0, 75, 85, 50, 65, 90, 45, 70, 55, 80, 35, 60, 75, 45, 90, 55, 70, 40, 85, 60, 75, 50, 65, 80];
@@ -81,7 +81,7 @@ export default function MembreDemo() {
             <div className="bg-gradient-to-br from-gold-400/20 to-gold-600/5 rounded-2xl p-5 border border-gold-400/20">
               <div className="text-xs text-gold-400 font-semibold mb-1">Bonjour 👋</div>
               <h2 className="text-xl font-black text-white">Marie Laurent</h2>
-              <p className="text-sm text-white/50 mt-1">Membre Premium · Paris 8e</p>
+              <p className="text-sm text-white/50 mt-1">Membre Premium · Thiais (Belle Épine)</p>
               <div className="flex items-center gap-4 mt-4">
                 <div>
                   <div className="text-lg font-black text-gold-400">42</div>
@@ -243,10 +243,7 @@ export default function MembreDemo() {
               <div className="absolute top-0 right-0 w-48 h-48 rounded-full bg-gold-400/5 -translate-y-1/2 translate-x-1/2" />
               <div className="relative">
                 <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center gap-2">
-                    <Zap className="w-5 h-5 text-gold-400" fill="#FBBF24" />
-                    <span className="font-black text-sm text-gold-400">OhMyGold</span>
-                  </div>
+                  <img src="/assets/logos/golds-gym-logo-primary-small.png" alt="Gold's Gym France logo" className="h-7 object-contain" />
                   <span className="text-xs text-gold-300/70 bg-gold-400/10 px-2 py-0.5 rounded-full font-semibold">PREMIUM</span>
                 </div>
 
@@ -264,7 +261,7 @@ export default function MembreDemo() {
 
                 <div className="text-center mb-4">
                   <div className="text-base font-black text-white">Marie Laurent</div>
-                  <div className="text-xs text-white/50 mt-1">#ML-1842 · Paris 8e</div>
+                  <div className="text-xs text-white/50 mt-1">#ML-1355 · Thiais (Belle Épine)</div>
                 </div>
 
                 <button
@@ -283,8 +280,8 @@ export default function MembreDemo() {
                 {[
                   { label: "Plan", value: "Premium" },
                   { label: "Statut", value: "Actif" },
-                  { label: "Valide jusqu'au", value: "31 jan 2025" },
-                  { label: "Accès", value: "Multi-clubs" },
+                  { label: "Valide jusqu'au", value: "31 jan 2026" },
+                  { label: "Accès", value: "2 clubs France" },
                 ].map((info) => (
                   <div key={info.label}>
                     <div className="text-[10px] text-white/30">{info.label}</div>
@@ -322,10 +319,11 @@ export default function MembreDemo() {
                 <span className="text-sm font-black text-gold-400">PREMIUM</span>
                 <span className="text-xs bg-green-400/10 text-green-400 px-2 py-0.5 rounded-full font-semibold">Actif</span>
               </div>
-              <div className="text-2xl font-black text-white mb-1">49,99 €<span className="text-sm font-normal text-white/40">/mois</span></div>
-              <div className="text-xs text-white/40">Renouvellement le 1er février 2025</div>
+              <div className="text-2xl font-black text-white mb-1">47,63 €<span className="text-sm font-normal text-white/40">/mois</span></div>
+              <div className="text-xs text-gold-400/60 mb-1">10,99 € / semaine · sans engagement</div>
+              <div className="text-xs text-white/40">Renouvellement le 1er février 2026</div>
               <div className="mt-3 space-y-1.5">
-                {["Accès illimité", "Multi-clubs", "Cours collectifs inclus", "Application mobile", "Suivi personnalisé"].map((feat) => (
+                {["Accès illimité 2 clubs (Thiais & Val d'Europe)", "Cours Hyrox & MMA inclus", "Carte partageable (1 foyer)", "Hydromassage & Sportwatter", "Application mobile & suivi", "10% boutique Gold's Shop"].map((feat) => (
                   <div key={feat} className="flex items-center gap-2">
                     <CheckCircle className="w-3.5 h-3.5 text-green-400 flex-shrink-0" />
                     <span className="text-xs text-white/70">{feat}</span>

@@ -6,7 +6,6 @@ import {
   Search,
   CheckCircle,
   X,
-  Zap,
   Plus,
   Minus,
   AlertTriangle,
@@ -20,27 +19,34 @@ const TABS = [
 ];
 
 const RECENT_CHECKINS = [
-  { name: "Marie Laurent", plan: "Premium", planColor: "bg-gold-400/20 text-gold-400", time: "14:32", initials: "ML", color: "bg-purple-500", expiry: "31 jan 2025", sessionsMonth: 8 },
-  { name: "Paul Marchetti", plan: "Élite", planColor: "bg-purple-400/20 text-purple-400", time: "14:28", initials: "PM", color: "bg-blue-500", expiry: "28 fév 2025", sessionsMonth: 14 },
-  { name: "Isabelle Renard", plan: "Essentiel", planColor: "bg-white/10 text-white/60", time: "14:15", initials: "IR", color: "bg-pink-500", expiry: "31 jan 2025", sessionsMonth: 5 },
-  { name: "Christophe Girard", plan: "Premium", planColor: "bg-gold-400/20 text-gold-400", time: "14:02", initials: "CG", color: "bg-green-500", expiry: "31 mars 2025", sessionsMonth: 11 },
-  { name: "Nathalie Blanc", plan: "Essentiel", planColor: "bg-white/10 text-white/60", time: "13:55", initials: "NB", color: "bg-orange-500", expiry: "31 jan 2025", sessionsMonth: 3 },
-  { name: "Julien Fabre", plan: "Premium", planColor: "bg-gold-400/20 text-gold-400", time: "13:42", initials: "JF", color: "bg-teal-500", expiry: "28 fév 2025", sessionsMonth: 9 },
-  { name: "Amina Diallo", plan: "Élite", planColor: "bg-purple-400/20 text-purple-400", time: "13:30", initials: "AD", color: "bg-indigo-500", expiry: "31 mars 2025", sessionsMonth: 18 },
-  { name: "Pierre Morel", plan: "Essentiel", planColor: "bg-white/10 text-white/60", time: "13:18", initials: "PM2", color: "bg-red-500", expiry: "15 jan 2025", sessionsMonth: 2 },
-  { name: "Claire Vidal", plan: "Premium", planColor: "bg-gold-400/20 text-gold-400", time: "13:05", initials: "CV", color: "bg-cyan-500", expiry: "28 fév 2025", sessionsMonth: 7 },
-  { name: "Samuel Torres", plan: "Élite", planColor: "bg-purple-400/20 text-purple-400", time: "12:50", initials: "ST", color: "bg-yellow-500", expiry: "31 mars 2025", sessionsMonth: 22 },
+  { name: "Marie Laurent", plan: "Premium", planColor: "bg-gold-400/20 text-gold-400", time: "14:32", initials: "ML", color: "bg-purple-500", expiry: "31 jan 2026", sessionsMonth: 8 },
+  { name: "Paul Marchetti", plan: "Flex", planColor: "bg-blue-400/20 text-blue-400", time: "14:28", initials: "PM", color: "bg-blue-500", expiry: "28 fév 2026", sessionsMonth: 14 },
+  { name: "Isabelle Renard", plan: "Basic", planColor: "bg-white/10 text-white/60", time: "14:15", initials: "IR", color: "bg-pink-500", expiry: "31 jan 2026", sessionsMonth: 5 },
+  { name: "Christophe Girard", plan: "Premium", planColor: "bg-gold-400/20 text-gold-400", time: "14:02", initials: "CG", color: "bg-green-500", expiry: "31 mars 2026", sessionsMonth: 11 },
+  { name: "Nathalie Blanc", plan: "Basic", planColor: "bg-white/10 text-white/60", time: "13:55", initials: "NB", color: "bg-orange-500", expiry: "31 jan 2026", sessionsMonth: 3 },
+  { name: "Julien Fabre", plan: "Premium", planColor: "bg-gold-400/20 text-gold-400", time: "13:42", initials: "JF", color: "bg-teal-500", expiry: "28 fév 2026", sessionsMonth: 9 },
+  { name: "Amina Diallo", plan: "Flex", planColor: "bg-blue-400/20 text-blue-400", time: "13:30", initials: "AD", color: "bg-indigo-500", expiry: "31 mars 2026", sessionsMonth: 18 },
+  { name: "Pierre Morel", plan: "Basic", planColor: "bg-white/10 text-white/60", time: "13:18", initials: "PM2", color: "bg-red-500", expiry: "15 jan 2026", sessionsMonth: 2 },
+  { name: "Claire Vidal", plan: "Premium", planColor: "bg-gold-400/20 text-gold-400", time: "13:05", initials: "CV", color: "bg-cyan-500", expiry: "28 fév 2026", sessionsMonth: 7 },
+  { name: "Samuel Torres", plan: "Flex", planColor: "bg-blue-400/20 text-blue-400", time: "12:50", initials: "ST", color: "bg-yellow-500", expiry: "31 mars 2026", sessionsMonth: 22 },
 ];
 
 const PRODUCTS = [
-  { id: 1, name: "Whey Protéine", category: "Suppléments", price: 39.99, emoji: "💪" },
-  { id: 2, name: "BCAA", category: "Suppléments", price: 24.99, emoji: "⚡" },
-  { id: 3, name: "Créatine", category: "Suppléments", price: 29.99, emoji: "🔥" },
-  { id: 4, name: "Eau 1.5L", category: "Boissons", price: 1.50, emoji: "💧" },
-  { id: 5, name: "Boisson Énergisante", category: "Boissons", price: 3.50, emoji: "🥤" },
-  { id: 6, name: "Shaker", category: "Équipement", price: 12.99, emoji: "🧴" },
-  { id: 7, name: "Gants Musculation", category: "Équipement", price: 19.99, emoji: "🧤" },
-  { id: 8, name: "Serviette", category: "Équipement", price: 8.99, emoji: "🏋️" },
+  // Fuel Bar — Gold's Gym signature smoothies
+  { id: 1, name: "Golden Classic", category: "Fuel Bar", price: 7.50, emoji: "🍌" },
+  { id: 2, name: "Power Berry", category: "Fuel Bar", price: 7.50, emoji: "🍓" },
+  { id: 3, name: "Golden Colada", category: "Fuel Bar", price: 7.50, emoji: "🥥" },
+  { id: 4, name: "Smoothie du mois", category: "Fuel Bar", price: 7.50, emoji: "⭐" },
+  // Gold's Shop
+  { id: 5, name: "Whey Protéine", category: "Gold's Shop", price: 39.99, emoji: "💪" },
+  { id: 6, name: "BCAA", category: "Gold's Shop", price: 24.99, emoji: "⚡" },
+  { id: 7, name: "Créatine", category: "Gold's Shop", price: 29.99, emoji: "🔥" },
+  { id: 8, name: "Gants Musculation", category: "Gold's Shop", price: 19.99, emoji: "🧤" },
+  { id: 9, name: "Serviette Gold's", category: "Gold's Shop", price: 14.99, emoji: "🏋️" },
+  // Boissons
+  { id: 10, name: "Sportwatter (Flex/Premium)", category: "Boissons", price: 0, emoji: "💧" },
+  { id: 11, name: "Eau 1.5L", category: "Boissons", price: 1.50, emoji: "🫗" },
+  { id: 12, name: "Boisson Énergisante", category: "Boissons", price: 3.50, emoji: "🥤" },
 ];
 
 const RESERVATIONS = [
@@ -134,12 +140,9 @@ export default function ReceptionnisteDemo() {
       {/* Topbar */}
       <div className="h-14 border-b border-white/5 flex items-center justify-between px-6 flex-shrink-0 bg-[#111111]">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-gold-400 flex items-center justify-center">
-            <Zap className="w-4 h-4 text-black" fill="black" />
-          </div>
-          <span className="font-black text-sm">Oh<span className="text-gold-400">My</span>Gold</span>
+          <img src="/assets/logos/golds-gym-logo-primary-small.png" alt="Gold's Gym France logo" className="h-6 object-contain" />
         </div>
-        <div className="text-xs text-white/30">Réception · Paris 8e · 14:35</div>
+        <div className="text-xs text-white/30">Réception · Thiais (Belle Épine) · 14:35</div>
         <div className="flex items-center gap-2 text-xs text-white/40">
           <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
           En ligne
@@ -294,8 +297,8 @@ export default function ReceptionnisteDemo() {
             {/* Products */}
             <div className="flex-1">
               {/* Category filters */}
-              <div className="flex gap-2 mb-4">
-                {["Tous", "Suppléments", "Boissons", "Équipement"].map((cat) => (
+              <div className="flex gap-2 mb-4 flex-wrap">
+                {["Tous", "Fuel Bar", "Gold's Shop", "Boissons"].map((cat) => (
                   <button
                     key={cat}
                     onClick={() => setProductCategory(cat)}
