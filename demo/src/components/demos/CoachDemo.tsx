@@ -97,6 +97,7 @@ export default function CoachDemo() {
                 key={item.id}
                 onClick={() => setActiveNav(item.id)}
                 title={sidebarCollapsed ? item.label : undefined}
+                aria-label={sidebarCollapsed ? item.label : undefined}
                 className={`w-full flex items-center gap-3 px-2 py-2 rounded-lg text-sm font-medium transition-all ${
                   active ? "bg-gold-400/15 text-gold-400" : "text-white/40 hover:text-white hover:bg-white/5"
                 } ${sidebarCollapsed ? "justify-center" : ""}`}
