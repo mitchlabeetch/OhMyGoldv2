@@ -42,13 +42,17 @@ export const neutral = {
   900: "#171717",
 } as const;
 
-/** Role accent colors */
+/** Role accent colors — aligned to DESIGN.MD §2.5 */
 export const role = {
-  superAdmin: "#9333EA",
+  superAdmin: "#9333EA", // legacy alias — kept for backward compat
   admin: "#EF4444",
+  manager: "#3B82F6",   // new roadmap role (blue)
   coach: "#10B981",
+  teacher: "#10B981",   // new roadmap alias for coach (green)
   receptionist: "#F59E0B",
+  employee: "#F59E0B",  // new roadmap alias for receptionist (amber)
   member: "#FFEC00",
+  client: "#FFEC00",    // new roadmap alias for member (brand gold)
   visitor: "#A855F7",
 } as const;
 

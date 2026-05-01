@@ -110,13 +110,40 @@ serve(async (req) => {
     // POST /subscriptions/:id?action=upgrade
     if (req.method === "POST" && subId && action === "upgrade") {
       requireRole(user.role, ["admin", "manager"]);
-      const { new_plan_id, reason, prorated_amount } = await req.json();
+      const { new_plan_id, reason } = await req.json();
 
-      const { data: current } = await supabase
+      // Fetch current subscription + both plan prices for server-side proration
+      const { data: current, error: subErr } = await supabase
         .from("subscriptions")
-        .select("plan_id")
+        .select("plan_id, current_period_start, current_period_end")
         .eq("id", subId)
         .single();
+      if (subErr || !current) throw subErr ?? new Error("Subscription not found");
+
+      // Fetch old and new plan monthly prices (price_cents per billing cycle)
+      const [{ data: oldPlan, error: oldPlanErr }, { data: newPlan, error: newPlanErr }] = await Promise.all([
+        supabase.from("membership_plans").select("price_cents, contract_type, duration_days").eq("id", current.plan_id).single(),
+        supabase.from("membership_plans").select("price_cents, contract_type, duration_days").eq("id", new_plan_id).single(),
+      ]);
+      if (oldPlanErr || !oldPlan) throw oldPlanErr ?? new Error("Old plan not found");
+      if (newPlanErr || !newPlan) throw newPlanErr ?? new Error("New plan not found");
+
+      // Server-side proration: (new_price - old_price) * (days_remaining / days_in_cycle)
+      // Use start_date / next_billing_date from the subscription as the billing cycle window.
+      let prorated_amount = 0;
+      if (oldPlan && newPlan) {
+        const now = Date.now();
+        const periodStart = current.start_date ? new Date(current.start_date).getTime() : now;
+        const periodEnd = current.next_billing_date
+          ? new Date(current.next_billing_date).getTime()
+          : periodStart + (oldPlan.duration_days ?? 30) * 86_400_000;
+        const daysInCycle = Math.max(1, Math.round((periodEnd - periodStart) / 86_400_000));
+        const daysRemaining = Math.max(0, Math.round((periodEnd - now) / 86_400_000));
+        const oldCents = oldPlan.price_cents;
+        const newCents = newPlan.price_cents;
+        // prorated_amount is stored as NUMERIC(10,2) euros → divide cents by 100
+        prorated_amount = Math.round((newCents - oldCents) * (daysRemaining / daysInCycle)) / 100;
+      }
 
       const { data, error } = await supabase
         .from("subscriptions")
@@ -129,7 +156,7 @@ serve(async (req) => {
       await supabase.from("subscription_events").insert({
         subscription_id: subId,
         event_type: "upgraded",
-        old_plan_id: current?.plan_id,
+        old_plan_id: current.plan_id,
         new_plan_id,
         reason,
         prorated_amount,
@@ -137,7 +164,7 @@ serve(async (req) => {
         effective_date: new Date().toISOString().split("T")[0],
       });
 
-      return json(data);
+      return json({ ...data, prorated_amount });
     }
 
     // POST /subscriptions/:id?action=cancel

@@ -1,0 +1,43 @@
+{
+  "title": "Facturation",
+  "invoices": "Factures",
+  "payments": "Paiements",
+  "subscription": "Abonnement",
+  "history": "Historique",
+  "invoice": {
+    "number": "N° {{number}}",
+    "date": "Date",
+    "dueDate": "Échéance",
+    "amount": "Montant",
+    "status": "Statut",
+    "download": "Télécharger",
+    "paid": "Payé",
+    "pending": "En attente",
+    "overdue": "En retard",
+    "cancelled": "Annulé"
+  },
+  "payment": {
+    "method": "Mode de paiement",
+    "card": "Carte bancaire",
+    "cash": "Espèces",
+    "transfer": "Virement",
+    "sepa": "Prélèvement SEPA",
+    "amount": "Montant",
+    "date": "Date",
+    "reference": "Référence"
+  },
+  "subscription": {
+    "plan": "Formule",
+    "price": "Tarif",
+    "billing": "Facturation",
+    "monthly": "Mensuelle",
+    "annual": "Annuelle",
+    "nextBilling": "Prochain prélèvement",
+    "freeze": "Geler",
+    "unfreeze": "Dégeler",
+    "upgrade": "Changer de formule",
+    "cancel": "Résilier"
+  },
+  "empty": "Aucune transaction.",
+  "errorLoad": "Impossible de charger la facturation."
+}

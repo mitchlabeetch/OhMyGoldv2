@@ -1,0 +1,55 @@
+{
+  "title": "Cours",
+  "schedule": "Planning",
+  "book": "Réserver",
+  "cancel": "Annuler la réservation",
+  "booked": "Réservé",
+  "full": "Complet",
+  "waitlist": "Liste d'attente",
+  "waitlistPosition": "Position : {{position}}",
+  "spots": "{{count}} place disponible",
+  "spots_other": "{{count}} places disponibles",
+  "fields": {
+    "name": "Nom du cours",
+    "description": "Description",
+    "category": "Catégorie",
+    "instructor": "Instructeur",
+    "room": "Salle",
+    "startTime": "Heure de début",
+    "duration": "Durée (min)",
+    "maxCapacity": "Capacité maximale",
+    "intensity": "Intensité"
+  },
+  "categories": {
+    "cardio": "Cardio",
+    "strength": "Musculation",
+    "yoga": "Yoga",
+    "pilates": "Pilates",
+    "combat": "Combat",
+    "dance": "Danse",
+    "cycling": "Cycling",
+    "aqua": "Aquagym",
+    "hiit": "HIIT",
+    "other": "Autre"
+  },
+  "intensity": {
+    "low": "Faible",
+    "medium": "Moyenne",
+    "high": "Élevée",
+    "extreme": "Extrême"
+  },
+  "status": {
+    "scheduled": "Planifié",
+    "cancelled": "Annulé",
+    "completed": "Terminé",
+    "draft": "Brouillon"
+  },
+  "empty": "Aucun cours disponible.",
+  "errorLoad": "Impossible de charger les cours.",
+  "booking": {
+    "success": "Votre réservation a été confirmée.",
+    "cancelled": "Réservation annulée.",
+    "waitlisted": "Vous êtes sur liste d'attente.",
+    "promoted": "Vous avez été promu(e) de la liste d'attente !"
+  }
+}
