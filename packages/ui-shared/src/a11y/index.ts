@@ -1,5 +1,5 @@
 export { VisuallyHidden } from "./VisuallyHidden";
-export type { } from "./VisuallyHidden";
+export type { VisuallyHiddenProps } from "./VisuallyHidden";
 
 export { LiveRegion } from "./LiveRegion";
 export type { LiveRegionProps } from "./LiveRegion";

@@ -120,24 +120,29 @@ serve(async (req) => {
         .single();
       if (subErr || !current) throw subErr ?? new Error("Subscription not found");
 
-      // Fetch old and new plan monthly prices (price_cents per month)
-      const [{ data: oldPlan }, { data: newPlan }] = await Promise.all([
-        supabase.from("membership_plans").select("price_cents, billing_interval").eq("id", current.plan_id).single(),
-        supabase.from("membership_plans").select("price_cents, billing_interval").eq("id", new_plan_id).single(),
+      // Fetch old and new plan monthly prices (price_cents per billing cycle)
+      const [{ data: oldPlan, error: oldPlanErr }, { data: newPlan, error: newPlanErr }] = await Promise.all([
+        supabase.from("membership_plans").select("price_cents, contract_type, duration_days").eq("id", current.plan_id).single(),
+        supabase.from("membership_plans").select("price_cents, contract_type, duration_days").eq("id", new_plan_id).single(),
       ]);
+      if (oldPlanErr || !oldPlan) throw oldPlanErr ?? new Error("Old plan not found");
+      if (newPlanErr || !newPlan) throw newPlanErr ?? new Error("New plan not found");
 
       // Server-side proration: (new_price - old_price) * (days_remaining / days_in_cycle)
+      // Use start_date / next_billing_date from the subscription as the billing cycle window.
       let prorated_amount = 0;
-      if (oldPlan && newPlan && current.current_period_start && current.current_period_end) {
+      if (oldPlan && newPlan) {
         const now = Date.now();
-        const periodStart = new Date(current.current_period_start).getTime();
-        const periodEnd = new Date(current.current_period_end).getTime();
+        const periodStart = current.start_date ? new Date(current.start_date).getTime() : now;
+        const periodEnd = current.next_billing_date
+          ? new Date(current.next_billing_date).getTime()
+          : periodStart + (oldPlan.duration_days ?? 30) * 86_400_000;
         const daysInCycle = Math.max(1, Math.round((periodEnd - periodStart) / 86_400_000));
         const daysRemaining = Math.max(0, Math.round((periodEnd - now) / 86_400_000));
-        const oldMonthly = oldPlan.price_cents;
-        const newMonthly = newPlan.price_cents;
-        // Proration in cents, rounded to nearest cent
-        prorated_amount = Math.round((newMonthly - oldMonthly) * (daysRemaining / daysInCycle));
+        const oldCents = oldPlan.price_cents;
+        const newCents = newPlan.price_cents;
+        // prorated_amount is stored as NUMERIC(10,2) euros → divide cents by 100
+        prorated_amount = Math.round((newCents - oldCents) * (daysRemaining / daysInCycle)) / 100;
       }
 
       const { data, error } = await supabase

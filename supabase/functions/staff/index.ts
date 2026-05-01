@@ -16,10 +16,13 @@ serve(async (req) => {
     const supabase = buildClient(req);
     const user = await requireAuth(supabase);
     const url = new URL(req.url);
-    const pathParts = url.pathname.replace(/^\/staff\/?/, "").split("/");
-    const staffId = pathParts[0] || null;
-    const subResource = pathParts[1] || null; // "certifications"
-    const subId = pathParts[2] || null;
+    // Use segment scanning so the function works under both
+    // /staff/... and /functions/v1/staff/... Supabase invocation paths.
+    const parts = url.pathname.split("/").filter(Boolean);
+    const staffIdx = parts.indexOf("staff");
+    const staffId = staffIdx !== -1 && parts[staffIdx + 1] ? parts[staffIdx + 1] : null;
+    const subResource = staffId && parts[staffIdx + 2] ? parts[staffIdx + 2] : null; // "certifications"
+    const subId = subResource && parts[staffIdx + 3] ? parts[staffIdx + 3] : null;
 
     // ---- Staff members ----
 

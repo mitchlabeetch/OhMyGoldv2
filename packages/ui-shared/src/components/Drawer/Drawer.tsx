@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useId } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -25,6 +25,7 @@ export function Drawer({
   size = "md",
 }: DrawerProps) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const titleId = useId();
 
   // ESC to close
   useEffect(() => {
@@ -80,7 +81,7 @@ export function Drawer({
           ].join(" ")}
           role="dialog"
           aria-modal="true"
-          aria-labelledby={title ? "drawer-title" : undefined}
+          aria-labelledby={title ? titleId : undefined}
         >
           {/* Backdrop */}
           <motion.div
@@ -111,7 +112,7 @@ export function Drawer({
             {/* Header */}
             <div className="flex items-center justify-between p-5 border-b border-border shrink-0">
               {title ? (
-                <h2 id="drawer-title" className="text-lg font-semibold text-white">
+                <h2 id={titleId} className="text-lg font-semibold text-white">
                   {title}
                 </h2>
               ) : (

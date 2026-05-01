@@ -1,6 +1,6 @@
 import React from "react";
 
-type VisuallyHiddenProps<T extends React.ElementType = "span"> = {
+export type VisuallyHiddenProps<T extends React.ElementType = "span"> = {
   as?: T;
   children: React.ReactNode;
 } & Omit<React.ComponentPropsWithoutRef<T>, "as" | "children">;

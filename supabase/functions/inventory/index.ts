@@ -15,23 +15,24 @@ serve(async (req) => {
     const supabase = buildClient(req);
     const user = await requireAuth(supabase);
     const url = new URL(req.url);
-    // Path: /inventory, /inventory/transaction, /inventory/transactions,
-    //        /inventory/suppliers, /inventory/suppliers/:id
-    //        /inventory/purchase-orders, /inventory/purchase-orders/:id
-    //        /inventory/low-stock
-    const pathSuffix = url.pathname.replace(/^\/inventory\/?/, "");
-    const segments = pathSuffix.split("/").filter(Boolean);
-    const resource = segments[0] ?? null; // "transaction", "transactions", "suppliers", etc.
-    const resourceId = segments[1] ?? null;
 
-    // GET /inventory — list products with stock info
+    // Segment scanning so the function works under both
+    // /inventory/... and /functions/v1/inventory/... paths.
+    const parts = url.pathname.split("/").filter(Boolean);
+    const invIdx = parts.indexOf("inventory");
+    const resource = invIdx !== -1 && parts[invIdx + 1] ? parts[invIdx + 1] : null;
+    const resourceId = resource && parts[invIdx + 2] ? parts[invIdx + 2] : null;
+
+    // GET /inventory — list products with stock info (admin/manager only)
     if (req.method === "GET" && !resource) {
+      requireRole(user.role, ["admin", "super_admin", "manager"]);
       const locationId = url.searchParams.get("location_id");
       const lowStockOnly = url.searchParams.get("low_stock_only") === "true";
 
+      // Use actual pos_products columns: price (NUMERIC), not unit_price_cents
       let query = supabase
         .from("pos_products")
-        .select("id, name, sku, barcode, stock_quantity, low_stock_threshold, unit_price_cents, is_active, category, location_id")
+        .select("id, name, sku, barcode, stock_quantity, low_stock_threshold, price, tax_rate, is_active, category, location_id")
         .eq("is_active", true)
         .order("name");
 
@@ -47,8 +48,9 @@ serve(async (req) => {
       return json(result);
     }
 
-    // GET /inventory/low-stock — convenience endpoint
+    // GET /inventory/low-stock — convenience low-stock alert endpoint
     if (req.method === "GET" && resource === "low-stock") {
+      requireRole(user.role, ["admin", "super_admin", "manager"]);
       const locationId = url.searchParams.get("location_id");
       let query = supabase
         .from("pos_products")
@@ -67,9 +69,10 @@ serve(async (req) => {
       return json(alerts);
     }
 
-    // POST /inventory/transaction — record a stock movement
+    // POST /inventory/transaction — record a stock movement (admin/manager only;
+    // RLS on pos_products restricts writes to admin/manager anyway)
     if (req.method === "POST" && resource === "transaction") {
-      requireRole(user.role, ["admin", "super_admin", "manager", "employee", "receptionist"]);
+      requireRole(user.role, ["admin", "super_admin", "manager"]);
       const {
         product_id,
         location_id,
@@ -85,7 +88,7 @@ serve(async (req) => {
         return errorResponse("product_id, location_id, transaction_type, quantity_change are required", 400);
       }
 
-      // Get current stock
+      // Read current stock before adjustment (for the ledger record)
       const { data: product, error: productErr } = await supabase
         .from("pos_products")
         .select("stock_quantity")
@@ -94,13 +97,22 @@ serve(async (req) => {
       if (productErr || !product) return errorResponse("Product not found", 404);
 
       const quantityBefore = product.stock_quantity ?? 0;
-      const quantityAfter = quantityBefore + quantity_change;
 
-      if (quantityAfter < 0) {
-        return errorResponse(`Insufficient stock. Available: ${quantityBefore}`, 400);
+      // Atomically adjust stock via an RPC that uses FOR UPDATE row-lock
+      const { data: newQty, error: adjustErr } = await supabase.rpc("adjust_stock_quantity", {
+        p_product_id: product_id,
+        p_delta: quantity_change,
+      });
+      if (adjustErr) {
+        if (adjustErr.message?.includes("Insufficient")) {
+          return errorResponse(adjustErr.message, 400);
+        }
+        throw adjustErr;
       }
 
-      // Insert transaction record (append-only ledger)
+      const quantityAfter = newQty as number;
+
+      // Append-only inventory ledger record
       const { data: txn, error: txnErr } = await supabase
         .from("inventory_transactions")
         .insert({
@@ -120,18 +132,12 @@ serve(async (req) => {
         .single();
       if (txnErr) throw txnErr;
 
-      // Update product stock
-      const { error: updateErr } = await supabase
-        .from("pos_products")
-        .update({ stock_quantity: quantityAfter })
-        .eq("id", product_id);
-      if (updateErr) throw updateErr;
-
       return json({ transaction: txn, new_stock_quantity: quantityAfter }, 201);
     }
 
     // GET /inventory/transactions — list inventory transactions
     if (req.method === "GET" && resource === "transactions") {
+      requireRole(user.role, ["admin", "super_admin", "manager"]);
       const productId = url.searchParams.get("product_id");
       const locationId = url.searchParams.get("location_id");
       const type = url.searchParams.get("transaction_type");
@@ -156,6 +162,7 @@ serve(async (req) => {
 
     // GET /inventory/suppliers
     if (req.method === "GET" && resource === "suppliers" && !resourceId) {
+      requireRole(user.role, ["admin", "super_admin", "manager"]);
       const { data, error } = await supabase
         .from("suppliers")
         .select("*")
@@ -239,7 +246,7 @@ serve(async (req) => {
   } catch (err) {
     console.error("[inventory]", err);
     const message = err instanceof Error ? err.message : "Internal server error";
-    const status = message === "Unauthorized" ? 401 : message.includes("not allowed") ? 403 : 500;
+    const status = message === "Unauthorized" ? 401 : message.includes("Forbidden") ? 403 : 500;
     return errorResponse(message, status);
   }
 });

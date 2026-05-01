@@ -3,11 +3,12 @@ import { corsHeaders } from "../_shared/cors.ts";
 import {
   buildClient,
   requireAuth,
-  requireRole,
   errorResponse,
   json,
   parseId,
 } from "../_shared/auth.ts";
+
+const STAFF_ROLES = ["admin", "super_admin", "manager", "employee", "receptionist", "teacher", "coach"];
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -17,16 +18,32 @@ serve(async (req) => {
     const user = await requireAuth(supabase);
     const url = new URL(req.url);
     const bookingId = parseId(url.pathname, "booking-atomic");
+    const isStaff = STAFF_ROLES.includes(user.role ?? "");
 
     // POST /booking-atomic — atomic class booking
     if (req.method === "POST" && !bookingId) {
-      const { class_id, member_id } = await req.json();
+      const body = await req.json();
+      const { class_id } = body;
 
-      if (!class_id || !member_id) {
-        return errorResponse("class_id and member_id are required", 400);
+      if (!class_id) {
+        return errorResponse("class_id is required", 400);
       }
 
-      // Call the atomic PostgreSQL function (handles locking + waitlist logic)
+      // Non-staff: derive member_id from the authenticated user's member record.
+      // Staff: may supply an explicit member_id to book on behalf of a member.
+      let member_id = isStaff ? (body.member_id ?? null) : null;
+
+      if (!isStaff || !member_id) {
+        const { data: member } = await supabase
+          .from("members")
+          .select("id")
+          .eq("profile_id", user.id)
+          .single();
+        if (!member) return errorResponse("No active member record found for this user", 404);
+        member_id = member.id;
+      }
+
+      // Authorization is also enforced inside the SQL function (SECURITY DEFINER)
       const { data, error } = await supabase.rpc("book_class_atomic", {
         p_class_id: class_id,
         p_member_id: member_id,
@@ -36,26 +53,27 @@ serve(async (req) => {
         if (error.message?.includes("already")) {
           return errorResponse("Member already has a booking for this class", 409);
         }
+        if (error.message?.includes("Unauthorized")) {
+          return errorResponse(error.message, 403);
+        }
         throw error;
       }
 
       return json(data);
     }
 
-    // GET /booking-atomic?class_id=X — get current user's booking for a class
+    // GET /booking-atomic?class_id=X — get caller's booking for a class
     if (req.method === "GET" && !bookingId) {
       const classId = url.searchParams.get("class_id");
       if (!classId) return errorResponse("class_id query param is required", 400);
 
-      // Staff can look up any member; non-staff can only see their own bookings
-      const isStaff = ["admin", "super_admin", "manager", "employee", "receptionist", "teacher", "coach"].includes(user.role ?? "");
       const memberId = url.searchParams.get("member_id");
 
       let query = supabase
         .from("bookings")
-        .select("*, gym_classes(id, name, start_time, instructor_id, max_capacity, current_bookings)")
+        .select("*, gym_classes(id, name, scheduled_at, coach_id, max_capacity, current_bookings)")
         .eq("class_id", classId)
-        .in("status", ["confirmed", "waitlisted", "held"]);
+        .in("status", ["booked", "waitlisted", "held"]);
 
       if (isStaff && memberId) {
         query = query.eq("member_id", memberId);
@@ -77,8 +95,6 @@ serve(async (req) => {
 
     // DELETE /booking-atomic/:bookingId — cancel a booking
     if (req.method === "DELETE" && bookingId) {
-      const isStaff = requireRole !== null && ["admin", "super_admin", "manager", "employee", "receptionist"].includes(user.role ?? "");
-
       // Fetch the booking to verify ownership
       const { data: booking, error: fetchErr } = await supabase
         .from("bookings")
@@ -96,7 +112,8 @@ serve(async (req) => {
         }
       }
 
-      if (!["confirmed", "waitlisted", "held"].includes(booking.status)) {
+      // Only active statuses may be cancelled
+      if (!["booked", "waitlisted", "held"].includes(booking.status)) {
         return errorResponse("Booking cannot be cancelled in its current state", 400);
       }
 
@@ -108,7 +125,7 @@ serve(async (req) => {
         .single();
       if (error) throw error;
 
-      // DB trigger (booking_cancel_trigger) will auto-promote next waitlisted member
+      // DB trigger (booking_cancel_trigger) auto-promotes next waitlisted member
       return json({ ...data, message: "Booking cancelled. Next waitlisted member will be notified." });
     }
 
@@ -116,7 +133,7 @@ serve(async (req) => {
   } catch (err) {
     console.error("[booking-atomic]", err);
     const message = err instanceof Error ? err.message : "Internal server error";
-    const status = message === "Unauthorized" ? 401 : 500;
+    const status = message === "Unauthorized" ? 401 : message.includes("Forbidden") ? 403 : 500;
     return errorResponse(message, status);
   }
 });

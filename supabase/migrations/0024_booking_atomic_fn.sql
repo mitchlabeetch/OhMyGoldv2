@@ -4,17 +4,73 @@
 -- ============================================================
 
 -- Add 'held' status to booking_status enum (for 24-hour hold)
+-- ADD VALUE IF NOT EXISTS is safe; we only catch the specific
+-- duplicate_object exception for older Postgres compatibility.
 DO $$
 BEGIN
   ALTER TYPE public.booking_status ADD VALUE IF NOT EXISTS 'held';
-EXCEPTION WHEN others THEN NULL;
+EXCEPTION WHEN duplicate_object THEN
+  -- 'held' already exists; safe to continue
+  NULL;
 END $$;
+
+-- ============================================================
+-- update_class_booking_count (replacement, held-aware)
+--
+-- Replaces the version in 0007_bookings.sql to correctly
+-- handle the 'held' status (promoted from waitlist, spot not
+-- yet counted in current_bookings until confirmed):
+--   • 'booked' INSERT           → increment
+--   • 'booked' → 'cancelled'   → decrement
+--   • 'held'   → 'booked'      → increment (confirmed hold)
+--   • 'held'   → 'cancelled'   → no-op (was never counted)
+--   • 'waitlisted' → anything  → no-op
+--   • 'cancelled'  → 'booked'  → increment (re-booking)
+-- ============================================================
+CREATE OR REPLACE FUNCTION public.update_class_booking_count()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  IF TG_OP = 'INSERT' AND NEW.status = 'booked' THEN
+    UPDATE public.gym_classes
+       SET current_bookings = current_bookings + 1
+     WHERE id = NEW.class_id;
+
+  ELSIF TG_OP = 'UPDATE' THEN
+    IF OLD.status = 'booked' AND NEW.status = 'cancelled' THEN
+      -- Confirmed seat cancelled → free the spot
+      UPDATE public.gym_classes
+         SET current_bookings = GREATEST(0, current_bookings - 1)
+       WHERE id = NEW.class_id;
+    ELSIF OLD.status IN ('held', 'cancelled') AND NEW.status = 'booked' THEN
+      -- Held slot confirmed, or cancelled booking reinstated
+      UPDATE public.gym_classes
+         SET current_bookings = current_bookings + 1
+       WHERE id = NEW.class_id;
+    END IF;
+    -- 'held' → 'cancelled': no-op (slot was never counted)
+    -- 'waitlisted' → anything: no-op
+
+  ELSIF TG_OP = 'DELETE' AND OLD.status = 'booked' THEN
+    UPDATE public.gym_classes
+       SET current_bookings = GREATEST(0, current_bookings - 1)
+     WHERE id = OLD.class_id;
+  END IF;
+
+  RETURN COALESCE(NEW, OLD);
+END;
+$$;
 
 -- ============================================================
 -- book_class_atomic(p_class_id, p_member_id) → jsonb
 --
--- Row-locks the class record to prevent race conditions.
--- Returns: { status: 'confirmed'|'waitlisted', booking_id, waitlist_position }
+-- SECURITY DEFINER: runs with definer privileges to bypass RLS
+-- during row-lock. Enforces authorization explicitly:
+--   • Staff roles may book on behalf of any member.
+--   • Non-staff callers must be the member themselves AND the
+--     membership must be active.
+-- Returns: { status: 'booked'|'waitlisted', booking_id, waitlist_position }
 -- ============================================================
 CREATE OR REPLACE FUNCTION public.book_class_atomic(
   p_class_id  uuid,
@@ -26,12 +82,33 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
 DECLARE
+  v_caller_uid      uuid := auth.uid();
+  v_is_staff        boolean := false;
   v_class           record;
   v_existing        uuid;
   v_booking_id      uuid;
   v_waitlist_pos    int;
   v_status          text;
 BEGIN
+  -- ---- Authorization check ----
+  SELECT (role IN ('admin', 'super_admin', 'manager', 'coach', 'employee', 'receptionist'))
+    INTO v_is_staff
+    FROM public.user_profiles
+   WHERE id = v_caller_uid;
+
+  IF NOT COALESCE(v_is_staff, false) THEN
+    -- Non-staff: must be booking for their own active member record
+    PERFORM 1
+      FROM public.members
+     WHERE id               = p_member_id
+       AND profile_id       = v_caller_uid
+       AND membership_status = 'active';
+
+    IF NOT FOUND THEN
+      RAISE EXCEPTION 'Unauthorized: cannot book for this member or membership is not active';
+    END IF;
+  END IF;
+
   -- Lock the class row to prevent concurrent overbooking
   SELECT id, max_capacity, current_bookings, status
     INTO v_class
@@ -47,12 +124,12 @@ BEGIN
     RAISE EXCEPTION 'Class has been cancelled';
   END IF;
 
-  -- Check if member already has an active booking
+  -- Check for duplicate active booking
   SELECT id INTO v_existing
     FROM public.bookings
    WHERE class_id  = p_class_id
      AND member_id = p_member_id
-     AND status IN ('confirmed', 'waitlisted', 'held');
+     AND status IN ('booked', 'waitlisted', 'held');
 
   IF FOUND THEN
     RAISE EXCEPTION 'Member already has an active booking for this class';
@@ -60,23 +137,18 @@ BEGIN
 
   IF v_class.current_bookings < v_class.max_capacity THEN
     -- ---- Confirmed booking ----
-    v_status := 'confirmed';
+    -- trg_booking_count will increment current_bookings on INSERT
+    v_status := 'booked';
 
     INSERT INTO public.bookings (class_id, member_id, status)
-    VALUES (p_class_id, p_member_id, 'confirmed')
+    VALUES (p_class_id, p_member_id, 'booked')
     RETURNING id INTO v_booking_id;
-
-    -- Increment booking counter
-    UPDATE public.gym_classes
-       SET current_bookings = current_bookings + 1
-     WHERE id = p_class_id;
 
     v_waitlist_pos := NULL;
   ELSE
     -- ---- Waitlisted booking ----
     v_status := 'waitlisted';
 
-    -- Calculate next waitlist position
     SELECT COALESCE(MAX(waitlist_position), 0) + 1
       INTO v_waitlist_pos
       FROM public.bookings
@@ -101,9 +173,9 @@ GRANT EXECUTE ON FUNCTION public.book_class_atomic(uuid, uuid) TO authenticated;
 -- ============================================================
 -- promote_next_waitlisted(p_class_id) → void
 --
--- Finds the next waitlisted booking (lowest position),
--- sets it to 'held' for 24 hours, and records the promotion.
--- Called automatically by the booking_cancel_trigger below.
+-- Finds the next waitlisted booking (lowest position) and
+-- sets it to 'held' for 24 hours with an audit record.
+-- SKIP LOCKED prevents parallel promotion races.
 -- ============================================================
 CREATE OR REPLACE FUNCTION public.promote_next_waitlisted(p_class_id uuid)
 RETURNS void
@@ -115,7 +187,6 @@ DECLARE
   v_next_booking record;
   v_hold_until   timestamptz;
 BEGIN
-  -- Find the next waitlisted booking (SKIP LOCKED prevents race conditions)
   SELECT b.id, b.member_id
     INTO v_next_booking
     FROM public.bookings b
@@ -125,57 +196,47 @@ BEGIN
    LIMIT 1
      FOR UPDATE SKIP LOCKED;
 
-  -- No one on waitlist — nothing to do
   IF NOT FOUND THEN
     RETURN;
   END IF;
 
   v_hold_until := now() + interval '24 hours';
 
-  -- Promote to 'held' with a 24-hour confirmation window
+  -- Promote to 'held' — note: current_bookings is NOT incremented here;
+  -- it increments only when the member confirms ('held' → 'booked').
   UPDATE public.bookings
      SET status            = 'held',
          waitlist_position = NULL
    WHERE id = v_next_booking.id;
 
-  -- Insert waitlist_promotions audit record
   INSERT INTO public.waitlist_promotions (
-    booking_id,
-    class_id,
-    member_id,
-    promoted_at,
-    held_until,
-    promotion_method,
-    status
+    booking_id, class_id, member_id, promoted_at, held_until,
+    promotion_method, status
   )
   VALUES (
-    v_next_booking.id,
-    p_class_id,
-    v_next_booking.member_id,
-    now(),
-    v_hold_until,
-    'auto',
-    'pending_confirmation'
+    v_next_booking.id, p_class_id, v_next_booking.member_id,
+    now(), v_hold_until, 'auto', 'pending_confirmation'
   );
 
-  -- Decrement remaining waitlist positions for all entries below
+  -- Compact remaining waitlist positions
   UPDATE public.bookings
      SET waitlist_position = waitlist_position - 1
    WHERE class_id          = p_class_id
      AND status            = 'waitlisted'
      AND waitlist_position IS NOT NULL;
-
 END;
 $$;
 
 GRANT EXECUTE ON FUNCTION public.promote_next_waitlisted(uuid) TO authenticated;
 
 -- ============================================================
--- trigger_promote_on_cancel() — trigger function
+-- trigger_promote_on_cancel()
 --
 -- Fires AFTER UPDATE OF status ON bookings.
--- When a confirmed/held booking is cancelled, promotes next
--- waitlisted member and frees one confirmed slot.
+-- When a 'booked' booking is cancelled, promotes the next
+-- waitlisted member to 'held'.
+-- Counter management is fully delegated to trg_booking_count
+-- (update_class_booking_count) — no manual counter update here.
 -- ============================================================
 CREATE OR REPLACE FUNCTION public.trigger_promote_on_cancel()
 RETURNS trigger
@@ -184,13 +245,8 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
 BEGIN
-  IF OLD.status IN ('confirmed', 'held') AND NEW.status = 'cancelled' THEN
-    -- Free up one spot on the class
-    UPDATE public.gym_classes
-       SET current_bookings = GREATEST(0, current_bookings - 1)
-     WHERE id = NEW.class_id;
-
-    -- Promote next person on waitlist
+  -- Only promote when a real confirmed seat is freed
+  IF OLD.status = 'booked' AND NEW.status = 'cancelled' THEN
     PERFORM public.promote_next_waitlisted(NEW.class_id);
   END IF;
   RETURN NEW;
