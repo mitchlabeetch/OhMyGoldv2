@@ -19,3 +19,4 @@ export * from "./useCRM";
 export * from "./useAnalytics";
 export * from "./useStaff";
 export * from "./useAccess";
+export * from "./useInventory";

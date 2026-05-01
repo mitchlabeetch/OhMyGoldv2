@@ -110,13 +110,35 @@ serve(async (req) => {
     // POST /subscriptions/:id?action=upgrade
     if (req.method === "POST" && subId && action === "upgrade") {
       requireRole(user.role, ["admin", "manager"]);
-      const { new_plan_id, reason, prorated_amount } = await req.json();
+      const { new_plan_id, reason } = await req.json();
 
-      const { data: current } = await supabase
+      // Fetch current subscription + both plan prices for server-side proration
+      const { data: current, error: subErr } = await supabase
         .from("subscriptions")
-        .select("plan_id")
+        .select("plan_id, current_period_start, current_period_end")
         .eq("id", subId)
         .single();
+      if (subErr || !current) throw subErr ?? new Error("Subscription not found");
+
+      // Fetch old and new plan monthly prices (price_cents per month)
+      const [{ data: oldPlan }, { data: newPlan }] = await Promise.all([
+        supabase.from("membership_plans").select("price_cents, billing_interval").eq("id", current.plan_id).single(),
+        supabase.from("membership_plans").select("price_cents, billing_interval").eq("id", new_plan_id).single(),
+      ]);
+
+      // Server-side proration: (new_price - old_price) * (days_remaining / days_in_cycle)
+      let prorated_amount = 0;
+      if (oldPlan && newPlan && current.current_period_start && current.current_period_end) {
+        const now = Date.now();
+        const periodStart = new Date(current.current_period_start).getTime();
+        const periodEnd = new Date(current.current_period_end).getTime();
+        const daysInCycle = Math.max(1, Math.round((periodEnd - periodStart) / 86_400_000));
+        const daysRemaining = Math.max(0, Math.round((periodEnd - now) / 86_400_000));
+        const oldMonthly = oldPlan.price_cents;
+        const newMonthly = newPlan.price_cents;
+        // Proration in cents, rounded to nearest cent
+        prorated_amount = Math.round((newMonthly - oldMonthly) * (daysRemaining / daysInCycle));
+      }
 
       const { data, error } = await supabase
         .from("subscriptions")
@@ -129,7 +151,7 @@ serve(async (req) => {
       await supabase.from("subscription_events").insert({
         subscription_id: subId,
         event_type: "upgraded",
-        old_plan_id: current?.plan_id,
+        old_plan_id: current.plan_id,
         new_plan_id,
         reason,
         prorated_amount,
@@ -137,7 +159,7 @@ serve(async (req) => {
         effective_date: new Date().toISOString().split("T")[0],
       });
 
-      return json(data);
+      return json({ ...data, prorated_amount });
     }
 
     // POST /subscriptions/:id?action=cancel
