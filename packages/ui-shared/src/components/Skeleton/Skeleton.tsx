@@ -8,7 +8,8 @@ export function Skeleton({ className = "" }: SkeletonProps) {
   return (
     <div
       className={[
-        "animate-pulse rounded-lg bg-surface-elevated",
+        "relative overflow-hidden rounded-lg bg-surface-elevated",
+        "before:absolute before:inset-0 before:-translate-x-full before:bg-gradient-to-r before:from-transparent before:via-white/5 before:to-transparent before:animate-shimmer",
         className,
       ].join(" ")}
       aria-hidden="true"
@@ -33,7 +34,7 @@ export function SkeletonCard({ className = "" }: SkeletonProps) {
   return (
     <div
       className={[
-        "bg-surface-card border border-border rounded-2xl p-5 animate-pulse",
+        "bg-surface-card border border-border rounded-2xl p-5",
         className,
       ].join(" ")}
       aria-hidden="true"

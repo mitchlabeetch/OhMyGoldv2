@@ -7,3 +7,4 @@ export * from "./Modal";
 export * from "./Toast";
 export * from "./Alert";
 export * from "./Skeleton";
+export * from "./Drawer";
