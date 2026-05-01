@@ -30,6 +30,9 @@ AS $$
 $$;
 
 -- Returns the current user's assigned location id (for gym-scoped RLS).
+-- NOTE: Returns NULL for staff users who may not have a member record.
+-- This function is intended for member/client scoping, not staff.
+-- For staff, use is_staff() to bypass location checks.
 CREATE OR REPLACE FUNCTION public.get_current_user_location_id()
 RETURNS uuid
 LANGUAGE sql
