@@ -50,6 +50,17 @@ const NAV_ITEMS: Record<string, NavItem[]> = {
     { labelKey: "nav.reports", path: "/admin/reports", Icon: FileText },
     { labelKey: "nav.auditLog", path: "/admin/audit-log", Icon: Shield },
   ],
+  // manager: location-level management (new roadmap role)
+  manager: [
+    { labelKey: "nav.dashboard", path: "/manager/dashboard", Icon: LayoutDashboard },
+    { labelKey: "nav.members", path: "/manager/members", Icon: Users },
+    { labelKey: "nav.classes", path: "/manager/classes", Icon: CalendarDays },
+    { labelKey: "nav.billing", path: "/manager/billing", Icon: CreditCard },
+    { labelKey: "nav.checkIn", path: "/employee/check-in", Icon: UserCheck },
+    { labelKey: "nav.booking", path: "/employee/bookings", Icon: CalendarDays },
+    { labelKey: "nav.pos", path: "/employee/pos", Icon: ShoppingCart },
+    { labelKey: "nav.analytics", path: "/admin/analytics", Icon: BarChart3 },
+  ],
   receptionist: [
     { labelKey: "nav.dashboard", path: "/dashboard", Icon: LayoutDashboard },
     { labelKey: "nav.members", path: "/manager/members", Icon: Users },
@@ -61,14 +72,37 @@ const NAV_ITEMS: Record<string, NavItem[]> = {
     { labelKey: "nav.booking", path: "/employee/bookings", Icon: CalendarDays },
     { labelKey: "nav.pos", path: "/employee/pos", Icon: ShoppingCart },
   ],
+  // employee: front-desk staff (new roadmap role, same as receptionist)
+  employee: [
+    { labelKey: "nav.dashboard", path: "/dashboard", Icon: LayoutDashboard },
+    { labelKey: "nav.checkIn", path: "/employee/check-in", Icon: UserCheck },
+    { labelKey: "nav.booking", path: "/employee/bookings", Icon: CalendarDays },
+    { labelKey: "nav.pos", path: "/employee/pos", Icon: ShoppingCart },
+    { labelKey: "nav.members", path: "/manager/members", Icon: Users },
+  ],
   coach: [
     { labelKey: "nav.dashboard", path: "/dashboard", Icon: LayoutDashboard },
     { labelKey: "nav.classes", path: "/teacher/classes", Icon: CalendarDays },
     { labelKey: "nav.members", path: "/teacher/roster", Icon: Users },
     { labelKey: "nav.analytics", path: "/teacher/progress", Icon: TrendingUp },
   ],
+  // teacher: class instructor (new roadmap role, same as coach)
+  teacher: [
+    { labelKey: "nav.dashboard", path: "/teacher/dashboard", Icon: LayoutDashboard },
+    { labelKey: "nav.classes", path: "/teacher/classes", Icon: CalendarDays },
+    { labelKey: "nav.members", path: "/teacher/roster", Icon: Users },
+    { labelKey: "nav.analytics", path: "/teacher/progress", Icon: TrendingUp },
+  ],
   member: [
     { labelKey: "nav.dashboard", path: "/dashboard", Icon: LayoutDashboard },
+    { labelKey: "nav.booking", path: "/client/booking", Icon: CalendarDays },
+    { labelKey: "nav.subscription", path: "/client/subscription", Icon: CreditCard },
+    { labelKey: "nav.profile", path: "/client/profile", Icon: User },
+    { labelKey: "nav.myCard", path: "/client/card", Icon: QrCode },
+  ],
+  // client: paying gym member (new roadmap role, same as member)
+  client: [
+    { labelKey: "nav.dashboard", path: "/client/dashboard", Icon: LayoutDashboard },
     { labelKey: "nav.booking", path: "/client/booking", Icon: CalendarDays },
     { labelKey: "nav.subscription", path: "/client/subscription", Icon: CreditCard },
     { labelKey: "nav.profile", path: "/client/profile", Icon: User },
@@ -84,9 +118,13 @@ const NAV_ITEMS: Record<string, NavItem[]> = {
 const ROLE_LABEL_KEYS: Record<string, string> = {
   super_admin: "roles.super_admin",
   admin: "roles.admin",
+  manager: "roles.manager",
   coach: "roles.coach",
+  teacher: "roles.teacher",
   receptionist: "roles.receptionist",
+  employee: "roles.employee",
   member: "roles.member",
+  client: "roles.client",
   visitor: "roles.visitor",
 };
 

@@ -7,9 +7,13 @@ import { useAuth } from "@/hooks/useAuth";
 const ROLE_LABEL_KEYS: Record<string, string> = {
   super_admin: "roles.super_admin",
   admin: "roles.admin",
+  manager: "roles.manager",
   coach: "roles.coach",
+  teacher: "roles.teacher",
   receptionist: "roles.receptionist",
+  employee: "roles.employee",
   member: "roles.member",
+  client: "roles.client",
   visitor: "roles.visitor",
 };
 

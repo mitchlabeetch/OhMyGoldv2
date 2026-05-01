@@ -7,9 +7,13 @@
 export type AppRole =
   | "super_admin"
   | "admin"
-  | "coach"
-  | "receptionist"
-  | "member"
+  | "manager"      // location-level manager (new roadmap role)
+  | "coach"        // legacy alias for teacher
+  | "teacher"      // class instructor (new roadmap role)
+  | "receptionist" // legacy alias for employee
+  | "employee"     // front-desk staff (new roadmap role)
+  | "member"       // legacy alias for client
+  | "client"       // paying gym member (new roadmap role)
   | "visitor";
 
 export type MembershipStatus =
@@ -299,7 +303,31 @@ export const ROLE_PERMISSIONS: Record<AppRole, Permission[]> = {
     "settings:write",
     "users:manage",
   ],
+  manager: [
+    "members:read",
+    "members:write",
+    "members:delete",
+    "classes:read",
+    "classes:write",
+    "bookings:read",
+    "bookings:write",
+    "bookings:delete",
+    "payments:read",
+    "payments:write",
+    "reports:read",
+    "access:grant",
+    "access:manage",
+    "settings:read",
+  ],
   coach: [
+    "members:read",
+    "classes:read",
+    "classes:write",
+    "bookings:read",
+    "bookings:write",
+    "reports:read",
+  ],
+  teacher: [
     "members:read",
     "classes:read",
     "classes:write",
@@ -317,7 +345,18 @@ export const ROLE_PERMISSIONS: Record<AppRole, Permission[]> = {
     "payments:write",
     "access:grant",
   ],
+  employee: [
+    "members:read",
+    "members:write",
+    "classes:read",
+    "bookings:read",
+    "bookings:write",
+    "payments:read",
+    "payments:write",
+    "access:grant",
+  ],
   member: ["classes:read", "bookings:read", "bookings:write"],
+  client: ["classes:read", "bookings:read", "bookings:write"],
   visitor: ["classes:read"],
 };
 

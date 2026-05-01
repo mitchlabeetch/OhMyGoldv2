@@ -68,9 +68,13 @@
   "roles": {
     "super_admin": "Super Admin",
     "admin": "Admin",
+    "manager": "Manager",
     "coach": "Coach",
+    "teacher": "Teacher",
     "receptionist": "Receptionist",
+    "employee": "Employee",
     "member": "Member",
+    "client": "Client",
     "visitor": "Visitor"
   }
 }

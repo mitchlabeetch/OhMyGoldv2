@@ -8,7 +8,7 @@ name: ohmygold-supabase
 services:
   # ---- PostgreSQL 16 ----
   db:
-    image: supabase/postgres:15.8.1.030
+    image: supabase/postgres:16.4.0
     restart: unless-stopped
     healthcheck:
       test: pg_isready -U ${POSTGRES_USER:-supabase} -d ${POSTGRES_DB:-postgres}
