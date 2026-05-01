@@ -1,0 +1,25 @@
+{
+  "tabs": {
+    "home": "Accueil",
+    "classes": "Cours",
+    "members": "Membres",
+    "payments": "Paiements",
+    "profile": "Profil",
+    "checkIn": "Pointage",
+    "schedule": "Planning",
+    "bookings": "Réservations"
+  },
+  "menu": {
+    "settings": "Paramètres",
+    "logout": "Se déconnecter",
+    "help": "Aide",
+    "language": "Langue",
+    "notifications": "Notifications",
+    "privacy": "Confidentialité"
+  },
+  "back": "Retour",
+  "close": "Fermer",
+  "more": "Plus",
+  "less": "Moins",
+  "seeAll": "Voir tout"
+}

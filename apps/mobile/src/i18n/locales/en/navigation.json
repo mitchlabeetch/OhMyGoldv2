@@ -1,0 +1,25 @@
+{
+  "tabs": {
+    "home": "Home",
+    "classes": "Classes",
+    "members": "Members",
+    "payments": "Payments",
+    "profile": "Profile",
+    "checkIn": "Check-in",
+    "schedule": "Schedule",
+    "bookings": "Bookings"
+  },
+  "menu": {
+    "settings": "Settings",
+    "logout": "Sign out",
+    "help": "Help",
+    "language": "Language",
+    "notifications": "Notifications",
+    "privacy": "Privacy"
+  },
+  "back": "Back",
+  "close": "Close",
+  "more": "More",
+  "less": "Less",
+  "seeAll": "See all"
+}
