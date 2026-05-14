@@ -2,8 +2,7 @@ import { Navigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "@/stores/authStore";
 import { Loader2 } from "lucide-react";
 import type { ReactNode } from "react";
-import type { AppRole, Permission } from "@ohmygold/shared";
-import { hasPermission, hasAnyPermission } from "@ohmygold/shared";
+import { hasPermission, hasAnyPermission, type AppRole, type Permission } from "@ohmygold/shared";
 
 interface ProtectedRouteProps {
   children: ReactNode;
