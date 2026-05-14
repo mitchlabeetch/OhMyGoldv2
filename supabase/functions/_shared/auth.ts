@@ -47,15 +47,18 @@ export class AuthError extends Error {
   }
 }
 
-export function errorResponse(err: unknown, defaultStatus = 500): Response {
+export function errorResponse(
+  errorOrMessage: unknown,
+  defaultStatus = 500,
+): Response {
   const message =
-    err instanceof Error
-      ? err.message
-      : typeof err === "string"
-        ? err
+    errorOrMessage instanceof Error
+      ? errorOrMessage.message
+      : typeof errorOrMessage === "string"
+        ? errorOrMessage
         : "Internal Server Error";
   const status =
-    err instanceof AuthError
+    errorOrMessage instanceof AuthError
       ? message === "Unauthorized"
         ? 401
         : 403

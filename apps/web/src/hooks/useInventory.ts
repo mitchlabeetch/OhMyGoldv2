@@ -155,20 +155,23 @@ export function useRecordInventoryTransaction() {
         },
       );
 
-      const result = (await response.json().catch(() => null)) as {
-        error?: string;
-        transaction?: InventoryTransaction;
-        new_stock_quantity?: number;
-      } | null;
+      const rawResult: unknown = await response.json().catch(() => null);
+      const result =
+        rawResult && typeof rawResult === "object" && !Array.isArray(rawResult)
+          ? rawResult
+          : null;
 
       if (!response.ok) {
         throw new Error(
-          result?.error ?? "Failed to record inventory transaction",
+          typeof result?.error === "string"
+            ? result.error
+            : "Failed to record inventory transaction",
         );
       }
 
       if (
-        !result?.transaction ||
+        !result ||
+        !("transaction" in result) ||
         typeof result.new_stock_quantity !== "number"
       ) {
         throw new Error(
@@ -177,7 +180,7 @@ export function useRecordInventoryTransaction() {
       }
 
       return {
-        transaction: result.transaction,
+        transaction: result.transaction as InventoryTransaction,
         new_stock_quantity: result.new_stock_quantity,
       };
     },
