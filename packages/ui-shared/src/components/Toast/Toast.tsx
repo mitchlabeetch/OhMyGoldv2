@@ -144,7 +144,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           </AnimatePresence>
         </div>,
         document.body
-      )}
+      ) as any}
     </ToastContext.Provider>
   );
 }
