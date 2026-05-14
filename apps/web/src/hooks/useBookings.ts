@@ -103,22 +103,24 @@ export function useWaitlistPosition(classId: string) {
   return useQuery({
     queryKey: ["bookings", "waitlist", classId, user?.id],
     queryFn: async () => {
-      const { data: member, error: memberError } = await supabase
-        .from("members")
-        .select("id")
-        .eq("user_id", user!.id)
-        .single();
-      if (memberError) throw memberError;
+      const [memberResult, bookingsResult] = await Promise.all([
+        supabase
+          .from("members")
+          .select("id")
+          .eq("user_id", user!.id)
+          .single(),
+        supabase
+          .from("bookings")
+          .select("id, created_at, member_id")
+          .eq("class_id", classId)
+          .eq("status", "waitlisted")
+          .order("created_at")
+      ]);
 
-      const { data, error } = await supabase
-        .from("bookings")
-        .select("id, created_at")
-        .eq("class_id", classId)
-        .eq("status", "waitlisted")
-        .order("created_at");
-      if (error) throw error;
+      if (memberResult.error) throw memberResult.error;
+      if (bookingsResult.error) throw bookingsResult.error;
 
-      const position = data.findIndex((b) => b.member_id === member.id);
+      const position = bookingsResult.data.findIndex((b) => b.member_id === memberResult.data.id);
       return position === -1 ? null : position + 1;
     },
     enabled: !!classId && !!user,
