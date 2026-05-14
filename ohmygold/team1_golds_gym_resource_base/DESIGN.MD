@@ -1115,7 +1115,7 @@ members.list.empty.action        → "Add First Member"
 - Namespaced by feature module (members, classes, payments, etc.)
 - Separate files per locale: `fr-FR/members.json`, `en-US/members.json`
 - Fallback chain: `fr-FR` → `fr` → `en-US` → key name (for debugging)
-- Translation management: [TODO] Select tool (Lokalise, Phrase, or self-hosted)
+- Translation management: **Lokalise** (Selected for robust React/React Native integration and developer experience)
 
 ---
 
@@ -1674,7 +1674,6 @@ This design system is built upon the brand research documented in the `brand_doc
 |----|-----------|----------|-------|-------------|
 | TODO-1 | Confirm server-side error message format | Section 5.2 | Backend Lead | 2026-05-06 |
 | TODO-2 | Confirm timezone handling (Europe/Paris default?) | Section 8.3 | Backend Lead | 2026-05-06 |
-| TODO-3 | Select translation management tool | Section 8.6 | Tech Lead | 2026-05-13 |
 | TODO-4 | Add alt text to all asset manifest entries | Appendix B | Frontend Lead | 2026-05-13 |
 | TODO-5 | Plan video transcript workflow if video added | Section 7.1 | Content Lead | Post-MVP |
 
