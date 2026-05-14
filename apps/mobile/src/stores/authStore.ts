@@ -11,6 +11,7 @@ interface AuthState {
   isInitialized: boolean;
   setSession: (session: Session | null) => void;
   setProfile: (profile: UserProfile | null) => void;
+  fetchProfile: (userId: string) => Promise<void>;
   initialize: () => Promise<void>;
   signOut: () => Promise<void>;
 }
