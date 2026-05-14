@@ -443,7 +443,7 @@ Structure:
 - Helper text: `neutral-500`, 12px
 - Error icon (circle-alert) prepended to error message
 - Real-time validation on blur; final validation on submit
-- [TODO] Confirm server-side error message format with backend team
+- [DONE] Confirmed server-side error message format with backend team. Format: `{ "error": "message string" }`
 
 ### 5.3 Cards
 
