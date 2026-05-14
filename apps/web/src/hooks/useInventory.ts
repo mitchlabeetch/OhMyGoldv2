@@ -163,7 +163,7 @@ export function useRecordInventoryTransaction() {
 
       if (!response.ok) {
         throw new Error(
-          typeof result?.error === "string"
+          typeof result.error === "string"
             ? result.error
             : "Failed to record inventory transaction",
         );

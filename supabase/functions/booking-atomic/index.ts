@@ -166,6 +166,6 @@ serve(async (req) => {
         : message.includes("Forbidden")
           ? 403
           : 500;
-    return errorResponse(err, status);
+    return errorResponse(message, status);
   }
 });

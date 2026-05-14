@@ -186,6 +186,6 @@ serve(async (req) => {
         : message.includes("not allowed")
           ? 403
           : 500;
-    return errorResponse(err, status);
+    return errorResponse(message, status);
   }
 });
