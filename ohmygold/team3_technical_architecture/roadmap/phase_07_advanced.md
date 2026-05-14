@@ -20,15 +20,19 @@ The research synthesis identified AI as "table stakes" for 2026, community featu
 ## 7.1 AI-Powered Churn Prediction
 
 ### Description and Scope
+
 Implement an AI model that predicts which members are at risk of cancelling based on attendance patterns, engagement metrics, subscription history, and behavioral signals. Display risk scores in dashboards, trigger automated retention campaigns, and provide actionable recommendations to staff.
 
 ### Why This Matters
+
 Member churn is the #1 revenue risk for gyms. The average gym loses 30-50% of members annually. Predicting churn before it happens allows proactive intervention — a personalized offer, a coach check-in, a class recommendation. Research shows AI churn prediction can reduce churn by 20-30%.
 
 ### Technical Approach
+
 Start with rule-based heuristics (attendance decline, booking drop-off, failed payments) then enhance with ML. Feature engineering: attendance frequency (7/14/30 day), booking patterns, engagement (app opens, push interactions), payment history, support tickets. Model: simple classifier (logistic regression or random forest) trained on historical data. Risk score: 0-100. Threshold: > 70 = high risk, trigger intervention. Deploy via Edge Function or Python microservice.
 
 ### Files/Directories to Create/Modify
+
 ```
 supabase/functions/ai-churn/
 ├── index.ts                 # Churn prediction API
@@ -39,9 +43,11 @@ apps/web/src/pages/manager/
 ```
 
 ### Dependencies on Other Items
+
 - Phase 4 (member data, attendance, billing history)
 
 ### Success Criteria
+
 ```
 [ ] Churn risk score calculated for every active member
 [ ] Features: attendance frequency, booking patterns, engagement, payments
@@ -56,6 +62,7 @@ apps/web/src/pages/manager/
 ```
 
 ### Estimated Effort
+
 5-6 days
 
 ### LLM Agent Launch Prompt
@@ -143,15 +150,19 @@ NOTES AREA (fill on completion):
 ## 7.2 Smart Recommendation Engine
 
 ### Description and Scope
+
 Build a recommendation engine that suggests classes, workout routines, and content based on member preferences, attendance history, goals, and similar member behavior. Display recommendations in the app home screen and booking flow.
 
 ### Why This Matters
+
 Personalization drives engagement. When members see classes they actually want to attend, booking rates increase. Recommendation engines used by Netflix, Spotify, and fitness apps increase engagement by 30-50%. For Gold's Gym, this means higher class attendance and member satisfaction.
 
 ### Technical Approach
+
 Collaborative filtering: members with similar attendance patterns get similar recommendations. Content-based: recommend classes similar to ones the member has attended. Hybrid: combine both approaches. Feature: class type, time preference, instructor preference, intensity level. Deploy via Edge Function. Cache recommendations for performance.
 
 ### Files/Directories to Create/Modify
+
 ```
 supabase/functions/recommendations/
 ├── index.ts                 # Recommendation API
@@ -163,10 +174,12 @@ apps/mobile/src/components/
 ```
 
 ### Dependencies on Other Items
+
 - Phase 4 (class data, booking history, member profiles)
 - 7.1 (churn data can inform recommendations)
 
 ### Success Criteria
+
 ```
 [ ] Class recommendations on home screen
 [ ] "Because you attended Yoga" type explanations
@@ -181,6 +194,7 @@ apps/mobile/src/components/
 ```
 
 ### Estimated Effort
+
 4-5 days
 
 ### LLM Agent Launch Prompt
@@ -257,15 +271,19 @@ NOTES AREA (fill on completion):
 ## 7.3 Community Features (Challenges, Leaderboards)
 
 ### Description and Scope
+
 Build community engagement features: fitness challenges (individual and team), leaderboards, achievement sharing, and member interaction. Challenges have goals (attendance, workouts), timeframes, and rewards. Leaderboards rank members by various metrics.
 
 ### Why This Matters
+
 Community drives retention. Members who feel connected to a community stay longer. Challenges create fun competition and social accountability. Research shows community features increase retention by 25% and daily active usage by 40%. This transforms OhMyGold from a utility into a social platform.
 
 ### Technical Approach
+
 Challenges table with goals, timeframes, participants, and progress. Leaderboard views: overall, by location, by challenge. Real-time updates via Supabase Realtime. Social sharing: generate shareable images for achievements. Team challenges: members form teams, collective progress tracked.
 
 ### Files/Directories to Create/Modify
+
 ```
 supabase/migrations/
 ├── 00000000000059_challenges.sql
@@ -280,9 +298,11 @@ apps/mobile/src/app/(app)/
 ```
 
 ### Dependencies on Other Items
+
 - Phase 4 (member data, attendance, check-in APIs)
 
 ### Success Criteria
+
 ```
 [ ] Create challenges: name, goal, timeframe, reward
 [ ] Challenge types: attendance, workouts, streak, weight loss
@@ -299,6 +319,7 @@ apps/mobile/src/app/(app)/
 ```
 
 ### Estimated Effort
+
 4-5 days
 
 ### LLM Agent Launch Prompt
@@ -379,15 +400,19 @@ NOTES AREA (fill on completion):
 ## 7.4 Gamification System (Badges, Streaks, Achievements)
 
 ### Description and Scope
+
 Build a comprehensive gamification system: achievement badges for milestones (first workout, 10 classes, 30-day streak), streak tracking, points/XP system, levels, and reward redemption. Displayed on profile, shared in community feed, and used for rewards.
 
 ### Why This Matters
+
 Gamification creates habit loops. When members earn badges and maintain streaks, they form gym habits. Studies show gamification increases daily active users by 40% and retention by 30%. The dopamine hit from earning a badge keeps members coming back.
 
 ### Technical Approach
+
 Badges table with criteria (e.g., "attend 10 yoga classes"), icon, rarity. Streak tracking: consecutive days with check-in. XP system: points for actions (check-in, book class, complete challenge). Levels: XP thresholds. Reward shop: redeem points for discounts, merchandise, free sessions. Achievement feed: public display of earned badges.
 
 ### Files/Directories to Create/Modify
+
 ```
 supabase/migrations/
 ├── 00000000000062_badges.sql
@@ -402,10 +427,12 @@ apps/mobile/src/app/(app)/
 ```
 
 ### Dependencies on Other Items
+
 - Phase 4 (attendance, booking, check-in data)
 - 7.3 (community features integration)
 
 ### Success Criteria
+
 ```
 [ ] Badge system: 20+ badges across categories
 [ ] Badge categories: attendance, classes, streaks, social, challenges
@@ -421,6 +448,7 @@ apps/mobile/src/app/(app)/
 ```
 
 ### Estimated Effort
+
 4-5 days
 
 ### LLM Agent Launch Prompt
@@ -507,15 +535,19 @@ NOTES AREA (fill on completion):
 ## 7.5 Wearable Integrations (Apple Health, Google Fit, Fitbit)
 
 ### Description and Scope
+
 Integrate wearable fitness platforms: Apple Health (iOS), Google Fit (Android), and Fitbit. Sync workout data, heart rate, calories burned, and activity rings. Display wearable data in member profiles and use for personalized recommendations.
 
 ### Why This Matters
+
 Wearable integration is expected by modern fitness app users. Apple Health and Google Fit are pre-installed on billions of devices. Syncing workout data provides a complete fitness picture — gym workouts + outdoor activities + daily activity. This data also feeds the recommendation engine and gamification system.
 
 ### Technical Approach
+
 Apple Health: react-native-health for iOS. Google Fit: react-native-google-fit for Android. Fitbit: OAuth + Fitbit Web API. Request permissions for workout, heart rate, calories. Background sync: periodic data pull. Display: activity rings, workout history, heart rate zones. Privacy: member controls what data to share, GDPR-compliant.
 
 ### Files/Directories to Create/Modify
+
 ```
 apps/mobile/src/
 ├── lib/
@@ -529,10 +561,12 @@ apps/mobile/src/
 ```
 
 ### Dependencies on Other Items
+
 - 6.1 (mobile app scaffolding)
 - Phase 4 (member profile)
 
 ### Success Criteria
+
 ```
 [ ] Apple Health: read workouts, heart rate, calories (iOS)
 [ ] Google Fit: read activity, heart rate, calories (Android)
@@ -548,6 +582,7 @@ apps/mobile/src/
 ```
 
 ### Estimated Effort
+
 4-5 days
 
 ### LLM Agent Launch Prompt
@@ -632,15 +667,19 @@ NOTES AREA (fill on completion):
 ## 7.6 Video Content Platform (On-Demand Classes)
 
 ### Description and Scope
+
 Build an on-demand video content platform: upload workout videos, organize by category and difficulty, stream with adaptive bitrate, track viewing progress, and integrate with member subscriptions. Premium content for higher-tier members.
 
 ### Why This Matters
+
 Hybrid fitness is the default model post-COVID. Members expect on-demand content alongside live classes. Gold's Gym specifically embraces hybrid fitness. Video content is an additional revenue stream (premium subscription tier) and a retention tool — members engage even when they can't visit the gym.
 
 ### Technical Approach
+
 Video storage: Supabase Storage or CDN (Cloudflare Stream). Upload: chunked upload for large files. Streaming: HLS with adaptive bitrate. Player: expo-av (React Native), custom web player. Categories: by type, difficulty, duration, instructor. Progress tracking: resume from where left off. Premium gating: check subscription tier before playback. Analytics: views, completion rate, popular content.
 
 ### Files/Directories to Create/Modify
+
 ```
 supabase/migrations/
 ├── 00000000000066_video_content.sql
@@ -654,10 +693,12 @@ apps/mobile/src/app/(app)/
 ```
 
 ### Dependencies on Other Items
+
 - Phase 4 (membership plans for premium gating)
 - 6.1 (mobile app)
 
 ### Success Criteria
+
 ```
 [ ] Video upload: chunked, progress indicator
 [ ] Video categories: Yoga, HIIT, Strength, Cardio, Stretching
@@ -674,6 +715,7 @@ apps/mobile/src/app/(app)/
 ```
 
 ### Estimated Effort
+
 5-6 days
 
 ### LLM Agent Launch Prompt
@@ -685,7 +727,7 @@ CONTEXT: On-demand workout videos as part of hybrid fitness offering. Premium co
 
 TASK:
 1. Video content system:
-   - Videos table: title, description, instructor_id, category, difficulty, duration, thumbnail_url, video_url, is_premium
+   - Videos table: title, description, instructor_id, category, difficulty, duration, thumbnail_url, video_url, is_premium, transcript_url, closed_captions_url
    - Categories: Yoga, HIIT, Strength, Cardio, Stretching, Mindfulness
    - Difficulty: Beginner, Intermediate, Advanced
    - Tags: for search and recommendations
@@ -756,15 +798,19 @@ NOTES AREA (fill on completion):
 ## 7.7 Nutrition Tracking Module
 
 ### Description and Scope
+
 Build a nutrition tracking module: food logging with database, macro tracking (protein, carbs, fat, calories), meal planning, water intake tracking, and integration with wearable calorie burn data. Help members achieve holistic fitness goals.
 
 ### Why This Matters
+
 "You can't out-train a bad diet." Nutrition is inseparable from fitness for members with weight or body composition goals. Research identified nutrition tracking as a differentiating feature. Integration with workout data (calories burned) provides a complete energy balance picture.
 
 ### Technical Approach
+
 Food database: USDA or Open Food Facts API. Food logging: search → select portion → log. Macro tracking: daily totals vs goals. Meal planning: plan meals for the week. Water tracker: tap to add glass. Integration: calories burned from wearable + gym vs calories consumed. Charts: macro breakdown, calorie trend over time.
 
 ### Files/Directories to Create/Modify
+
 ```
 supabase/migrations/
 ├── 00000000000068_nutrition_logs.sql
@@ -778,10 +824,12 @@ apps/mobile/src/app/(app)/
 ```
 
 ### Dependencies on Other Items
+
 - 7.5 (wearable data for calorie burn)
 - Phase 4 (member profile for goals)
 
 ### Success Criteria
+
 ```
 [ ] Food database: search 100,000+ foods
 [ ] Food logging: search → select → log with portion
@@ -797,6 +845,7 @@ apps/mobile/src/app/(app)/
 ```
 
 ### Estimated Effort
+
 4-5 days
 
 ### LLM Agent Launch Prompt
@@ -875,15 +924,19 @@ NOTES AREA (fill on completion):
 ## 7.8 Social Feed and Member Connections
 
 ### Description and Scope
+
 Build a social feed where members can share achievements, post updates, follow each other, and interact through likes and comments. Moderation tools for staff. Privacy controls for members.
 
 ### Why This Matters
+
 Social connection is the strongest retention driver. Members who make friends at the gym stay significantly longer. A social feed creates a sense of community even when members aren't physically at the gym. Achievement sharing celebrates milestones and inspires others.
 
 ### Technical Approach
+
 Posts table with content, media, author. Feed: chronological + algorithmic (prioritize friends, achievements). Likes and comments. Follow system: members follow each other. Privacy: public, friends-only, private. Moderation: staff can hide/remove posts. Reporting: members can report inappropriate content. Achievement posts: auto-generated on badge earn.
 
 ### Files/Directories to Create/Modify
+
 ```
 supabase/migrations/
 ├── 00000000000071_social_posts.sql
@@ -898,10 +951,12 @@ apps/mobile/src/app/(app)/
 ```
 
 ### Dependencies on Other Items
+
 - 7.4 (gamification — achievement posts)
 - Phase 4 (member profiles)
 
 ### Success Criteria
+
 ```
 [ ] Social feed: chronological + algorithmic
 [ ] Post types: text, photo, achievement share
@@ -918,6 +973,7 @@ apps/mobile/src/app/(app)/
 ```
 
 ### Estimated Effort
+
 4-5 days
 
 ### LLM Agent Launch Prompt
@@ -997,15 +1053,19 @@ NOTES AREA (fill on completion):
 ## 7.9 Advanced Analytics (Predictive, Cohort Analysis)
 
 ### Description and Scope
+
 Implement advanced analytics: cohort analysis (member retention by join month), predictive forecasting (revenue, attendance), funnel analysis (visitor → trial → member), lifetime value calculation, and automated insight generation. For Admin and Manager dashboards.
 
 ### Why This Matters
+
 Advanced analytics turn data into strategic insights. Cohort analysis reveals which acquisition months produced the most loyal members. Predictive forecasting helps with staffing and budgeting. Funnel analysis identifies conversion bottlenecks. These capabilities elevate OhMyGold from operational tool to strategic platform.
 
 ### Technical Approach
+
 Cohort analysis: group members by join month, track retention over time. Predictive: time-series forecasting using historical trends. Funnel: track visitor → trial signup → trial attendance → membership conversion. LTV: average revenue per member × average retention. Insights: auto-generated text summaries of key trends. Charts: cohort heatmap, forecast lines, funnel visualization.
 
 ### Files/Directories to Create/Modify
+
 ```
 supabase/functions/advanced-analytics/
 ├── index.ts                 # Analytics API
@@ -1018,10 +1078,12 @@ apps/web/src/pages/manager/
 ```
 
 ### Dependencies on Other Items
+
 - Phase 4 (all operational data)
 - 7.1 (churn data)
 
 ### Success Criteria
+
 ```
 [ ] Cohort analysis: retention by join month (heatmap)
 [ ] Cohort comparison: which months had best retention
@@ -1036,6 +1098,7 @@ apps/web/src/pages/manager/
 ```
 
 ### Estimated Effort
+
 4-5 days
 
 ### LLM Agent Launch Prompt
@@ -1110,15 +1173,19 @@ NOTES AREA (fill on completion):
 ## 7.10 IoT Equipment Integration
 
 ### Description and Scope
+
 Build IoT integration framework for gym equipment: connect cardio machines (treadmills, bikes), track usage data, display equipment status, enable maintenance alerts, and provide usage analytics. API-first design for future hardware partnerships.
 
 ### Why This Matters
+
 IoT-enabled equipment is the future of gym management. Connected treadmills can report usage hours (triggering maintenance alerts), workout data (feeding member profiles), and availability status (reducing wait times). This positions OhMyGold as a forward-thinking platform ready for smart gym partnerships.
 
 ### Technical Approach
+
 API-first: define equipment data interface (status, usage_hours, workout_data). MQTT or WebSocket for real-time data. Equipment gateway: Edge Function that receives data from equipment. Status dashboard: which machines are in use, which need maintenance. Usage analytics: peak usage times, most popular equipment. Maintenance alerts: when usage hours exceed threshold. Integration hooks: documented API for equipment vendors.
 
 ### Files/Directories to Create/Modify
+
 ```
 supabase/migrations/
 ├── 00000000000074_iot_equipment.sql
@@ -1131,10 +1198,12 @@ apps/web/src/pages/manager/
 ```
 
 ### Dependencies on Other Items
+
 - Phase 4 (equipment inventory)
 - 4.1 (location management)
 
 ### Success Criteria
+
 ```
 [ ] Equipment data model: status, usage_hours, workout_data
 [ ] Real-time status: in_use, available, maintenance_needed, offline
@@ -1149,6 +1218,7 @@ apps/web/src/pages/manager/
 ```
 
 ### Estimated Effort
+
 3-4 days
 
 ### LLM Agent Launch Prompt
@@ -1242,4 +1312,4 @@ NOTES AREA (fill on completion):
 
 ---
 
-*Phase 7 notes: These are the features that differentiate OhMyGold. AI, community, gamification, and wearables transform the platform from a management tool into an engagement ecosystem. Each feature builds on the core data from Phase 4. The key success metric is member engagement — are members booking more classes, maintaining streaks, and staying longer because of these features?*
+_Phase 7 notes: These are the features that differentiate OhMyGold. AI, community, gamification, and wearables transform the platform from a management tool into an engagement ecosystem. Each feature builds on the core data from Phase 4. The key success metric is member engagement — are members booking more classes, maintaining streaks, and staying longer because of these features?_
