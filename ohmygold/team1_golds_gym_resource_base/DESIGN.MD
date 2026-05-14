@@ -1115,7 +1115,7 @@ members.list.empty.action        → "Add First Member"
 - Namespaced by feature module (members, classes, payments, etc.)
 - Separate files per locale: `fr-FR/members.json`, `en-US/members.json`
 - Fallback chain: `fr-FR` → `fr` → `en-US` → key name (for debugging)
-- Translation management: [TODO] Select tool (Lokalise, Phrase, or self-hosted)
+- Translation management: Lokalise
 
 ---
 
