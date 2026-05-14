@@ -11,6 +11,7 @@ interface AuthState {
   isInitialized: boolean;
   setSession: (session: Session | null) => void;
   setProfile: (profile: UserProfile | null) => void;
+  fetchProfile: (userId: string) => Promise<void>;
   initialize: () => Promise<void>;
   signOut: () => Promise<void>;
 }
@@ -49,7 +50,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     } = await supabase.auth.getSession();
     set({ session, user: session?.user ?? null });
     if (session?.user) {
-      await (get() as any).fetchProfile(session.user.id);
+      await get().fetchProfile(session.user.id);
     }
     supabase.auth.onAuthStateChange((_event, session) => {
       get().setSession(session);

@@ -5,9 +5,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { ModalProps, ModalSize } from "./Modal.types";
 
 const sizeMap: Record<ModalSize, string> = {
-  sm: "max-w-md",
-  md: "max-w-2xl",
-  lg: "max-w-4xl",
+  sm: "max-w-[560px]",
+  md: "max-w-[720px]",
+  lg: "max-w-[960px]",
   full: "max-w-none m-4",
 };
 

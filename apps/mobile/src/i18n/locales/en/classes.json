@@ -1,0 +1,55 @@
+{
+  "title": "Classes",
+  "schedule": "Schedule",
+  "book": "Book",
+  "cancel": "Cancel booking",
+  "booked": "Booked",
+  "full": "Full",
+  "waitlist": "Waitlist",
+  "waitlistPosition": "Position: {{position}}",
+  "spots": "{{count}} spot available",
+  "spots_other": "{{count}} spots available",
+  "fields": {
+    "name": "Class name",
+    "description": "Description",
+    "category": "Category",
+    "instructor": "Instructor",
+    "room": "Room",
+    "startTime": "Start time",
+    "duration": "Duration (min)",
+    "maxCapacity": "Max capacity",
+    "intensity": "Intensity"
+  },
+  "categories": {
+    "cardio": "Cardio",
+    "strength": "Strength",
+    "yoga": "Yoga",
+    "pilates": "Pilates",
+    "combat": "Combat",
+    "dance": "Dance",
+    "cycling": "Cycling",
+    "aqua": "Aqua",
+    "hiit": "HIIT",
+    "other": "Other"
+  },
+  "intensity": {
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+    "extreme": "Extreme"
+  },
+  "status": {
+    "scheduled": "Scheduled",
+    "cancelled": "Cancelled",
+    "completed": "Completed",
+    "draft": "Draft"
+  },
+  "empty": "No classes available.",
+  "errorLoad": "Failed to load classes.",
+  "booking": {
+    "success": "Your booking has been confirmed.",
+    "cancelled": "Booking cancelled.",
+    "waitlisted": "You are on the waitlist.",
+    "promoted": "You have been promoted from the waitlist!"
+  }
+}

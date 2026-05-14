@@ -1,0 +1,43 @@
+{
+  "title": "Billing",
+  "invoices": "Invoices",
+  "payments": "Payments",
+  "subscription": "Subscription",
+  "history": "History",
+  "invoice": {
+    "number": "No. {{number}}",
+    "date": "Date",
+    "dueDate": "Due date",
+    "amount": "Amount",
+    "status": "Status",
+    "download": "Download",
+    "paid": "Paid",
+    "pending": "Pending",
+    "overdue": "Overdue",
+    "cancelled": "Cancelled"
+  },
+  "payment": {
+    "method": "Payment method",
+    "card": "Credit card",
+    "cash": "Cash",
+    "transfer": "Bank transfer",
+    "sepa": "SEPA direct debit",
+    "amount": "Amount",
+    "date": "Date",
+    "reference": "Reference"
+  },
+  "subscription": {
+    "plan": "Plan",
+    "price": "Price",
+    "billing": "Billing cycle",
+    "monthly": "Monthly",
+    "annual": "Annual",
+    "nextBilling": "Next billing",
+    "freeze": "Freeze",
+    "unfreeze": "Unfreeze",
+    "upgrade": "Change plan",
+    "cancel": "Cancel subscription"
+  },
+  "empty": "No transactions.",
+  "errorLoad": "Failed to load billing."
+}

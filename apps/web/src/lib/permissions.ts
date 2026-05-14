@@ -90,6 +90,17 @@ const PERMISSIONS_BY_ROLE: Record<AppRole, Set<Permission>> = {
     "audit:read_own",
   ]),
 
+  // teacher: new roadmap role — same permissions as coach (class instructor)
+  teacher: new Set<Permission>([
+    "members:read",
+    "classes:read", "classes:create", "classes:update",
+    "bookings:read_own", "bookings:read_all", "bookings:cancel_any",
+    "access:read_own",
+    "locations:read",
+    "analytics:read_basic",
+    "audit:read_own",
+  ]),
+
   receptionist: new Set<Permission>([
     "members:read", "members:create", "members:update",
     "classes:read",
@@ -100,7 +111,43 @@ const PERMISSIONS_BY_ROLE: Record<AppRole, Set<Permission>> = {
     "audit:read_own",
   ]),
 
+  // employee: new roadmap role — same permissions as receptionist (front-desk)
+  employee: new Set<Permission>([
+    "members:read", "members:create", "members:update",
+    "classes:read",
+    "bookings:read_own", "bookings:read_all", "bookings:create", "bookings:cancel_own", "bookings:cancel_any",
+    "payments:read_own", "payments:read_all", "payments:create",
+    "access:grant", "access:read_own", "access:read_all",
+    "locations:read",
+    "audit:read_own",
+  ]),
+
+  // manager: new roadmap role — location-level management, between admin and employee
+  manager: new Set<Permission>([
+    "members:read", "members:create", "members:update", "members:delete",
+    "classes:read", "classes:create", "classes:update", "classes:delete",
+    "bookings:read_own", "bookings:read_all", "bookings:create", "bookings:cancel_own", "bookings:cancel_any",
+    "payments:read_own", "payments:read_all", "payments:create", "payments:refund",
+    "access:grant", "access:read_own", "access:read_all",
+    "users:read",
+    "settings:read",
+    "locations:read",
+    "analytics:read_basic", "analytics:read_full",
+    "audit:read_own", "audit:read_all",
+    "notifications:send",
+  ]),
+
   member: new Set<Permission>([
+    "bookings:read_own", "bookings:create", "bookings:cancel_own",
+    "payments:read_own",
+    "access:read_own",
+    "classes:read",
+    "locations:read",
+    "audit:read_own",
+  ]),
+
+  // client: new roadmap role — same permissions as member (paying gym member)
+  client: new Set<Permission>([
     "bookings:read_own", "bookings:create", "bookings:cancel_own",
     "payments:read_own",
     "access:read_own",
@@ -146,14 +193,20 @@ export function getPermissions(role: AppRole): Set<Permission> {
 
 /**
  * Role hierarchy — higher = more access.
+ * Legacy roles (coach, receptionist, member) map to the same level as their
+ * new roadmap counterparts (teacher, employee, client).
  */
 export const ROLE_HIERARCHY: Record<AppRole, number> = {
   visitor: 0,
   member: 1,
+  client: 1,       // new roadmap alias for member
   receptionist: 2,
+  employee: 2,     // new roadmap alias for receptionist
   coach: 2,
-  admin: 3,
-  super_admin: 4,
+  teacher: 2,      // new roadmap alias for coach
+  manager: 3,      // new roadmap role — between admin and staff
+  admin: 4,
+  super_admin: 5,
 };
 
 /**

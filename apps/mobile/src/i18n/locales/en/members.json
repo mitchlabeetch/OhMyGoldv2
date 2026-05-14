@@ -1,0 +1,46 @@
+{
+  "title": "Members",
+  "search": "Search for a member…",
+  "new": "New member",
+  "edit": "Edit member",
+  "delete": "Delete",
+  "profile": {
+    "title": "Member profile",
+    "overview": "Overview",
+    "membership": "Membership",
+    "attendance": "Attendance",
+    "payments": "Payments",
+    "notes": "Notes"
+  },
+  "fields": {
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+    "phone": "Phone",
+    "dateOfBirth": "Date of birth",
+    "gender": "Gender",
+    "membershipNumber": "Member number",
+    "contractType": "Contract type",
+    "contractStart": "Contract start",
+    "contractEnd": "Contract end",
+    "emergencyContact": "Emergency contact",
+    "medicalNotes": "Medical notes"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "suspended": "Suspended",
+    "expired": "Expired",
+    "pending": "Pending"
+  },
+  "actions": {
+    "checkIn": "Check in",
+    "viewCard": "View card",
+    "sendMessage": "Send message",
+    "exportData": "Export data (GDPR)",
+    "freeze": "Freeze subscription",
+    "cancel": "Cancel subscription"
+  },
+  "empty": "No members found.",
+  "errorLoad": "Failed to load members."
+}
