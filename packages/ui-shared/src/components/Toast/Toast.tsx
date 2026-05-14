@@ -131,7 +131,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={{ toasts, toast, dismiss, dismissAll }}>
       {children}
-      {createPortal(
+      {typeof document !== "undefined" ? createPortal(
         <div
           className="fixed top-4 right-4 z-[60] flex flex-col gap-2"
           aria-label="Notifications"
@@ -144,7 +144,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           </AnimatePresence>
         </div>,
         document.body
-      )}
+      ) : null}
     </ToastContext.Provider>
   );
 }
