@@ -1,4 +1,4 @@
-import { useEffect, useState, type ChangeEvent } from "react";
+import React, { useEffect, useState } from "react";
 import { Search, X } from "lucide-react";
 
 type SearchInputProps = {
@@ -25,7 +25,7 @@ export function SearchInput({
     return () => clearTimeout(timer);
   }, [value, debounceMs, onSearch]);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
   };
 

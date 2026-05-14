@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { TrendingUp, Users, BarChart2 } from "lucide-react";
 import { useRevenueChart, useMembershipBreakdown } from "@/hooks/useAnalytics";
@@ -83,8 +84,25 @@ export default function AnalyticsPage() {
   const { data: revenueData, isLoading: revLoading } = useRevenueChart("year");
   const { data: breakdown, isLoading: breakdownLoading } = useMembershipBreakdown();
 
-  const totalRevenue = (revenueData ?? []).reduce((s, p) => s + p.amount, 0);
-  const totalMembers = Object.values(breakdown ?? {}).reduce((s, v) => s + v, 0);
+  const totalRevenue = useMemo(() => {
+    let sum = 0;
+    const data = revenueData ?? [];
+    for (let i = 0; i < data.length; i++) {
+      sum += data[i].amount;
+    }
+    return sum;
+  }, [revenueData]);
+
+  const totalMembers = useMemo(() => {
+    let sum = 0;
+    const data = breakdown ?? {};
+    for (const key in data) {
+      if (Object.prototype.hasOwnProperty.call(data, key)) {
+        sum += data[key];
+      }
+    }
+    return sum;
+  }, [breakdown]);
 
   return (
     <div className="p-6 space-y-6">

@@ -12,17 +12,18 @@ export default {
     extend: {
       colors: {
         gold: {
-          50: "#FFFBEB",
-          100: "#FEF3C7",
-          200: "#FDE68A",
-          300: "#FCD34D",
-          400: "#FBBF24",
-          500: "#F59E0B",
-          600: "#D97706",
-          700: "#B45309",
-          800: "#92400E",
-          900: "#78350F",
-          950: "#451A03",
+          // Brand gold palette — Gold's Gym France brand identity (#FFEC00)
+          50: "#FFFFE0",
+          100: "#FFFACC",
+          200: "#FFF799",
+          300: "#FFF566",
+          400: "#FFEC00", // PRIMARY brand gold
+          500: "#FFEC00", // PRIMARY brand gold (same as 400 for Tailwind compat)
+          600: "#D4C400", // goldDark — hover state
+          700: "#ABA000",
+          800: "#817800",
+          900: "#575000",
+          950: "#2C2800",
         },
         surface: {
           DEFAULT: "#0A0A0A",
@@ -82,8 +83,8 @@ export default {
         "4xl": "2rem",
       },
       boxShadow: {
-        gold: "0 0 0 3px rgba(245, 158, 11, 0.4)",
-        glow: "0 0 20px rgba(245, 158, 11, 0.15)",
+        gold: "0 0 0 3px rgba(255, 236, 0, 0.4)",
+        glow: "0 0 20px rgba(255, 236, 0, 0.15)",
       },
       animation: {
         shimmer: "shimmer 2s linear infinite",

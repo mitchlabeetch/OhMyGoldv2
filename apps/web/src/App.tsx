@@ -114,15 +114,15 @@ export default function App() {
 
             {/* Admin routes */}
             {[
-              { path: "/admin/dashboard", Component: AdminDashboard, roles: ["admin"] as const },
-              { path: "/admin/locations", Component: AdminLocations, roles: ["admin"] as const },
-              { path: "/admin/locations/new", Component: AdminLocationNew, roles: ["admin"] as const },
-              { path: "/admin/locations/:id", Component: AdminLocationDetail, roles: ["admin"] as const },
-              { path: "/admin/users", Component: AdminUsers, roles: ["admin"] as const },
-              { path: "/admin/users/:id", Component: AdminUserDetail, roles: ["admin"] as const },
-              { path: "/admin/settings", Component: AdminSettings, roles: ["admin"] as const },
-              { path: "/admin/audit-log", Component: AdminAuditLog, roles: ["admin"] as const },
-              { path: "/admin/analytics", Component: AdminAnalytics, roles: ["admin"] as const },
+              { path: "/admin/dashboard", Component: AdminDashboard, roles: ["admin", "super_admin"] as const },
+              { path: "/admin/locations", Component: AdminLocations, roles: ["admin", "super_admin"] as const },
+              { path: "/admin/locations/new", Component: AdminLocationNew, roles: ["admin", "super_admin"] as const },
+              { path: "/admin/locations/:id", Component: AdminLocationDetail, roles: ["admin", "super_admin"] as const },
+              { path: "/admin/users", Component: AdminUsers, roles: ["admin", "super_admin"] as const },
+              { path: "/admin/users/:id", Component: AdminUserDetail, roles: ["admin", "super_admin"] as const },
+              { path: "/admin/settings", Component: AdminSettings, roles: ["admin", "super_admin"] as const },
+              { path: "/admin/audit-log", Component: AdminAuditLog, roles: ["admin", "super_admin"] as const },
+              { path: "/admin/analytics", Component: AdminAnalytics, roles: ["admin", "super_admin"] as const },
             ].map(({ path, Component, roles }) => (
               <Route
                 key={path}
@@ -229,8 +229,8 @@ export default function App() {
             <Route path="/unauthorized" element={<UnauthorizedPage />} />
             <Route path="/404" element={<NotFoundPage />} />
 
-            {/* Redirects */}
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            {/* Root route: public visitor landing page */}
+            <Route path="/" element={<VisitorHome />} />
             <Route path="*" element={<Navigate to="/404" replace />} />
           </Routes>
         </Suspense>

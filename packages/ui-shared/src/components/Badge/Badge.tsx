@@ -9,12 +9,16 @@ const statusMap: Record<BadgeStatus, { label: string; className: string }> = {
 };
 
 const roleMap: Record<BadgeRole, { label: string; className: string }> = {
-  super_admin:  { label: "Super Admin",  className: "bg-purple-500/10 text-purple-400 border-purple-500/30" },
-  admin:        { label: "Admin",        className: "bg-status-error/10 text-status-error border-status-error/30" },
-  coach:        { label: "Coach",        className: "bg-status-success/10 text-status-success border-status-success/30" },
-  receptionist: { label: "Réceptionniste", className: "bg-status-warning/10 text-status-warning border-status-warning/30" },
-  member:       { label: "Membre",       className: "bg-gold-500/10 text-gold-400 border-gold-500/30" },
-  visitor:      { label: "Visiteur",     className: "bg-purple-500/10 text-purple-400 border-purple-500/30" },
+  super_admin:  { label: "Super Admin",   className: "bg-purple-500/10 text-purple-400 border-purple-500/30" },
+  admin:        { label: "Admin",         className: "bg-status-error/10 text-status-error border-status-error/30" },
+  coach:        { label: "Coach",         className: "bg-status-success/10 text-status-success border-status-success/30" },
+  receptionist: { label: "Receptionist",  className: "bg-status-warning/10 text-status-warning border-status-warning/30" },
+  member:       { label: "Member",        className: "bg-gold-500/10 text-gold-400 border-gold-500/30" },
+  visitor:      { label: "Visitor",       className: "bg-purple-500/10 text-purple-400 border-purple-500/30" },
+  manager:      { label: "Manager",       className: "bg-status-info/10 text-status-info border-status-info/30" },
+  teacher:      { label: "Teacher",       className: "bg-status-success/10 text-status-success border-status-success/30" },
+  employee:     { label: "Employee",      className: "bg-status-warning/10 text-status-warning border-status-warning/30" },
+  client:       { label: "Client",        className: "bg-gold-500/10 text-gold-400 border-gold-500/30" },
 };
 
 export function Badge({

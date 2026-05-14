@@ -1,10 +1,27 @@
 import { useState } from "react";
-import { ShoppingCart, Plus, Minus, Trash2, CreditCard, Banknote, User, CheckCircle, Loader2 } from "lucide-react";
-import { usePOSProducts, usePOSTransaction, type POSProduct } from "@/hooks/usePOS";
+import {
+  ShoppingCart,
+  Plus,
+  Minus,
+  Trash2,
+  CreditCard,
+  Banknote,
+  User,
+  CheckCircle,
+  Loader2,
+} from "lucide-react";
+import {
+  usePOSProducts,
+  usePOSTransaction,
+  type POSProduct,
+} from "@/hooks/usePOS";
 import { useAuthStore } from "@/stores/authStore";
 
 function formatCurrency(amount: number) {
-  return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(amount);
+  return new Intl.NumberFormat("fr-FR", {
+    style: "currency",
+    currency: "EUR",
+  }).format(amount);
 }
 
 type CartItem = {
@@ -15,27 +32,33 @@ type CartItem = {
 const CATEGORIES = ["Tous", "supplement", "equipment", "drink", "other"];
 
 const CATEGORY_LABELS: Record<string, string> = {
-  "Tous": "Tous",
-  "supplement": "Suppléments",
-  "equipment": "Équipement",
-  "drink": "Boissons",
-  "other": "Autre",
+  Tous: "Tous",
+  supplement: "Suppléments",
+  equipment: "Équipement",
+  drink: "Boissons",
+  other: "Autre",
 };
 
-type PaymentMethod = "cash" | "card" | "member_account";
+type PaymentMethod = "cash" | "card" | "account_credit";
 
-const PAYMENT_METHODS: { id: PaymentMethod; label: string; icon: typeof CreditCard }[] = [
+const PAYMENT_METHODS: {
+  id: PaymentMethod;
+  label: string;
+  icon: typeof CreditCard;
+}[] = [
   { id: "card", label: "Carte", icon: CreditCard },
   { id: "cash", label: "Espèces", icon: Banknote },
-  { id: "member_account", label: "Compte", icon: User },
+  { id: "account_credit", label: "Compte", icon: User },
 ];
 
 export default function POSPage() {
   const { profile } = useAuthStore();
   const locationId = profile?.location_id ?? undefined;
 
-  const { data: products, isLoading: productsLoading } = usePOSProducts(locationId);
-  const { mutateAsync: processTransaction, isPending: processingTx } = usePOSTransaction();
+  const { data: products, isLoading: productsLoading } =
+    usePOSProducts(locationId);
+  const { mutateAsync: processTransaction, isPending: processingTx } =
+    usePOSTransaction();
 
   const [cart, setCart] = useState<CartItem[]>([]);
   const [categoryFilter, setCategoryFilter] = useState("Tous");
@@ -63,7 +86,9 @@ export default function POSPage() {
     setCart((prev) =>
       prev
         .map((i) =>
-          i.product.id === productId ? { ...i, quantity: i.quantity + delta } : i,
+          i.product.id === productId
+            ? { ...i, quantity: i.quantity + delta }
+            : i,
         )
         .filter((i) => i.quantity > 0),
     );
@@ -97,7 +122,10 @@ export default function POSPage() {
   };
 
   return (
-    <div className="h-[calc(100vh-4rem)] flex flex-col lg:flex-row" aria-label="Point de vente">
+    <div
+      className="h-[calc(100vh-4rem)] flex flex-col lg:flex-row"
+      aria-label="Point de vente"
+    >
       {/* Product grid */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         <div className="flex items-center justify-between">
@@ -132,11 +160,16 @@ export default function POSPage() {
         {productsLoading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {Array.from({ length: 9 }).map((_, i) => (
-              <div key={i} className="h-24 rounded-xl bg-neutral-700 animate-pulse" />
+              <div
+                key={i}
+                className="h-24 rounded-xl bg-neutral-700 animate-pulse"
+              />
             ))}
           </div>
         ) : filteredProducts.length === 0 ? (
-          <p className="text-text-secondary text-sm text-center py-8">Aucun produit dans cette catégorie</p>
+          <p className="text-text-secondary text-sm text-center py-8">
+            Aucun produit dans cette catégorie
+          </p>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3" role="list">
             {filteredProducts.map((product) => (
@@ -148,10 +181,16 @@ export default function POSPage() {
                 className="glass-card p-4 text-left hover:border-gold-400/50 transition-all active:scale-95"
                 aria-label={`Ajouter ${product.name} au panier — ${formatCurrency(product.price)}`}
               >
-                <p className="text-white font-medium text-sm truncate">{product.name}</p>
-                <p className="text-gold-400 font-bold mt-1">{formatCurrency(product.price)}</p>
+                <p className="text-white font-medium text-sm truncate">
+                  {product.name}
+                </p>
+                <p className="text-gold-400 font-bold mt-1">
+                  {formatCurrency(product.price)}
+                </p>
                 {product.stock_quantity !== undefined && (
-                  <p className="text-text-muted text-xs mt-0.5">Stock: {product.stock_quantity}</p>
+                  <p className="text-text-muted text-xs mt-0.5">
+                    Stock: {product.stock_quantity}
+                  </p>
                 )}
               </button>
             ))}
@@ -168,15 +207,27 @@ export default function POSPage() {
         </div>
 
         {/* Cart items */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-3" role="list" aria-label="Articles dans le panier">
+        <div
+          className="flex-1 overflow-y-auto p-4 space-y-3"
+          role="list"
+          aria-label="Articles dans le panier"
+        >
           {cart.length === 0 ? (
-            <p className="text-text-secondary text-sm text-center py-8">Panier vide</p>
+            <p className="text-text-secondary text-sm text-center py-8">
+              Panier vide
+            </p>
           ) : (
             cart.map(({ product, quantity }) => (
-              <div key={product.id} role="listitem" className="flex items-center gap-2">
+              <div
+                key={product.id}
+                role="listitem"
+                className="flex items-center gap-2"
+              >
                 <div className="flex-1 min-w-0">
                   <p className="text-white text-sm truncate">{product.name}</p>
-                  <p className="text-text-muted text-xs">{formatCurrency(product.price)} / unité</p>
+                  <p className="text-text-muted text-xs">
+                    {formatCurrency(product.price)} / unité
+                  </p>
                 </div>
                 <div className="flex items-center gap-1">
                   <button
@@ -187,7 +238,12 @@ export default function POSPage() {
                   >
                     <Minus className="w-3 h-3" aria-hidden="true" />
                   </button>
-                  <span className="text-white text-sm w-5 text-center" aria-label={`Quantité: ${quantity}`}>{quantity}</span>
+                  <span
+                    className="text-white text-sm w-5 text-center"
+                    aria-label={`Quantité: ${quantity}`}
+                  >
+                    {quantity}
+                  </span>
                   <button
                     type="button"
                     onClick={() => updateQty(product.id, 1)}
@@ -222,7 +278,10 @@ export default function POSPage() {
               role="status"
               aria-live="polite"
             >
-              <CheckCircle className="w-4 h-4 text-status-success" aria-hidden="true" />
+              <CheckCircle
+                className="w-4 h-4 text-status-success"
+                aria-hidden="true"
+              />
               <span className="text-status-success text-sm font-medium">
                 Paiement encaissé — {formatCurrency(lastTotal)}
               </span>
@@ -232,11 +291,17 @@ export default function POSPage() {
           {/* Total */}
           <div className="flex items-center justify-between">
             <span className="text-text-secondary font-medium">Total</span>
-            <span className="text-xl font-bold text-white">{formatCurrency(cartTotal)}</span>
+            <span className="text-xl font-bold text-white">
+              {formatCurrency(cartTotal)}
+            </span>
           </div>
 
           {/* Payment methods */}
-          <div className="grid grid-cols-3 gap-2" role="group" aria-label="Méthode de paiement">
+          <div
+            className="grid grid-cols-3 gap-2"
+            role="group"
+            aria-label="Méthode de paiement"
+          >
             {PAYMENT_METHODS.map(({ id, label, icon: Icon }) => (
               <button
                 key={id}

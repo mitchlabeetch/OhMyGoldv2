@@ -1,18 +1,26 @@
-import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
+import {
+  createClient,
+  SupabaseClient,
+} from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders } from "./cors.ts";
 
 export function buildClient(req: Request): SupabaseClient {
   return createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
     Deno.env.get("SUPABASE_ANON_KEY") ?? "",
-    { global: { headers: { Authorization: req.headers.get("Authorization")! } } },
+    {
+      global: { headers: { Authorization: req.headers.get("Authorization")! } },
+    },
   );
 }
 
 export async function requireAuth(
   supabase: SupabaseClient,
 ): Promise<{ id: string; role: string | null }> {
-  const { data: { user }, error } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
   if (error || !user) {
     throw new AuthError("Unauthorized");
   }
@@ -26,10 +34,7 @@ export async function requireAuth(
   return { id: user.id, role: profile?.role ?? null };
 }
 
-export function requireRole(
-  role: string | null,
-  allowed: string[],
-): void {
+export function requireRole(role: string | null, allowed: string[]): void {
   if (!role || !allowed.includes(role)) {
     throw new AuthError("Forbidden");
   }
@@ -42,10 +47,18 @@ export class AuthError extends Error {
   }
 }
 
-export function errorResponse(err: unknown, defaultStatus = 500): Response {
-  const message = err instanceof Error ? err.message : "Internal Server Error";
+export function errorResponse(
+  errorOrMessage: unknown,
+  defaultStatus = 500,
+): Response {
+  const message =
+    errorOrMessage instanceof Error
+      ? errorOrMessage.message
+      : typeof errorOrMessage === "string"
+        ? errorOrMessage
+        : "Internal Server Error";
   const status =
-    err instanceof AuthError
+    errorOrMessage instanceof AuthError
       ? message === "Unauthorized"
         ? 401
         : 403

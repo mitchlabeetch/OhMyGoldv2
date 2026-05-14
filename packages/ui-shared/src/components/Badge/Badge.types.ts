@@ -1,6 +1,16 @@
 export type BadgeVariant = "status" | "role" | "tag" | "count";
 export type BadgeStatus = "active" | "inactive" | "pending" | "expired" | "suspended";
-export type BadgeRole = "super_admin" | "admin" | "coach" | "receptionist" | "member" | "visitor";
+export type BadgeRole =
+  | "super_admin"
+  | "admin"
+  | "coach"
+  | "receptionist"
+  | "member"
+  | "visitor"
+  | "manager"
+  | "teacher"
+  | "employee"
+  | "client";
 
 export interface BadgeProps {
   variant?: BadgeVariant;
