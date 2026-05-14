@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { ChevronUp, ChevronDown } from "lucide-react";
 
 export type Column<T> = {
@@ -45,14 +45,18 @@ export function DataTable<T extends { id?: string }>({
     }
   };
 
-  const sorted = [...data].sort((a, b) => {
-    if (!sortKey) return 0;
-    const av = (a as Record<string, unknown>)[sortKey];
-    const bv = (b as Record<string, unknown>)[sortKey];
-    if (av === bv) return 0;
-    const cmp = String(av ?? "").localeCompare(String(bv ?? ""));
-    return sortDir === "asc" ? cmp : -cmp;
-  });
+  // ⚡ Bolt: Memoize the sorted data array to prevent unnecessary O(n log n) sorting
+  // and array cloning on every render when the source data or sort keys haven't changed.
+  const sorted = useMemo(() => {
+    return [...data].sort((a, b) => {
+      if (!sortKey) return 0;
+      const av = (a as Record<string, unknown>)[sortKey];
+      const bv = (b as Record<string, unknown>)[sortKey];
+      if (av === bv) return 0;
+      const cmp = String(av ?? "").localeCompare(String(bv ?? ""));
+      return sortDir === "asc" ? cmp : -cmp;
+    });
+  }, [data, sortKey, sortDir]);
 
   const getRowKey = (row: T, i: number) => {
     if (rowKey) return rowKey(row);
