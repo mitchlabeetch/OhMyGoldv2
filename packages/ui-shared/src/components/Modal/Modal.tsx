@@ -11,6 +11,7 @@ const sizeMap: Record<ModalSize, string> = {
   full: "max-w-none m-4",
 };
 
+import type { ReactNode } from "react";
 export function Modal({
   isOpen,
   onClose,
@@ -20,7 +21,7 @@ export function Modal({
   children,
   footer,
   persistent = false,
-}: ModalProps) {
+}: ModalProps): ReactNode {
   const dialogRef = useRef<HTMLDivElement>(null);
 
   // ESC to close
@@ -128,5 +129,5 @@ export function Modal({
       )}
     </AnimatePresence>,
     document.body
-  );
+  ) as any;
 }
