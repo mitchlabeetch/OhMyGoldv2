@@ -62,7 +62,7 @@ export default function EnrollPage() {
       // should be handled via an Edge Function in production)
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: personalInfo.email,
-        password: Math.random().toString(36).slice(2) + "Aa1!",
+        password: crypto.randomUUID() + "Aa1!",
         options: {
           data: {
             first_name: personalInfo.firstName,
