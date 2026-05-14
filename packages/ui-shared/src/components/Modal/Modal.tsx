@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -52,6 +52,8 @@ export function Modal({
     }
     return () => { document.body.style.overflow = ""; };
   }, [isOpen]);
+
+  if (typeof document === 'undefined') return null;
 
   return createPortal(
     <AnimatePresence>
@@ -128,5 +130,5 @@ export function Modal({
       )}
     </AnimatePresence>,
     document.body
-  );
+  ) as any;
 }

@@ -13,6 +13,7 @@ interface AuthState {
   setProfile: (profile: UserProfile | null) => void;
   initialize: () => Promise<void>;
   signOut: () => Promise<void>;
+  fetchProfile: (userId: string) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
