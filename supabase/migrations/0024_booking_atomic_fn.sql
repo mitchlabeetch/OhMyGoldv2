@@ -91,10 +91,8 @@ DECLARE
   v_status          text;
 BEGIN
   -- ---- Authorization check ----
-  SELECT (role IN ('admin', 'super_admin', 'manager', 'coach', 'employee', 'receptionist'))
-    INTO v_is_staff
-    FROM public.user_profiles
-   WHERE id = v_caller_uid;
+  SELECT public.is_staff()
+    INTO v_is_staff;
 
   IF NOT COALESCE(v_is_staff, false) THEN
     -- Non-staff: must be booking for their own active member record
@@ -175,7 +173,9 @@ GRANT EXECUTE ON FUNCTION public.book_class_atomic(uuid, uuid) TO authenticated;
 --
 -- Finds the next waitlisted booking (lowest position) and
 -- sets it to 'held' for 24 hours with an audit record.
--- SKIP LOCKED prevents parallel promotion races.
+-- Acquires the gym_classes row lock so inserts/promotions for the
+-- same class are serialized with book_class_atomic().
+-- Intended for internal trigger/service-role use only.
 -- ============================================================
 CREATE OR REPLACE FUNCTION public.promote_next_waitlisted(p_class_id uuid)
 RETURNS void
@@ -187,6 +187,17 @@ DECLARE
   v_next_booking record;
   v_hold_until   timestamptz;
 BEGIN
+  -- Serialize all waitlist mutations for a class with the same lock
+  -- used by book_class_atomic().
+  PERFORM 1
+    FROM public.gym_classes
+   WHERE id = p_class_id
+     FOR UPDATE;
+
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'Class % not found', p_class_id;
+  END IF;
+
   SELECT b.id, b.member_id
     INTO v_next_booking
     FROM public.bookings b
@@ -227,7 +238,7 @@ BEGIN
 END;
 $$;
 
-GRANT EXECUTE ON FUNCTION public.promote_next_waitlisted(uuid) TO authenticated;
+REVOKE ALL ON FUNCTION public.promote_next_waitlisted(uuid) FROM PUBLIC, anon, authenticated;
 
 -- ============================================================
 -- trigger_promote_on_cancel()

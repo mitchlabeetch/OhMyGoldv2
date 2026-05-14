@@ -1,9 +1,17 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { corsHeaders } from "../_shared/cors.ts";
-import { buildClient, requireAuth, requireRole, errorResponse, json, parseId } from "../_shared/auth.ts";
+import {
+  buildClient,
+  requireAuth,
+  requireRole,
+  errorResponse,
+  json,
+  parseId,
+} from "../_shared/auth.ts";
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (req.method === "OPTIONS")
+    return new Response("ok", { headers: corsHeaders });
 
   try {
     const supabase = buildClient(req);
@@ -20,7 +28,9 @@ serve(async (req) => {
 
       let query = supabase
         .from("subscriptions")
-        .select("*, membership_plans(*), members(*, user_profiles!profile_id(email, first_name, last_name))")
+        .select(
+          "*, membership_plans(*), members(*, user_profiles!profile_id(email, first_name, last_name))",
+        )
         .order("created_at", { ascending: false });
 
       if (memberId) query = query.eq("member_id", memberId);
@@ -118,31 +128,55 @@ serve(async (req) => {
         .select("plan_id, current_period_start, current_period_end")
         .eq("id", subId)
         .single();
-      if (subErr || !current) throw subErr ?? new Error("Subscription not found");
+      if (subErr || !current)
+        throw subErr ?? new Error("Subscription not found");
 
       // Fetch old and new plan monthly prices (price_cents per billing cycle)
-      const [{ data: oldPlan, error: oldPlanErr }, { data: newPlan, error: newPlanErr }] = await Promise.all([
-        supabase.from("membership_plans").select("price_cents, contract_type, duration_days").eq("id", current.plan_id).single(),
-        supabase.from("membership_plans").select("price_cents, contract_type, duration_days").eq("id", new_plan_id).single(),
+      const [
+        { data: oldPlan, error: oldPlanErr },
+        { data: newPlan, error: newPlanErr },
+      ] = await Promise.all([
+        supabase
+          .from("membership_plans")
+          .select("price_cents, contract_type, duration_days")
+          .eq("id", current.plan_id)
+          .single(),
+        supabase
+          .from("membership_plans")
+          .select("price_cents, contract_type, duration_days")
+          .eq("id", new_plan_id)
+          .single(),
       ]);
-      if (oldPlanErr || !oldPlan) throw oldPlanErr ?? new Error("Old plan not found");
-      if (newPlanErr || !newPlan) throw newPlanErr ?? new Error("New plan not found");
+      if (oldPlanErr || !oldPlan)
+        throw oldPlanErr ?? new Error("Old plan not found");
+      if (newPlanErr || !newPlan)
+        throw newPlanErr ?? new Error("New plan not found");
 
       // Server-side proration: (new_price - old_price) * (days_remaining / days_in_cycle)
-      // Use start_date / next_billing_date from the subscription as the billing cycle window.
+      // Use current_period_start / current_period_end from the subscription as the billing cycle window.
       let prorated_amount = 0;
       if (oldPlan && newPlan) {
         const now = Date.now();
-        const periodStart = current.start_date ? new Date(current.start_date).getTime() : now;
-        const periodEnd = current.next_billing_date
-          ? new Date(current.next_billing_date).getTime()
+        const periodStart = current.current_period_start
+          ? new Date(current.current_period_start).getTime()
+          : now;
+        const periodEnd = current.current_period_end
+          ? new Date(current.current_period_end).getTime()
           : periodStart + (oldPlan.duration_days ?? 30) * 86_400_000;
-        const daysInCycle = Math.max(1, Math.round((periodEnd - periodStart) / 86_400_000));
-        const daysRemaining = Math.max(0, Math.round((periodEnd - now) / 86_400_000));
+        const daysInCycle = Math.max(
+          1,
+          Math.round((periodEnd - periodStart) / 86_400_000),
+        );
+        const daysRemaining = Math.max(
+          0,
+          Math.round((periodEnd - now) / 86_400_000),
+        );
         const oldCents = oldPlan.price_cents;
         const newCents = newPlan.price_cents;
         // prorated_amount is stored as NUMERIC(10,2) euros → divide cents by 100
-        prorated_amount = Math.round((newCents - oldCents) * (daysRemaining / daysInCycle)) / 100;
+        prorated_amount =
+          Math.round((newCents - oldCents) * (daysRemaining / daysInCycle)) /
+          100;
       }
 
       const { data, error } = await supabase
@@ -210,11 +244,20 @@ serve(async (req) => {
       return json(data);
     }
 
-    return new Response(JSON.stringify({ error: "Not Found" }), { status: 404, headers: corsHeaders });
+    return new Response(JSON.stringify({ error: "Not Found" }), {
+      status: 404,
+      headers: corsHeaders,
+    });
   } catch (err) {
     console.error("[subscriptions]", err);
-    const message = err instanceof Error ? err.message : "Internal server error";
-    const status = message === "Unauthorized" ? 401 : message.includes("Forbidden") ? 403 : 500;
-    return errorResponse(message, status);
+    const message =
+      err instanceof Error ? err.message : "Internal server error";
+    const status =
+      message === "Unauthorized"
+        ? 401
+        : message.includes("Forbidden")
+          ? 403
+          : 500;
+    return errorResponse(err, status);
   }
 });

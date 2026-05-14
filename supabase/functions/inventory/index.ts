@@ -9,7 +9,8 @@ import {
 } from "../_shared/auth.ts";
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (req.method === "OPTIONS")
+    return new Response("ok", { headers: corsHeaders });
 
   try {
     const supabase = buildClient(req);
@@ -20,7 +21,8 @@ serve(async (req) => {
     // /inventory/... and /functions/v1/inventory/... paths.
     const parts = url.pathname.split("/").filter(Boolean);
     const invIdx = parts.indexOf("inventory");
-    const resource = invIdx !== -1 && parts[invIdx + 1] ? parts[invIdx + 1] : null;
+    const resource =
+      invIdx !== -1 && parts[invIdx + 1] ? parts[invIdx + 1] : null;
     const resourceId = resource && parts[invIdx + 2] ? parts[invIdx + 2] : null;
 
     // GET /inventory — list products with stock info (admin/manager only)
@@ -32,7 +34,9 @@ serve(async (req) => {
       // Use actual pos_products columns: price (NUMERIC), not unit_price_cents
       let query = supabase
         .from("pos_products")
-        .select("id, name, sku, barcode, stock_quantity, low_stock_threshold, price, tax_rate, is_active, category, location_id")
+        .select(
+          "id, name, sku, barcode, stock_quantity, low_stock_threshold, price, tax_rate, is_active, category, location_id",
+        )
         .eq("is_active", true)
         .order("name");
 
@@ -42,7 +46,11 @@ serve(async (req) => {
       if (error) throw error;
 
       const result = lowStockOnly
-        ? data?.filter((p) => p.low_stock_threshold != null && p.stock_quantity <= p.low_stock_threshold)
+        ? data?.filter(
+            (p) =>
+              p.low_stock_threshold != null &&
+              p.stock_quantity <= p.low_stock_threshold,
+          )
         : data;
 
       return json(result);
@@ -54,7 +62,9 @@ serve(async (req) => {
       const locationId = url.searchParams.get("location_id");
       let query = supabase
         .from("pos_products")
-        .select("id, name, sku, stock_quantity, low_stock_threshold, location_id")
+        .select(
+          "id, name, sku, stock_quantity, low_stock_threshold, location_id",
+        )
         .eq("is_active", true)
         .not("low_stock_threshold", "is", null);
 
@@ -64,7 +74,10 @@ serve(async (req) => {
 
       const alerts = (data ?? [])
         .filter((p) => p.stock_quantity <= p.low_stock_threshold)
-        .map((p) => ({ ...p, shortage: p.low_stock_threshold - p.stock_quantity }));
+        .map((p) => ({
+          ...p,
+          shortage: p.low_stock_threshold - p.stock_quantity,
+        }));
 
       return json(alerts);
     }
@@ -84,8 +97,16 @@ serve(async (req) => {
         reference_type,
       } = await req.json();
 
-      if (!product_id || !location_id || !transaction_type || quantity_change === undefined) {
-        return errorResponse("product_id, location_id, transaction_type, quantity_change are required", 400);
+      if (
+        !product_id ||
+        !location_id ||
+        !transaction_type ||
+        quantity_change === undefined
+      ) {
+        return errorResponse(
+          "product_id, location_id, transaction_type, quantity_change are required",
+          400,
+        );
       }
 
       // Read current stock before adjustment (for the ledger record)
@@ -94,15 +115,19 @@ serve(async (req) => {
         .select("stock_quantity")
         .eq("id", product_id)
         .single();
-      if (productErr || !product) return errorResponse("Product not found", 404);
+      if (productErr || !product)
+        return errorResponse("Product not found", 404);
 
       const quantityBefore = product.stock_quantity ?? 0;
 
       // Atomically adjust stock via an RPC that uses FOR UPDATE row-lock
-      const { data: newQty, error: adjustErr } = await supabase.rpc("adjust_stock_quantity", {
-        p_product_id: product_id,
-        p_delta: quantity_change,
-      });
+      const { data: newQty, error: adjustErr } = await supabase.rpc(
+        "adjust_stock_quantity",
+        {
+          p_product_id: product_id,
+          p_delta: quantity_change,
+        },
+      );
       if (adjustErr) {
         if (adjustErr.message?.includes("Insufficient")) {
           return errorResponse(adjustErr.message, 400);
@@ -229,7 +254,11 @@ serve(async (req) => {
     }
 
     // PATCH /inventory/purchase-orders/:id
-    if (req.method === "PATCH" && resource === "purchase-orders" && resourceId) {
+    if (
+      req.method === "PATCH" &&
+      resource === "purchase-orders" &&
+      resourceId
+    ) {
       requireRole(user.role, ["admin", "super_admin", "manager"]);
       const body = await req.json();
       const { data, error } = await supabase
@@ -245,8 +274,14 @@ serve(async (req) => {
     return errorResponse("Not found", 404);
   } catch (err) {
     console.error("[inventory]", err);
-    const message = err instanceof Error ? err.message : "Internal server error";
-    const status = message === "Unauthorized" ? 401 : message.includes("Forbidden") ? 403 : 500;
-    return errorResponse(message, status);
+    const message =
+      err instanceof Error ? err.message : "Internal server error";
+    const status =
+      message === "Unauthorized"
+        ? 401
+        : message.includes("Forbidden")
+          ? 403
+          : 500;
+    return errorResponse(err, status);
   }
 });

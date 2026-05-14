@@ -6,7 +6,7 @@ export type Booking = {
   id: string;
   class_id: string;
   member_id: string;
-  status: "confirmed" | "waitlisted" | "cancelled";
+  status: "booked" | "waitlisted" | "cancelled";
   created_at: string;
 };
 
@@ -18,7 +18,7 @@ export function useMyBookings() {
       const { data: member, error: memberError } = await supabase
         .from("members")
         .select("id")
-        .eq("user_id", user!.id)
+        .eq("profile_id", user!.id)
         .single();
       if (memberError) throw memberError;
 
@@ -62,13 +62,13 @@ export function useCreateBooking() {
       const { data: member, error: memberError } = await supabase
         .from("members")
         .select("id")
-        .eq("user_id", user!.id)
+        .eq("profile_id", user!.id)
         .single();
       if (memberError) throw memberError;
 
       const { data, error } = await supabase
         .from("bookings")
-        .insert({ class_id: classId, member_id: member.id, status: "confirmed" })
+        .insert({ class_id: classId, member_id: member.id, status: "booked" })
         .select()
         .single();
       if (error) throw error;
@@ -107,20 +107,22 @@ export function useWaitlistPosition(classId: string) {
         supabase
           .from("members")
           .select("id")
-          .eq("user_id", user!.id)
+          .eq("profile_id", user!.id)
           .single(),
         supabase
           .from("bookings")
           .select("id, created_at, member_id")
           .eq("class_id", classId)
           .eq("status", "waitlisted")
-          .order("created_at")
+          .order("created_at"),
       ]);
 
       if (memberResult.error) throw memberResult.error;
       if (bookingsResult.error) throw bookingsResult.error;
 
-      const position = bookingsResult.data.findIndex((b) => b.member_id === memberResult.data.id);
+      const position = bookingsResult.data.findIndex(
+        (b) => b.member_id === memberResult.data.id,
+      );
       return position === -1 ? null : position + 1;
     },
     enabled: !!classId && !!user,

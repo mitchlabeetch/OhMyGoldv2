@@ -21,9 +21,14 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
 DECLARE
+  v_caller_uid uuid := auth.uid();
   v_current integer;
   v_new     integer;
 BEGIN
+  IF v_caller_uid IS NULL OR NOT public.is_manager() THEN
+    RAISE EXCEPTION 'Forbidden: inventory adjustments require manager privileges';
+  END IF;
+
   SELECT stock_quantity
     INTO v_current
     FROM public.pos_products

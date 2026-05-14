@@ -52,13 +52,18 @@ export type StockCount = {
 
 // ---- Products with inventory ----
 
-export function useInventoryProducts(locationId?: string, lowStockOnly = false) {
+export function useInventoryProducts(
+  locationId?: string,
+  lowStockOnly = false,
+) {
   return useQuery({
     queryKey: ["inventory", "products", locationId, lowStockOnly],
     queryFn: async () => {
       let query = supabase
         .from("pos_products")
-        .select("id, name, sku, barcode, stock_quantity, low_stock_threshold, is_active")
+        .select(
+          "id, name, sku, barcode, stock_quantity, low_stock_threshold, is_active",
+        )
         .eq("is_active", true)
         .order("name");
 
@@ -70,7 +75,9 @@ export function useInventoryProducts(locationId?: string, lowStockOnly = false) 
       // Filter low stock client-side
       if (lowStockOnly && data) {
         return data.filter(
-          (p) => p.low_stock_threshold != null && p.stock_quantity <= p.low_stock_threshold
+          (p) =>
+            p.low_stock_threshold != null &&
+            p.stock_quantity <= p.low_stock_threshold,
         );
       }
       return data;
@@ -93,14 +100,16 @@ export function useInventoryTransactions(filters?: {
       let query = supabase
         .from("inventory_transactions")
         .select(
-          "*, pos_products(name, sku), user_profiles!performed_by(first_name, last_name)"
+          "*, pos_products(name, sku), user_profiles!performed_by(first_name, last_name)",
         )
         .order("created_at", { ascending: false })
         .limit(filters?.limit ?? 100);
 
       if (filters?.productId) query = query.eq("product_id", filters.productId);
-      if (filters?.locationId) query = query.eq("location_id", filters.locationId);
-      if (filters?.transactionType) query = query.eq("transaction_type", filters.transactionType);
+      if (filters?.locationId)
+        query = query.eq("location_id", filters.locationId);
+      if (filters?.transactionType)
+        query = query.eq("transaction_type", filters.transactionType);
 
       const { data, error } = await query;
       if (error) throw error;
@@ -125,51 +134,52 @@ export function useRecordInventoryTransaction() {
       reference_id?: string;
       reference_type?: string;
     }) => {
-      // Get current stock first
-      const { data: product, error: productErr } = await supabase
-        .from("pos_products")
-        .select("stock_quantity")
-        .eq("id", payload.product_id)
-        .single();
-      if (productErr) throw productErr;
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-      const quantityBefore = product.stock_quantity ?? 0;
-      const quantityAfter = quantityBefore + payload.quantity_change;
-
-      if (quantityAfter < 0) {
-        throw new Error(`Insufficient stock. Available: ${quantityBefore}`);
+      if (!session?.access_token) {
+        throw new Error("Unauthorized");
       }
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/inventory/transaction`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+            apikey: import.meta.env.VITE_SUPABASE_ANON_KEY as string,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        },
+      );
 
-      // Insert transaction record
-      const { data: txn, error: txnErr } = await supabase
-        .from("inventory_transactions")
-        .insert({
-          product_id: payload.product_id,
-          location_id: payload.location_id,
-          transaction_type: payload.transaction_type,
-          quantity_change: payload.quantity_change,
-          quantity_before: quantityBefore,
-          quantity_after: quantityAfter,
-          unit_cost_cents: payload.unit_cost_cents,
-          notes: payload.notes,
-          reference_id: payload.reference_id,
-          reference_type: payload.reference_type,
-          performed_by: user?.id,
-        })
-        .select()
-        .single();
-      if (txnErr) throw txnErr;
+      const result = (await response.json().catch(() => null)) as {
+        error?: string;
+        transaction?: InventoryTransaction;
+        new_stock_quantity?: number;
+      } | null;
 
-      // Update product stock
-      const { error: updateErr } = await supabase
-        .from("pos_products")
-        .update({ stock_quantity: quantityAfter })
-        .eq("id", payload.product_id);
-      if (updateErr) throw updateErr;
+      if (!response.ok) {
+        throw new Error(
+          result?.error ?? "Failed to record inventory transaction",
+        );
+      }
 
-      return { transaction: txn, new_stock_quantity: quantityAfter };
+      if (
+        !result?.transaction ||
+        typeof result.new_stock_quantity !== "number"
+      ) {
+        throw new Error(
+          "Inventory transaction completed with an invalid response.",
+        );
+      }
+
+      return {
+        transaction: result.transaction,
+        new_stock_quantity: result.new_stock_quantity,
+      };
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["inventory"] });
@@ -199,7 +209,9 @@ export function useSuppliers() {
 export function useCreateSupplier() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (payload: Omit<Supplier, "id" | "created_at" | "is_active">) => {
+    mutationFn: async (
+      payload: Omit<Supplier, "id" | "created_at" | "is_active">,
+    ) => {
       const { data, error } = await supabase
         .from("suppliers")
         .insert({ ...payload, is_active: true })
@@ -208,7 +220,8 @@ export function useCreateSupplier() {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["inventory", "suppliers"] }),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: ["inventory", "suppliers"] }),
   });
 }
 
@@ -242,7 +255,9 @@ export function useCreatePurchaseOrder() {
       po_number: string;
       notes?: string;
     }) => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       const { data, error } = await supabase
         .from("purchase_orders")
         .insert({ ...payload, status: "draft", created_by: user?.id })
@@ -251,7 +266,8 @@ export function useCreatePurchaseOrder() {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["inventory", "purchase-orders"] }),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: ["inventory", "purchase-orders"] }),
   });
 }
 

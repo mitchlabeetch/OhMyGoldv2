@@ -19,7 +19,7 @@ export type POSTransactionItem = {
 
 export type POSTransactionPayload = {
   items: POSTransactionItem[];
-  paymentMethod: "cash" | "card" | "member_account";
+  paymentMethod: "cash" | "card" | "account_credit";
   memberId?: string;
   locationId?: string;
 };
@@ -52,19 +52,31 @@ export function usePOSTransaction() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (payload: POSTransactionPayload) => {
-      const total = payload.items.reduce(
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError) throw userError;
+      if (!user) throw new Error("Unauthorized");
+      if (!payload.locationId)
+        throw new Error("A location is required to process POS transactions.");
+
+      const subtotal = payload.items.reduce(
         (sum, item) => sum + item.quantity * item.unitPrice,
         0,
       );
       const { data, error } = await supabase
         .from("pos_transactions")
         .insert({
+          location_id: payload.locationId,
+          cashier_id: user.id,
           items: payload.items,
           payment_method: payload.paymentMethod,
           member_id: payload.memberId ?? null,
-          location_id: payload.locationId ?? null,
-          total_amount: total,
-          status: "completed",
+          subtotal,
+          tax_amount: 0,
+          total: subtotal,
         })
         .select()
         .single();

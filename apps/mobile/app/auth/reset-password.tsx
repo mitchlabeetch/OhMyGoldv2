@@ -25,25 +25,50 @@ const C = {
 };
 
 export default function ResetPasswordScreen() {
-  const { access_token } = useLocalSearchParams<{ access_token?: string }>();
+  const { access_token, refresh_token } = useLocalSearchParams<{
+    access_token?: string;
+    refresh_token?: string;
+  }>();
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // When the user arrives via a deep link the Supabase client automatically
-    // picks up the access_token from the URL fragment. If an explicit token is
-    // provided as a query param we set the session manually.
-    if (access_token) {
-      supabase.auth.setSession({ access_token, refresh_token: "" }).catch(() => null);
+    // When tokens are provided explicitly in a deep link, only set a session
+    // when both access + refresh tokens are present.
+    if (!access_token && !refresh_token) {
+      return;
     }
-  }, [access_token]);
+
+    if (!access_token || !refresh_token) {
+      setError(
+        "Invalid or expired reset link. Please request a new password reset email.",
+      );
+      return;
+    }
+
+    supabase.auth
+      .setSession({ access_token, refresh_token })
+      .then(({ error: sessionError }) => {
+        if (sessionError) {
+          setError(sessionError.message);
+        }
+      })
+      .catch((sessionError: unknown) => {
+        setError(
+          sessionError instanceof Error
+            ? sessionError.message
+            : "Unable to verify the reset link. Please request a new one.",
+        );
+      });
+  }, [access_token, refresh_token]);
 
   async function handleReset() {
     setError(null);
     if (!password) return setError("New password is required.");
-    if (password.length < 8) return setError("Password must be at least 8 characters.");
+    if (password.length < 8)
+      return setError("Password must be at least 8 characters.");
     if (password !== confirm) return setError("Passwords do not match.");
 
     setLoading(true);
@@ -55,9 +80,11 @@ export default function ResetPasswordScreen() {
       return;
     }
 
-    Alert.alert("Password updated", "Your password has been changed. Please log in.", [
-      { text: "OK", onPress: () => router.replace("/auth/login") },
-    ]);
+    Alert.alert(
+      "Password updated",
+      "Your password has been changed. Please log in.",
+      [{ text: "OK", onPress: () => router.replace("/auth/login") }],
+    );
   }
 
   return (
@@ -68,7 +95,9 @@ export default function ResetPasswordScreen() {
       >
         <View style={styles.container}>
           <Text style={styles.title}>Reset Password</Text>
-          <Text style={styles.subtitle}>Enter and confirm your new password below.</Text>
+          <Text style={styles.subtitle}>
+            Enter and confirm your new password below.
+          </Text>
 
           {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
@@ -114,7 +143,10 @@ export default function ResetPasswordScreen() {
             )}
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => router.replace("/auth/login")} style={styles.backLink}>
+          <TouchableOpacity
+            onPress={() => router.replace("/auth/login")}
+            style={styles.backLink}
+          >
             <Text style={styles.backLinkText}>Back to Login</Text>
           </TouchableOpacity>
         </View>

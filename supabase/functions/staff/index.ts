@@ -6,11 +6,11 @@ import {
   requireRole,
   errorResponse,
   json,
-  parseId,
 } from "../_shared/auth.ts";
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (req.method === "OPTIONS")
+    return new Response("ok", { headers: corsHeaders });
 
   try {
     const supabase = buildClient(req);
@@ -20,9 +20,12 @@ serve(async (req) => {
     // /staff/... and /functions/v1/staff/... Supabase invocation paths.
     const parts = url.pathname.split("/").filter(Boolean);
     const staffIdx = parts.indexOf("staff");
-    const staffId = staffIdx !== -1 && parts[staffIdx + 1] ? parts[staffIdx + 1] : null;
-    const subResource = staffId && parts[staffIdx + 2] ? parts[staffIdx + 2] : null; // "certifications"
-    const subId = subResource && parts[staffIdx + 3] ? parts[staffIdx + 3] : null;
+    const staffId =
+      staffIdx !== -1 && parts[staffIdx + 1] ? parts[staffIdx + 1] : null;
+    const subResource =
+      staffId && parts[staffIdx + 2] ? parts[staffIdx + 2] : null; // "certifications"
+    const subId =
+      subResource && parts[staffIdx + 3] ? parts[staffIdx + 3] : null;
 
     // ---- Staff members ----
 
@@ -36,7 +39,7 @@ serve(async (req) => {
       let query = supabase
         .from("staff_members")
         .select(
-          "*, user_profiles!user_id(id, first_name, last_name, email, avatar_url, role)"
+          "*, user_profiles!user_id(id, first_name, last_name, email, avatar_url, role)",
         )
         .order("created_at");
 
@@ -55,7 +58,7 @@ serve(async (req) => {
       const { data, error } = await supabase
         .from("staff_members")
         .select(
-          "*, user_profiles!user_id(id, first_name, last_name, email, avatar_url, role), certifications(*)"
+          "*, user_profiles!user_id(id, first_name, last_name, email, avatar_url, role), certifications(*)",
         )
         .eq("id", staffId)
         .single();
@@ -106,7 +109,12 @@ serve(async (req) => {
     // ---- Certifications sub-resource ----
 
     // GET /staff/:id/certifications
-    if (req.method === "GET" && staffId && subResource === "certifications" && !subId) {
+    if (
+      req.method === "GET" &&
+      staffId &&
+      subResource === "certifications" &&
+      !subId
+    ) {
       requireRole(user.role, ["admin", "super_admin", "manager"]);
       const { data, error } = await supabase
         .from("certifications")
@@ -131,7 +139,12 @@ serve(async (req) => {
     }
 
     // PATCH /staff/:id/certifications/:cert_id
-    if (req.method === "PATCH" && staffId && subResource === "certifications" && subId) {
+    if (
+      req.method === "PATCH" &&
+      staffId &&
+      subResource === "certifications" &&
+      subId
+    ) {
       requireRole(user.role, ["admin", "super_admin", "manager"]);
       const body = await req.json();
       const { data, error } = await supabase
@@ -146,7 +159,12 @@ serve(async (req) => {
     }
 
     // DELETE /staff/:id/certifications/:cert_id
-    if (req.method === "DELETE" && staffId && subResource === "certifications" && subId) {
+    if (
+      req.method === "DELETE" &&
+      staffId &&
+      subResource === "certifications" &&
+      subId
+    ) {
       requireRole(user.role, ["admin", "super_admin"]);
       const { error } = await supabase
         .from("certifications")
@@ -160,8 +178,14 @@ serve(async (req) => {
     return errorResponse("Not found", 404);
   } catch (err) {
     console.error("[staff]", err);
-    const message = err instanceof Error ? err.message : "Internal server error";
-    const status = message === "Unauthorized" ? 401 : message.includes("not allowed") ? 403 : 500;
-    return errorResponse(message, status);
+    const message =
+      err instanceof Error ? err.message : "Internal server error";
+    const status =
+      message === "Unauthorized"
+        ? 401
+        : message.includes("not allowed")
+          ? 403
+          : 500;
+    return errorResponse(err, status);
   }
 });

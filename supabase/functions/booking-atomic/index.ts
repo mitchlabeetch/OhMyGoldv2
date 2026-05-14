@@ -8,10 +8,19 @@ import {
   parseId,
 } from "../_shared/auth.ts";
 
-const STAFF_ROLES = ["admin", "super_admin", "manager", "employee", "receptionist", "teacher", "coach"];
+const STAFF_ROLES = [
+  "admin",
+  "super_admin",
+  "manager",
+  "employee",
+  "receptionist",
+  "teacher",
+  "coach",
+];
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (req.method === "OPTIONS")
+    return new Response("ok", { headers: corsHeaders });
 
   try {
     const supabase = buildClient(req);
@@ -39,7 +48,11 @@ serve(async (req) => {
           .select("id")
           .eq("profile_id", user.id)
           .single();
-        if (!member) return errorResponse("No active member record found for this user", 404);
+        if (!member)
+          return errorResponse(
+            "No active member record found for this user",
+            404,
+          );
         member_id = member.id;
       }
 
@@ -51,7 +64,10 @@ serve(async (req) => {
 
       if (error) {
         if (error.message?.includes("already")) {
-          return errorResponse("Member already has a booking for this class", 409);
+          return errorResponse(
+            "Member already has a booking for this class",
+            409,
+          );
         }
         if (error.message?.includes("Unauthorized")) {
           return errorResponse(error.message, 403);
@@ -65,13 +81,16 @@ serve(async (req) => {
     // GET /booking-atomic?class_id=X — get caller's booking for a class
     if (req.method === "GET" && !bookingId) {
       const classId = url.searchParams.get("class_id");
-      if (!classId) return errorResponse("class_id query param is required", 400);
+      if (!classId)
+        return errorResponse("class_id query param is required", 400);
 
       const memberId = url.searchParams.get("member_id");
 
       let query = supabase
         .from("bookings")
-        .select("*, gym_classes(id, name, scheduled_at, coach_id, max_capacity, current_bookings)")
+        .select(
+          "*, gym_classes(id, name, scheduled_at, coach_id, max_capacity, current_bookings)",
+        )
         .eq("class_id", classId)
         .in("status", ["booked", "waitlisted", "held"]);
 
@@ -106,7 +125,8 @@ serve(async (req) => {
 
       // Non-staff may only cancel their own bookings
       if (!isStaff) {
-        const memberProfileId = (booking.members as { profile_id: string }).profile_id;
+        const memberProfileId = (booking.members as { profile_id: string })
+          .profile_id;
         if (memberProfileId !== user.id) {
           return errorResponse("Cannot cancel another member's booking", 403);
         }
@@ -114,7 +134,10 @@ serve(async (req) => {
 
       // Only active statuses may be cancelled
       if (!["booked", "waitlisted", "held"].includes(booking.status)) {
-        return errorResponse("Booking cannot be cancelled in its current state", 400);
+        return errorResponse(
+          "Booking cannot be cancelled in its current state",
+          400,
+        );
       }
 
       const { data, error } = await supabase
@@ -126,14 +149,23 @@ serve(async (req) => {
       if (error) throw error;
 
       // DB trigger (booking_cancel_trigger) auto-promotes next waitlisted member
-      return json({ ...data, message: "Booking cancelled. Next waitlisted member will be notified." });
+      return json({
+        ...data,
+        message: "Booking cancelled. Next waitlisted member will be notified.",
+      });
     }
 
     return errorResponse("Method not allowed", 405);
   } catch (err) {
     console.error("[booking-atomic]", err);
-    const message = err instanceof Error ? err.message : "Internal server error";
-    const status = message === "Unauthorized" ? 401 : message.includes("Forbidden") ? 403 : 500;
-    return errorResponse(message, status);
+    const message =
+      err instanceof Error ? err.message : "Internal server error";
+    const status =
+      message === "Unauthorized"
+        ? 401
+        : message.includes("Forbidden")
+          ? 403
+          : 500;
+    return errorResponse(err, status);
   }
 });

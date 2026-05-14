@@ -1,40 +1,181 @@
+import { Fragment } from "react";
 import { Shield, CheckCircle2, XCircle } from "lucide-react";
 
-const ROLES = ["super_admin", "admin", "manager", "employee", "teacher", "client", "visitor"] as const;
-type Role = typeof ROLES[number];
+const ROLES = [
+  "super_admin",
+  "admin",
+  "manager",
+  "employee",
+  "teacher",
+  "client",
+  "visitor",
+] as const;
+type Role = (typeof ROLES)[number];
 
-const PERMISSIONS: { id: string; label: string; category: string; allowed: Role[] }[] = [
+const PERMISSIONS: {
+  id: string;
+  label: string;
+  category: string;
+  allowed: Role[];
+}[] = [
   // Users
-  { id: "users.read",   label: "View users",   category: "Users", allowed: ["super_admin","admin","manager"] },
-  { id: "users.write",  label: "Manage users", category: "Users", allowed: ["super_admin","admin"] },
+  {
+    id: "users.read",
+    label: "View users",
+    category: "Users",
+    allowed: ["super_admin", "admin", "manager"],
+  },
+  {
+    id: "users.write",
+    label: "Manage users",
+    category: "Users",
+    allowed: ["super_admin", "admin"],
+  },
   // Locations
-  { id: "locations.read",  label: "View locations",  category: "Locations", allowed: ["super_admin","admin","manager","employee","teacher","client"] },
-  { id: "locations.write", label: "Manage locations", category: "Locations", allowed: ["super_admin","admin"] },
+  {
+    id: "locations.read",
+    label: "View locations",
+    category: "Locations",
+    allowed: [
+      "super_admin",
+      "admin",
+      "manager",
+      "employee",
+      "teacher",
+      "client",
+    ],
+  },
+  {
+    id: "locations.write",
+    label: "Manage locations",
+    category: "Locations",
+    allowed: ["super_admin", "admin"],
+  },
   // Classes
-  { id: "classes.read",  label: "View classes",  category: "Classes", allowed: ["super_admin","admin","manager","employee","teacher","client","visitor"] },
-  { id: "classes.write", label: "Manage classes", category: "Classes", allowed: ["super_admin","admin","manager","teacher"] },
+  {
+    id: "classes.read",
+    label: "View classes",
+    category: "Classes",
+    allowed: [
+      "super_admin",
+      "admin",
+      "manager",
+      "employee",
+      "teacher",
+      "client",
+      "visitor",
+    ],
+  },
+  {
+    id: "classes.write",
+    label: "Manage classes",
+    category: "Classes",
+    allowed: ["super_admin", "admin", "manager", "teacher"],
+  },
   // Bookings
-  { id: "bookings.read",    label: "View bookings",       category: "Bookings", allowed: ["super_admin","admin","manager","employee"] },
-  { id: "bookings.write",   label: "Manage bookings",     category: "Bookings", allowed: ["super_admin","admin","manager","employee"] },
-  { id: "bookings.own",     label: "Book own classes",    category: "Bookings", allowed: ["super_admin","admin","manager","employee","teacher","client"] },
+  {
+    id: "bookings.read",
+    label: "View bookings",
+    category: "Bookings",
+    allowed: ["super_admin", "admin", "manager", "employee"],
+  },
+  {
+    id: "bookings.write",
+    label: "Manage bookings",
+    category: "Bookings",
+    allowed: ["super_admin", "admin", "manager", "employee"],
+  },
+  {
+    id: "bookings.own",
+    label: "Book own classes",
+    category: "Bookings",
+    allowed: [
+      "super_admin",
+      "admin",
+      "manager",
+      "employee",
+      "teacher",
+      "client",
+    ],
+  },
   // Members
-  { id: "members.read",  label: "View members",  category: "Members", allowed: ["super_admin","admin","manager","employee"] },
-  { id: "members.write", label: "Manage members", category: "Members", allowed: ["super_admin","admin","manager"] },
+  {
+    id: "members.read",
+    label: "View members",
+    category: "Members",
+    allowed: ["super_admin", "admin", "manager", "employee"],
+  },
+  {
+    id: "members.write",
+    label: "Manage members",
+    category: "Members",
+    allowed: ["super_admin", "admin", "manager"],
+  },
   // Billing
-  { id: "billing.read",  label: "View billing",  category: "Billing", allowed: ["super_admin","admin","manager"] },
-  { id: "billing.write", label: "Manage billing", category: "Billing", allowed: ["super_admin","admin"] },
+  {
+    id: "billing.read",
+    label: "View billing",
+    category: "Billing",
+    allowed: ["super_admin", "admin", "manager"],
+  },
+  {
+    id: "billing.write",
+    label: "Manage billing",
+    category: "Billing",
+    allowed: ["super_admin", "admin"],
+  },
   // POS
-  { id: "pos.use",    label: "Use POS",     category: "POS", allowed: ["super_admin","admin","manager","employee"] },
-  { id: "pos.refund", label: "Issue refunds", category: "POS", allowed: ["super_admin","admin","manager"] },
+  {
+    id: "pos.use",
+    label: "Use POS",
+    category: "POS",
+    allowed: ["super_admin", "admin", "manager", "employee"],
+  },
+  {
+    id: "pos.refund",
+    label: "Issue refunds",
+    category: "POS",
+    allowed: ["super_admin", "admin", "manager"],
+  },
   // Inventory
-  { id: "inventory.read",  label: "View inventory",  category: "Inventory", allowed: ["super_admin","admin","manager"] },
-  { id: "inventory.write", label: "Manage inventory", category: "Inventory", allowed: ["super_admin","admin","manager"] },
+  {
+    id: "inventory.read",
+    label: "View inventory",
+    category: "Inventory",
+    allowed: ["super_admin", "admin", "manager"],
+  },
+  {
+    id: "inventory.write",
+    label: "Manage inventory",
+    category: "Inventory",
+    allowed: ["super_admin", "admin", "manager"],
+  },
   // Analytics
-  { id: "analytics.read",  label: "View analytics",  category: "Analytics", allowed: ["super_admin","admin","manager"] },
-  { id: "analytics.global", label: "Global analytics", category: "Analytics", allowed: ["super_admin","admin"] },
+  {
+    id: "analytics.read",
+    label: "View analytics",
+    category: "Analytics",
+    allowed: ["super_admin", "admin", "manager"],
+  },
+  {
+    id: "analytics.global",
+    label: "Global analytics",
+    category: "Analytics",
+    allowed: ["super_admin", "admin"],
+  },
   // Settings
-  { id: "settings.read",  label: "View settings",  category: "Settings", allowed: ["super_admin","admin"] },
-  { id: "settings.write", label: "Manage settings", category: "Settings", allowed: ["super_admin","admin"] },
+  {
+    id: "settings.read",
+    label: "View settings",
+    category: "Settings",
+    allowed: ["super_admin", "admin"],
+  },
+  {
+    id: "settings.write",
+    label: "Manage settings",
+    category: "Settings",
+    allowed: ["super_admin", "admin"],
+  },
 ];
 
 const ROLE_LABELS: Record<Role, string> = {
@@ -59,7 +200,8 @@ export default function AdminRoles() {
         <div>
           <h1 className="text-2xl font-bold text-white">Roles & Permissions</h1>
           <p className="text-text-secondary text-sm">
-            Read-only permission matrix. All permissions are enforced at the database level via Row Level Security.
+            Read-only permission matrix. All permissions are enforced at the
+            database level via Row Level Security.
           </p>
         </div>
       </div>
@@ -72,7 +214,10 @@ export default function AdminRoles() {
                 Permission
               </th>
               {ROLES.map((role) => (
-                <th key={role} className="px-3 py-3 text-center text-text-secondary font-semibold whitespace-nowrap">
+                <th
+                  key={role}
+                  className="px-3 py-3 text-center text-text-secondary font-semibold whitespace-nowrap"
+                >
                   {ROLE_LABELS[role]}
                 </th>
               ))}
@@ -80,7 +225,7 @@ export default function AdminRoles() {
           </thead>
           <tbody>
             {categories.map((cat) => (
-              <>
+              <Fragment key={cat}>
                 <tr key={`cat-${cat}`} className="bg-surface-card/50">
                   <td
                     colSpan={ROLES.length + 1}
@@ -90,8 +235,13 @@ export default function AdminRoles() {
                   </td>
                 </tr>
                 {PERMISSIONS.filter((p) => p.category === cat).map((perm) => (
-                  <tr key={perm.id} className="border-t border-border/50 hover:bg-surface-elevated/40 transition-colors">
-                    <td className="px-4 py-2.5 text-text-secondary">{perm.label}</td>
+                  <tr
+                    key={perm.id}
+                    className="border-t border-border/50 hover:bg-surface-elevated/40 transition-colors"
+                  >
+                    <td className="px-4 py-2.5 text-text-secondary">
+                      {perm.label}
+                    </td>
                     {ROLES.map((role) => {
                       const allowed = perm.allowed.includes(role);
                       return (
@@ -112,15 +262,16 @@ export default function AdminRoles() {
                     })}
                   </tr>
                 ))}
-              </>
+              </Fragment>
             ))}
           </tbody>
         </table>
       </div>
 
       <p className="text-xs text-text-muted">
-        Permissions are enforced by PostgreSQL Row Level Security policies. This matrix reflects the current policy definitions.
-        Changes require a database migration.
+        Permissions are enforced by PostgreSQL Row Level Security policies. This
+        matrix reflects the current policy definitions. Changes require a
+        database migration.
       </p>
     </div>
   );
