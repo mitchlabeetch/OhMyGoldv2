@@ -115,15 +115,15 @@ export default function App() {
 
             {/* Admin routes */}
             {[
-              { path: "/admin/dashboard", Component: AdminDashboard, roles: ["admin"] as AppRole[] },
-              { path: "/admin/locations", Component: AdminLocations, roles: ["admin"] as AppRole[] },
-              { path: "/admin/locations/new", Component: AdminLocationNew, roles: ["admin"] as AppRole[] },
-              { path: "/admin/locations/:id", Component: AdminLocationDetail, roles: ["admin"] as AppRole[] },
-              { path: "/admin/users", Component: AdminUsers, roles: ["admin"] as AppRole[] },
-              { path: "/admin/users/:id", Component: AdminUserDetail, roles: ["admin"] as AppRole[] },
-              { path: "/admin/settings", Component: AdminSettings, roles: ["admin"] as AppRole[] },
-              { path: "/admin/audit-log", Component: AdminAuditLog, roles: ["admin"] as AppRole[] },
-              { path: "/admin/analytics", Component: AdminAnalytics, roles: ["admin"] as AppRole[] },
+              { path: "/admin/dashboard", Component: AdminDashboard, roles: ["admin"] as const },
+              { path: "/admin/locations", Component: AdminLocations, roles: ["admin"] as const },
+              { path: "/admin/locations/new", Component: AdminLocationNew, roles: ["admin"] as const },
+              { path: "/admin/locations/:id", Component: AdminLocationDetail, roles: ["admin"] as const },
+              { path: "/admin/users", Component: AdminUsers, roles: ["admin"] as const },
+              { path: "/admin/users/:id", Component: AdminUserDetail, roles: ["admin"] as const },
+              { path: "/admin/settings", Component: AdminSettings, roles: ["admin"] as const },
+              { path: "/admin/audit-log", Component: AdminAuditLog, roles: ["admin"] as const },
+              { path: "/admin/analytics", Component: AdminAnalytics, roles: ["admin"] as const },
             ].map(({ path, Component, roles }) => (
               <Route
                 key={path}
@@ -140,12 +140,12 @@ export default function App() {
 
             {/* Manager routes */}
             {[
-              { path: "/manager/dashboard", Component: ManagerDashboard, roles: ["admin"] as AppRole[] },
-              { path: "/manager/members", Component: ManagerMembers, roles: ["admin"] as AppRole[] },
-              { path: "/manager/members/enroll", Component: ManagerMemberEnroll, roles: ["admin"] as AppRole[] },
-              { path: "/manager/members/:id", Component: ManagerMemberDetail, roles: ["admin"] as AppRole[] },
-              { path: "/manager/classes", Component: ManagerClasses, roles: ["admin"] as AppRole[] },
-              { path: "/manager/billing", Component: ManagerBilling, roles: ["admin"] as AppRole[] },
+              { path: "/manager/dashboard", Component: ManagerDashboard, roles: ["admin"] as const },
+              { path: "/manager/members", Component: ManagerMembers, roles: ["admin"] as const },
+              { path: "/manager/members/enroll", Component: ManagerMemberEnroll, roles: ["admin"] as const },
+              { path: "/manager/members/:id", Component: ManagerMemberDetail, roles: ["admin"] as const },
+              { path: "/manager/classes", Component: ManagerClasses, roles: ["admin"] as const },
+              { path: "/manager/billing", Component: ManagerBilling, roles: ["admin"] as const },
             ].map(({ path, Component, roles }) => (
               <Route
                 key={path}
@@ -170,7 +170,7 @@ export default function App() {
                 key={path}
                 path={path}
                 element={
-                  <ProtectedRoute roles={["admin", "manager", "employee"] as AppRole[]}>
+                  <ProtectedRoute roles={["admin", "receptionist"]}>
                     <AppShell>
                       <Component />
                     </AppShell>
@@ -190,7 +190,7 @@ export default function App() {
                 key={path}
                 path={path}
                 element={
-                  <ProtectedRoute roles={["admin", "manager", "teacher"] as AppRole[]}>
+                  <ProtectedRoute roles={["admin", "coach"]}>
                     <AppShell>
                       <Component />
                     </AppShell>
@@ -212,7 +212,7 @@ export default function App() {
                 key={path}
                 path={path}
                 element={
-                  <ProtectedRoute roles={["admin", "manager", "employee", "teacher", "client"] as AppRole[]}>
+                  <ProtectedRoute roles={["admin", "receptionist", "coach", "member"]}>
                     <AppShell>
                       <Component />
                     </AppShell>
