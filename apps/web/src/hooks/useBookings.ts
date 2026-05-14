@@ -15,17 +15,10 @@ export function useMyBookings() {
   return useQuery({
     queryKey: ["bookings", "my", user?.id],
     queryFn: async () => {
-      const { data: member, error: memberError } = await supabase
-        .from("members")
-        .select("id")
-        .eq("user_id", user!.id)
-        .single();
-      if (memberError) throw memberError;
-
       const { data, error } = await supabase
         .from("bookings")
-        .select("*, classes(*, gym_locations(name))")
-        .eq("member_id", member.id)
+        .select("*, classes(*, gym_locations(name)), members!inner(profile_id)")
+        .eq("members.profile_id", user!.id)
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data;
@@ -62,7 +55,7 @@ export function useCreateBooking() {
       const { data: member, error: memberError } = await supabase
         .from("members")
         .select("id")
-        .eq("user_id", user!.id)
+        .eq("profile_id", user!.id)
         .single();
       if (memberError) throw memberError;
 
@@ -103,22 +96,22 @@ export function useWaitlistPosition(classId: string) {
   return useQuery({
     queryKey: ["bookings", "waitlist", classId, user?.id],
     queryFn: async () => {
-      const { data: member, error: memberError } = await supabase
-        .from("members")
-        .select("id")
-        .eq("user_id", user!.id)
-        .single();
-      if (memberError) throw memberError;
-
       const { data, error } = await supabase
         .from("bookings")
-        .select("id, created_at")
+        .select("id, created_at, members!inner(profile_id)")
         .eq("class_id", classId)
         .eq("status", "waitlisted")
         .order("created_at");
       if (error) throw error;
 
-      const position = data.findIndex((b) => b.member_id === member.id);
+      // Note: we fetch the list to find position
+      const position = data.findIndex((b: unknown) => {
+        const item = b as { members?: { profile_id: string } | { profile_id: string }[] };
+        if (Array.isArray(item.members)) {
+          return item.members[0]?.profile_id === user!.id;
+        }
+        return item.members?.profile_id === user!.id;
+      });
       return position === -1 ? null : position + 1;
     },
     enabled: !!classId && !!user,
