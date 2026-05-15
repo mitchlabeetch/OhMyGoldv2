@@ -1,0 +1,3 @@
+## 2024-05-15 - N+1 query and roundtrip optimization with Supabase inner joins
+**Learning:** Found multiple instances of serial fetching in custom hooks (e.g. `useMyBookings`, `useWaitlistPosition`) where the `members` table is fetched first by `profile_id`, and then the resulting `member.id` is used in a subsequent query to `bookings`. This causes an unnecessary roundtrip, increasing latency. By utilizing PostgREST inner joins (`!inner()`), we can combine these queries into a single roundtrip. Memory entry specifically highlights this anti-pattern.
+**Action:** Consistently review use of Supabase querying where a relationship exists, and refactor separate sequentially chained queries to use `!inner` joins.

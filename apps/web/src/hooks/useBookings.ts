@@ -15,17 +15,11 @@ export function useMyBookings() {
   return useQuery({
     queryKey: ["bookings", "my", user?.id],
     queryFn: async () => {
-      const { data: member, error: memberError } = await supabase
-        .from("members")
-        .select("id")
-        .eq("profile_id", user!.id)
-        .single();
-      if (memberError) throw memberError;
-
+      // ⚡ Bolt Optimization: Replaced sequential N+1 query with PostgREST inner join
       const { data, error } = await supabase
         .from("bookings")
-        .select("*, classes(*, gym_locations(name))")
-        .eq("member_id", member.id)
+        .select("*, classes(*, gym_locations(name)), members!inner(profile_id)")
+        .eq("members.profile_id", user!.id)
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data;
