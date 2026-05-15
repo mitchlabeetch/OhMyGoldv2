@@ -3,7 +3,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { useAuthStore } from "../../src/stores/authStore";
 
-const C = { primary: "#F5A623", bg: "#0A0A0F", card: "#1A1A2E", border: "#2A2A3E", text: "#FFFFFF", muted: "#9CA3AF" };
+const C = {
+  primary: "#F5A623",
+  bg: "#0A0A0F",
+  card: "#1A1A2E",
+  border: "#2A2A3E",
+  text: "#FFFFFF",
+  muted: "#9CA3AF",
+};
 
 const QUICK_ACTIONS = [
   { label: "Book a Class", icon: "📅", route: "/booking" as const },
@@ -13,12 +20,17 @@ const QUICK_ACTIONS = [
 
 export default function HomeScreen() {
   const { profile, session } = useAuthStore();
-  const name = (profile as { first_name?: string; full_name?: string } | null)?.first_name
-    ?? (profile as { full_name?: string } | null)?.full_name?.split(" ")[0]
-    ?? session?.user?.email?.split("@")[0]
-    ?? "Member";
+  const name =
+    (profile as { first_name?: string; full_name?: string } | null)?.first_name ??
+    (profile as { full_name?: string } | null)?.full_name?.split(" ")[0] ??
+    session?.user?.email?.split("@")[0] ??
+    "Member";
 
-  const today = new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
+  const today = new Date().toLocaleDateString("fr-FR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  });
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -44,7 +56,12 @@ export default function HomeScreen() {
         <Text style={styles.sectionTitle}>Quick Actions</Text>
         <View style={styles.actionsRow}>
           {QUICK_ACTIONS.map((a) => (
-            <TouchableOpacity key={a.label} style={styles.actionBtn} onPress={() => router.push(a.route)} activeOpacity={0.75}>
+            <TouchableOpacity
+              key={a.label}
+              style={styles.actionBtn}
+              onPress={() => router.push(a.route)}
+              activeOpacity={0.75}
+            >
               <Text style={styles.actionIcon}>{a.icon}</Text>
               <Text style={styles.actionLabel}>{a.label}</Text>
             </TouchableOpacity>
@@ -67,7 +84,10 @@ export default function HomeScreen() {
                 <Text style={styles.className}>{cls.name}</Text>
                 <Text style={styles.classTeacher}>{cls.teacher}</Text>
               </View>
-              <TouchableOpacity style={[styles.bookBtn, cls.spots <= 3 && styles.bookBtnLow]} onPress={() => router.push("/booking")}>
+              <TouchableOpacity
+                style={[styles.bookBtn, cls.spots <= 3 && styles.bookBtnLow]}
+                onPress={() => router.push("/booking")}
+              >
                 <Text style={styles.bookBtnText}>{cls.spots <= 0 ? "Full" : "Book"}</Text>
               </TouchableOpacity>
             </View>
@@ -76,7 +96,9 @@ export default function HomeScreen() {
 
         {/* Tip */}
         <View style={styles.tipCard}>
-          <Text style={styles.tipText}>🏆 Tip: Book early to secure your spot in popular classes!</Text>
+          <Text style={styles.tipText}>
+            🏆 Tip: Book early to secure your spot in popular classes!
+          </Text>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -86,72 +108,85 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: C.bg },
   scroll: { paddingHorizontal: 20, paddingBottom: 32, paddingTop: 8 },
-  header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 20 },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+  },
   greeting: { fontSize: 22, fontWeight: "800", color: C.text },
   date: { fontSize: 13, color: C.muted, marginTop: 2 },
-  avatar: { width: 44, height: 44, borderRadius: 22, backgroundColor: C.card, borderWidth: 1.5, borderColor: C.primary, alignItems: "center", justifyContent: "center" },
+  avatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: C.card,
+    borderWidth: 1.5,
+    borderColor: C.primary,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   avatarText: { color: C.primary, fontWeight: "700", fontSize: 15 },
-  banner: { backgroundColor: C.card, borderRadius: 16, padding: 20, marginBottom: 24, alignItems: "center", borderWidth: 1, borderColor: "#2A2A3E" },
+  banner: {
+    backgroundColor: C.card,
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 24,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#2A2A3E",
+  },
   bannerTitle: { fontSize: 18, fontWeight: "900", color: C.primary, letterSpacing: 1 },
   bannerSub: { fontSize: 12, color: C.muted, marginTop: 4 },
   sectionTitle: { fontSize: 16, fontWeight: "700", color: C.text, marginBottom: 12 },
   actionsRow: { flexDirection: "row", gap: 12, marginBottom: 24 },
-  actionBtn: { flex: 1, backgroundColor: C.card, borderRadius: 14, padding: 16, alignItems: "center", borderWidth: 1, borderColor: C.border, gap: 8 },
+  actionBtn: {
+    flex: 1,
+    backgroundColor: C.card,
+    borderRadius: 14,
+    padding: 16,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: C.border,
+    gap: 8,
+  },
   actionIcon: { fontSize: 24 },
   actionLabel: { fontSize: 11, color: C.muted, fontWeight: "600", textAlign: "center" },
-  card: { backgroundColor: C.card, borderRadius: 16, borderWidth: 1, borderColor: C.border, overflow: "hidden", marginBottom: 16 },
-  classRow: { flexDirection: "row", alignItems: "center", padding: 14, borderBottomWidth: 1, borderBottomColor: C.border, gap: 12 },
+  card: {
+    backgroundColor: C.card,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: C.border,
+    overflow: "hidden",
+    marginBottom: 16,
+  },
+  classRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: C.border,
+    gap: 12,
+  },
   classTime: { width: 46 },
   classTimeText: { color: C.primary, fontWeight: "700", fontSize: 13 },
   classInfo: { flex: 1 },
   className: { color: C.text, fontWeight: "600", fontSize: 14 },
   classTeacher: { color: C.muted, fontSize: 12, marginTop: 2 },
-  bookBtn: { backgroundColor: C.primary, borderRadius: 8, paddingHorizontal: 14, paddingVertical: 7 },
+  bookBtn: {
+    backgroundColor: C.primary,
+    borderRadius: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+  },
   bookBtnLow: { backgroundColor: "#EF4444" },
   bookBtnText: { color: "#000", fontWeight: "700", fontSize: 13 },
-  tipCard: { backgroundColor: "#1A1A2E", borderRadius: 14, padding: 16, borderWidth: 1, borderColor: C.primary + "30" },
-  tipText: { color: C.muted, fontSize: 13, lineHeight: 20 },
-});
-
-export default function DashboardScreen() {
-  const { t } = useTranslation("dashboard");
-  const { profile } = useAuthStore();
-
-  return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.header}>
-          <Text style={styles.welcomeText}>
-            {t("welcome", { name: profile?.first_name ?? "…" })}
-          </Text>
-          <Text style={styles.subtitle}>Gold's Gym France</Text>
-        </View>
-
-        <View style={styles.placeholder}>
-          <Text style={styles.placeholderTitle}>Phase 4 — Core Gym Management</Text>
-          <Text style={styles.placeholderText}>
-            Les fonctionnalités de gestion seront implémentées en Phase 4.
-          </Text>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#0A0A0A" },
-  content: { padding: 24 },
-  header: { marginBottom: 32 },
-  welcomeText: { fontSize: 24, fontWeight: "700", color: "#FFFFFF", marginBottom: 4 },
-  subtitle: { fontSize: 14, color: "#A3A3A3" },
-  placeholder: {
-    backgroundColor: "#171717",
-    borderRadius: 16,
+  tipCard: {
+    backgroundColor: "#1A1A2E",
+    borderRadius: 14,
+    padding: 16,
     borderWidth: 1,
-    borderColor: "#2A2A2A",
-    padding: 24,
-    alignItems: "center",
+    borderColor: C.primary + "30",
   },
-  placeholderTitle: { fontSize: 16, fontWeight: "600", color: "#FFFFFF", marginBottom: 8, textAlign: "center" },
-  placeholderText: { fontSize: 13, color: "#737373", textAlign: "center", lineHeight: 20 },
+  tipText: { color: C.muted, fontSize: 13, lineHeight: 20 },
 });

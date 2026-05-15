@@ -35,11 +35,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   setProfile: (profile) => set({ profile }),
 
   fetchProfile: async (userId: string) => {
-    const { data } = await supabase
-      .from("user_profiles")
-      .select("*")
-      .eq("id", userId)
-      .single();
+    const { data } = await supabase.from("user_profiles").select("*").eq("id", userId).single();
     set({ profile: data as UserProfile | null });
   },
 
