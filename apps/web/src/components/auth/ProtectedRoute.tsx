@@ -7,7 +7,7 @@ import { hasPermission, hasAnyPermission, type AppRole, type Permission } from "
 interface ProtectedRouteProps {
   children: ReactNode;
   /** Required role(s) — at least one must match */
-  roles?: AppRole | AppRole[];
+  roles?: AppRole | readonly AppRole[];
   /** Required permission — user must have this */
   permission?: Permission;
   /** Any of these permissions — user needs at least one */
@@ -44,7 +44,7 @@ export function ProtectedRoute({
 
   // Check role restriction
   if (roles && userRole) {
-    const allowed = Array.isArray(roles) ? roles.includes(userRole) : userRole === roles;
+    const allowed = Array.isArray(roles) ? roles.includes(userRole as any) : userRole === roles;
     if (!allowed) {
       return <Navigate to={unauthorizedRedirect} replace />;
     }
@@ -67,7 +67,7 @@ export function ProtectedRoute({
 interface GateProps {
   permission?: Permission;
   anyPermission?: Permission[];
-  role?: AppRole | AppRole[];
+  role?: AppRole | readonly AppRole[];
   children: ReactNode;
   fallback?: ReactNode;
 }
@@ -79,7 +79,7 @@ export function Gate({ permission, anyPermission, role, children, fallback = nul
   if (!userRole) return <>{fallback}</>;
 
   if (role) {
-    const allowed = Array.isArray(role) ? role.includes(userRole) : userRole === role;
+    const allowed = Array.isArray(role) ? role.includes(userRole as any) : userRole === role;
     if (!allowed) return <>{fallback}</>;
   }
 

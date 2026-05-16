@@ -1,4 +1,4 @@
-import {
+import React, {
   createContext,
   useContext,
   useState,
@@ -144,7 +144,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           </AnimatePresence>
         </div>,
         document.body
-      )}
+      ) as unknown as ReactNode}
     </ToastContext.Provider>
   );
 }
