@@ -7,19 +7,21 @@ import type { Permission, AppRole } from "@ohmygold/shared";
 
 export function useAuth() {
   const navigate = useNavigate();
-  const {
-    user,
-    profile,
-    session,
-    isLoading,
-    isAuthenticated,
-    error,
-    login,
-    loginWithGoogle,
-    loginWithApple,
-    logout: storeLogout,
-    clearError,
-  } = useAuthStore();
+
+  // Performance optimization: Select individual state slices
+  // to prevent unnecessary re-renders in consuming components
+  // when unrelated store values change.
+  const user = useAuthStore((s) => s.user);
+  const profile = useAuthStore((s) => s.profile);
+  const session = useAuthStore((s) => s.session);
+  const isLoading = useAuthStore((s) => s.isLoading);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const error = useAuthStore((s) => s.error);
+  const login = useAuthStore((s) => s.login);
+  const loginWithGoogle = useAuthStore((s) => s.loginWithGoogle);
+  const loginWithApple = useAuthStore((s) => s.loginWithApple);
+  const storeLogout = useAuthStore((s) => s.logout);
+  const clearError = useAuthStore((s) => s.clearError);
 
   const role = useRole();
 
