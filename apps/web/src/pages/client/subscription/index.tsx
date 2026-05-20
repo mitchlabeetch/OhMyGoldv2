@@ -22,7 +22,7 @@ function Modal({ open, onClose, title, children }: { open: boolean; onClose: () 
 
 export default function ClientSubscription() {
   const { t } = useTranslation(["common"]);
-  const { profile } = useAuthStore();
+  const profile = useAuthStore((s) => s.profile);
   const memberId = (profile as { member_id?: string } | null)?.member_id ?? "";
 
   const { data: subscription, isLoading } = useSubscription(memberId);

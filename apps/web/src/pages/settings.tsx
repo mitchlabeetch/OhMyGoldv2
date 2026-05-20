@@ -15,7 +15,8 @@ type Tab = (typeof TABS)[number]["id"];
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<Tab>("profile");
-  const { profile, refreshProfile } = useAuthStore();
+  const profile = useAuthStore((s) => s.profile);
+  const refreshProfile = useAuthStore((s) => s.refreshProfile);
 
   return (
     <div className="py-8 px-4 max-w-4xl mx-auto">

@@ -17,7 +17,7 @@ import type { AppRole } from "@ohmygold/shared";
  * if (can('members:create')) { ... }
  */
 export function usePermissions() {
-  const { profile } = useAuthStore();
+  const profile = useAuthStore((s) => s.profile);
   const role = profile?.role as AppRole | undefined;
 
   const can = useCallback(

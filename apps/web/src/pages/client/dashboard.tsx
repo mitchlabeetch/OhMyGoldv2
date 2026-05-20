@@ -6,7 +6,8 @@ import { useMyBookings } from "@/hooks/useBookings";
 
 export default function ClientDashboard() {
   const { t } = useTranslation(["dashboard", "common"]);
-  const { user, profile } = useAuthStore();
+  const user = useAuthStore((s) => s.user);
+  const profile = useAuthStore((s) => s.profile);
   const { data: bookings = [] } = useMyBookings();
 
   const upcoming = (bookings as Array<{ id: string; status: string; gym_classes?: { name: string; starts_at: string; teacher_name: string } }>)

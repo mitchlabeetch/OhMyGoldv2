@@ -13,7 +13,8 @@ import { useToast } from "@ohmygold/ui-shared";
 export function useSession(idleTimeoutMinutes = 30) {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { signOut, refreshProfile } = useAuthStore();
+  const signOut = useAuthStore((s) => s.signOut);
+  const refreshProfile = useAuthStore((s) => s.refreshProfile);
 
   const handleSignedOut = useCallback(() => {
     navigate("/auth/login", { replace: true });

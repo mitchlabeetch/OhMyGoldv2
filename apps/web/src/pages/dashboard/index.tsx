@@ -6,7 +6,7 @@ import { LayoutDashboard, TrendingUp, Users, Calendar, Loader2 } from "lucide-re
 
 export default function DashboardPage() {
   const { t } = useTranslation(["dashboard", "common"]);
-  const { profile } = useAuthStore();
+  const profile = useAuthStore((s) => s.profile);
 
   const stats = [
     {

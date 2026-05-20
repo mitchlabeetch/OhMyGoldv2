@@ -34,7 +34,7 @@ export interface AuditEventPayload {
  * Calls the `log_audit_event` Supabase RPC function.
  */
 export function useAuditLog() {
-  const { user } = useAuthStore();
+  const user = useAuthStore((s) => s.user);
 
   const logEvent = useCallback(
     async ({ action, resourceType, resourceId, metadata = {} }: AuditEventPayload) => {

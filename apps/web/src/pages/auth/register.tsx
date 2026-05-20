@@ -15,7 +15,7 @@ type Step = (typeof STEPS)[number];
 export default function RegisterPage() {
   const { t } = useTranslation(["auth", "common"]);
   const navigate = useNavigate();
-  const { fetchProfile } = useAuthStore();
+  const fetchProfile = useAuthStore((s) => s.fetchProfile);
 
   const [step, setStep] = useState<Step>("account");
   const [showPassword, setShowPassword] = useState(false);

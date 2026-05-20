@@ -12,7 +12,7 @@ function formatCurrency(amount: number) {
 
 export default function ManagerDashboard() {
   const { t } = useTranslation(["dashboard"]);
-  const { profile } = useAuthStore();
+  const profile = useAuthStore((s) => s.profile);
   const locationId = profile?.location_id ?? "";
 
   const { data: kpi, isLoading: kpiLoading } = useKPIOverview(locationId || undefined);

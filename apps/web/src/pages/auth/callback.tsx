@@ -6,7 +6,9 @@ import { Loader2 } from "lucide-react";
 
 export default function OAuthCallbackPage() {
   const navigate = useNavigate();
-  const { setUser, setSession, fetchProfile } = useAuthStore();
+  const setUser = useAuthStore((s) => s.setUser);
+  const setSession = useAuthStore((s) => s.setSession);
+  const fetchProfile = useAuthStore((s) => s.fetchProfile);
 
   useEffect(() => {
     const handleCallback = async () => {
