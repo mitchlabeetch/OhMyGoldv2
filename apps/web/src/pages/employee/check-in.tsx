@@ -23,7 +23,7 @@ type RecentEntry = {
 };
 
 export default function CheckInPage() {
-  const { profile } = useAuthStore();
+  const profile = useAuthStore((s) => s.profile);
   const locationId = profile?.location_id ?? "";
 
   const [searchQuery, setSearchQuery] = useState("");

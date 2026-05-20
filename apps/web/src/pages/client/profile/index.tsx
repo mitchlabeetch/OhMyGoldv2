@@ -8,7 +8,9 @@ const GOALS = ["muscle_gain", "weight_loss", "endurance", "flexibility", "stress
 
 export default function ClientProfile() {
   const { t } = useTranslation(["common"]);
-  const { user, profile, refreshProfile } = useAuthStore();
+  const user = useAuthStore((s) => s.user);
+  const profile = useAuthStore((s) => s.profile);
+  const refreshProfile = useAuthStore((s) => s.refreshProfile);
 
   const [form, setForm] = useState({
     full_name: (profile as { full_name?: string } | null)?.full_name ?? "",

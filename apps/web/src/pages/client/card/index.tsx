@@ -35,7 +35,7 @@ function QRPlaceholder({ value }: { value: string }) {
 
 export default function ClientCard() {
   const { t } = useTranslation(["common"]);
-  const { user } = useAuthStore();
+  const user = useAuthStore((s) => s.user);
   const [visible, setVisible] = useState(true);
 
   const { data: card, isLoading } = useQuery({

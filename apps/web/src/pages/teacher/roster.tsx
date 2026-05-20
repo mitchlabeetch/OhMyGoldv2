@@ -7,7 +7,7 @@ import { useClassBookings } from "@/hooks/useBookings";
 
 export default function TeacherRoster() {
   const { t } = useTranslation(["common"]);
-  const { user } = useAuthStore();
+  const user = useAuthStore((s) => s.user);
   const [search, setSearch] = useState("");
   const { data: classes = [] } = useClasses({ teacherId: user?.id });
 

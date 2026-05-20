@@ -10,7 +10,11 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue>({ initialized: false });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const { setUser, setSession, setLoading, fetchProfile, checkSession } = useAuthStore();
+  const setUser = useAuthStore((s) => s.setUser);
+  const setSession = useAuthStore((s) => s.setSession);
+  const setLoading = useAuthStore((s) => s.setLoading);
+  const fetchProfile = useAuthStore((s) => s.fetchProfile);
+  const checkSession = useAuthStore((s) => s.checkSession);
   const initialized = useRef(false);
 
   useEffect(() => {

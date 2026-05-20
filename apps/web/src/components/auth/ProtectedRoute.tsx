@@ -23,7 +23,9 @@ export function ProtectedRoute({
   anyPermission,
   unauthorizedRedirect = "/unauthorized",
 }: ProtectedRouteProps) {
-  const { isAuthenticated, isLoading, profile } = useAuthStore();
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const isLoading = useAuthStore((s) => s.isLoading);
+  const profile = useAuthStore((s) => s.profile);
   const location = useLocation();
 
   // Show loading spinner while checking session
@@ -73,7 +75,7 @@ interface GateProps {
 }
 
 export function Gate({ permission, anyPermission, role, children, fallback = null }: GateProps) {
-  const { profile } = useAuthStore();
+  const profile = useAuthStore((s) => s.profile);
   const userRole = profile?.role;
 
   if (!userRole) return <>{fallback}</>;

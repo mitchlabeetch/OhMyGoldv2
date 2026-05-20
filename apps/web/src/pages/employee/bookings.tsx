@@ -106,7 +106,7 @@ function AddBookingPanel({ classId, onDone }: { classId: string; onDone: () => v
 }
 
 export default function BookingsPage() {
-  const { profile } = useAuthStore();
+  const profile = useAuthStore((s) => s.profile);
   const locationId = profile?.location_id ?? undefined;
   const today = new Date().toISOString().split("T")[0];
 

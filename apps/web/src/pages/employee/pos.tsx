@@ -52,7 +52,7 @@ const PAYMENT_METHODS: {
 ];
 
 export default function POSPage() {
-  const { profile } = useAuthStore();
+  const profile = useAuthStore((s) => s.profile);
   const locationId = profile?.location_id ?? undefined;
 
   const { data: products, isLoading: productsLoading } =

@@ -30,7 +30,8 @@ interface CartItem {
 }
 
 export default function ManagerPOS() {
-  const { user, profile } = useAuthStore();
+  const user = useAuthStore((s) => s.user);
+  const profile = useAuthStore((s) => s.profile);
   const [search, setSearch] = useState("");
   const [cart, setCart] = useState<CartItem[]>([]);
   const [paymentMethod, setPaymentMethod] = useState<"card" | "cash">("card");

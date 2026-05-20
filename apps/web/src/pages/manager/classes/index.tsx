@@ -23,7 +23,7 @@ function getWeekDates(baseDate: Date): Date[] {
 
 export default function ManagerClassesPage() {
   const { t } = useTranslation(["classes", "common"]);
-  const { profile } = useAuthStore();
+  const profile = useAuthStore((s) => s.profile);
   const locationId = profile?.location_id ?? undefined;
 
   const [weekBase, setWeekBase] = useState(new Date());
